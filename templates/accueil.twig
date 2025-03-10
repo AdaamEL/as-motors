@@ -1,0 +1,34 @@
+{% extends "base.twig" %}
+
+{% block title %}Accueil - ASMOTORS{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="text-center my-4">Nos Véhicules Disponibles</h2>
+        <div class="row">
+            {% for voiture in voitures %}
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <img src="{{ voiture.image }}" class="card-img-top img-fluid" alt="{{ voiture.marque }} {{ voiture.modele }}">
+                        <div class="card-body text-center d-flex flex-column">
+                            <h5 class="card-title">{{ voiture.marque }} - {{ voiture.modele }}</h5>
+                            <p class="card-text"><strong>Prix :</strong> {{ voiture.prix }} €</p>
+                            <p class="text-muted">Connectez-vous pour voir plus de détails.</p>
+
+                            {% if session.user or session.admin %}
+                                <a href="details.php?id={{ voiture.id }}" class="btn btn-primary mt-auto">Détails</a>
+                                <p class="card-text {% if voiture.disponible == 1 %}text-success{% else %}text-danger{% endif %}">
+                                    {% if voiture.disponible == 1 %}
+                                        ✅ Disponible
+                                    {% else %}
+                                        ❌ Indisponible
+                                    {% endif %}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

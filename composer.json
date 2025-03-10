@@ -1,0 +1,17 @@
+{
+    "name": "adam/as-motors",
+    "autoload": {
+        "psr-4": {
+            "Adam\\AsMotors\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "AdaamEL",
+            "email": "91120983+AdaamEL@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "twig/twig": "^3.20"
+    }
+}

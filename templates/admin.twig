@@ -1,0 +1,47 @@
+{% extends "base.twig" %}
+
+{% block title %}Administration - ASMOTORS{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="text-center my-4">Gestion des Véhicules</h2>
+        
+        <a href="ajouter_voiture.php" class="btn btn-success mb-3">➕ Ajouter une voiture</a>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Marque</th>
+                    <th>Modèle</th>
+                    <th>Année</th>
+                    <th>Prix (€)</th>
+                    <th>Disponibilité</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for voiture in voitures %}
+                    <tr>
+                        <td><img src="{{ voiture.image }}" width="80" height="50" class="img-thumbnail"></td>
+                        <td>{{ voiture.marque }}</td>
+                        <td>{{ voiture.modele }}</td>
+                        <td>{{ voiture.annee }}</td>
+                        <td>{{ voiture.prix }}</td>
+                        <td>
+                            {% if voiture.disponible == 1 %}
+                                ✅ Disponible
+                            {% else %}
+                                ❌ Indisponible
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="modifier_voiture.php?id={{ voiture.id }}" class="btn btn-warning btn-sm">✏ Modifier</a>
+                            <a href="supprimer_voiture.php?id={{ voiture.id }}" class="btn btn-danger btn-sm" onclick="return confirm('Supprimer cette voiture ?')">🗑 Supprimer</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.twig" %}
+
+{% block title %}Détails - {{ voiture.marque }} {{ voiture.modele }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="text-center my-4">{{ voiture.marque }} - {{ voiture.modele }}</h2>
+        <div class="card shadow">
+            <img src="{{ voiture.image }}" class="card-img-top" alt="{{ voiture.marque }} {{ voiture.modele }}">
+            <div class="card-body">
+                <p><strong>Année :</strong> {{ voiture.annee }}</p>
+                <p><strong>Prix :</strong> {{ voiture.prix }} €</p>
+                <p><strong>Description :</strong> {{ voiture.description }}</p>
+                <a href="index.php" class="btn btn-primary">Retour</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
