@@ -1,34 +1,178 @@
 {% extends "base.twig" %}
 
-{% block title %}Accueil - ASMOTORS{% endblock %}
+{% block title %}Accueil - AS MOTOR'S{% endblock %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h2 class="text-center my-4">Nos Véhicules Disponibles</h2>
-        <div class="row">
-            {% for voiture in voitures %}
-                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                    <div class="card shadow-sm h-100">
-                        <img src="{{ voiture.image }}" class="card-img-top img-fluid" alt="{{ voiture.marque }} {{ voiture.modele }}">
-                        <div class="card-body text-center d-flex flex-column">
-                            <h5 class="card-title">{{ voiture.marque }} - {{ voiture.modele }}</h5>
-                            <p class="card-text"><strong>Prix :</strong> {{ voiture.prix }} €</p>
-                            <p class="text-muted">Connectez-vous pour voir plus de détails.</p>
+<div class="hero-section dark-mode">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-gradient">Bienvenue chez <span class="brand-highlight">AS MOTOR'S</span></h1>
+                <p class="lead my-4">Découvrez notre sélection de véhicules d'exception. Qualité, fiabilité et service personnalisé pour votre satisfaction.</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <a href="/vehicules.php" class="btn btn-primary btn-glow btn-lg px-4 me-md-2">Voir nos véhicules</a>
+                    <a href="/contact.php" class="btn btn-outline-light btn-lg px-4">Nous contacter</a>
+                </div>
+            </div>
+            <div class="col-lg-6 position-relative">
+                <div class="hero-image-container">
+                    <img src="/uploads/hero-car.jpg" alt="Voiture de luxe" class="img-fluid rounded shadow-lg">
+                    <div class="glow-overlay"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                            {% if session.user or session.admin %}
-                                <a href="details.php?id={{ voiture.id }}" class="btn btn-primary mt-auto">Détails</a>
-                                <p class="card-text {% if voiture.disponible == 1 %}text-success{% else %}text-danger{% endif %}">
-                                    {% if voiture.disponible == 1 %}
-                                        ✅ Disponible
-                                    {% else %}
-                                        ❌ Indisponible
-                                    {% endif %}
-                                </p>
-                            {% endif %}
+<div class="car-showcase py-5 dark-mode">
+    <div class="container">
+        <h2 class="text-center mb-5 section-title">Nos véhicules phares</h2>
+        <div class="row">
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="car-card">
+                    <div class="car-image">
+                        <img src="/uploads/audi-rs3.jpg" alt="Audi RS3" class="img-fluid">
+                        <div class="car-overlay">
+                            <span class="car-price">350€/24h</span>
+                        </div>
+                    </div>
+                    <div class="car-details">
+                        <h4>Audi RS3</h4>
+                        <p>Sportback, 400ch, Pack RS Dynamic Plus</p>
+                        <a href="/vehicules.php" class="btn btn-sm btn-outline-primary">Découvrir</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="car-card">
+                    <div class="car-image">
+                        <img src="/uploads/mercedes-classe-a.jpg" alt="Mercedes Classe A" class="img-fluid">
+                        <div class="car-overlay">
+                            <span class="car-price">130€/24h</span>
+                        </div>
+                    </div>
+                    <div class="car-details">
+                        <h4>Mercedes Classe A</h4>
+                        <p>AMG Line, équipement complet</p>
+                        <a href="/vehicules.php" class="btn btn-sm btn-outline-primary">Découvrir</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="car-card">
+                    <div class="car-image">
+                        <img src="/uploads/clio-5.jpg" alt="Renault Clio 5" class="img-fluid">
+                        <div class="car-overlay">
+                            <span class="car-price">80€/24h</span>
+                        </div>
+                    </div>
+                    <div class="car-details">
+                        <h4>Renault Clio 5</h4>
+                        <p>RS Line, polyvalent et économique</p>
+                        <a href="/vehicules.php" class="btn btn-sm btn-outline-primary">Découvrir</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="car-card">
+                    <div class="car-image">
+                        <img src="/uploads/mercedes-classe-c.jpg" alt="Mercedes Classe C" class="img-fluid">
+                        <div class="car-overlay">
+                            <span class="car-price">140€/24h</span>
+                        </div>
+                    </div>
+                    <div class="car-details">
+                        <h4>Mercedes Classe C</h4>
+                        <p>AMG Line, finition haut de gamme</p>
+                        <a href="/vehicules.php" class="btn btn-sm btn-outline-primary">Découvrir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="features-section py-5 dark-section">
+    <div class="container">
+        <h2 class="text-center mb-5 section-title">Pourquoi choisir <span class="brand-highlight">AS MOTOR'S</span> ?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-car-front-fill"></i>
+                    </div>
+                    <h3>Véhicules sélectionnés</h3>
+                    <p>Tous nos véhicules sont soigneusement inspectés pour garantir qualité et fiabilité.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-tools"></i>
+                    </div>
+                    <h3>Service après-vente</h3>
+                    <p>Notre équipe de professionnels est à votre disposition pour l'entretien de votre véhicule.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h3>Garantie étendue</h3>
+                    <p>Tous nos véhicules sont couverts par une garantie pour votre tranquillité d'esprit.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="testimonials-section py-5 dark-mode">
+    <div class="container">
+        <h2 class="text-center mb-5 section-title">Ce que disent nos clients</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="testimonial-card p-4 h-100">
+                    <div class="testimonial-content">
+                        <p class="mb-3">"Service exceptionnel ! J'ai trouvé la voiture de mes rêves à un prix raisonnable."</p>
+                        <div class="testimonial-author">
+                            <h5 class="mb-0">Jean Dupont</h5>
+                            <small class="text-muted">Client depuis 2022</small>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="testimonial-card p-4 h-100">
+                    <div class="testimonial-content">
+                        <p class="mb-3">"Personnel très professionnel et à l'écoute. Je recommande vivement AS MOTOR'S."</p>
+                        <div class="testimonial-author">
+                            <h5 class="mb-0">Marie Martin</h5>
+                            <small class="text-muted">Cliente depuis 2023</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="testimonial-card p-4 h-100">
+                    <div class="testimonial-content">
+                        <p class="mb-3">"Achat sans stress et suivi impeccable. Je reviendrai pour mon prochain véhicule !"</p>
+                        <div class="testimonial-author">
+                            <h5 class="mb-0">Pierre Leroy</h5>
+                            <small class="text-muted">Client depuis 2021</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+</div>
+
+<div class="cta-section py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">Prêt à prendre la route ?</h2>
+        <p class="lead mb-4">Réservez dès maintenant votre véhicule et profitez d'une expérience de conduite exceptionnelle.</p>
+        <a href="/vehicules.php" class="btn btn-primary btn-glow btn-lg">Réserver un véhicule</a>
+    </div>
+</div>
 {% endblock %}

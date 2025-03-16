@@ -14,7 +14,6 @@ html, body {
 
 main {
   flex: 1;
-  padding: 20px;
 }
 
 /* ============================= */
@@ -34,10 +33,10 @@ nav a {
   padding: 8px 15px;
 }
 
-nav a:hover {
+/* nav a:hover {
   background-color: #495057;
   border-radius: 5px;
-}
+} */
 
 /* ============================= */
 /*      FOOTER                   */
@@ -52,124 +51,338 @@ footer {
   bottom: 0;
 }
 
-/* ============================= */
-/*      NAVBAR                   */
-/* ============================= */
-.navbar {
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+/* ==== */
+/*    THÈME FUTURISTE ET SOMBRE    */
+/* ==== */
+
+:root {
+  --primary-color: #007bff;
+  --primary-glow: rgba(0, 123, 255, 0.5);
+  --dark-bg: #121212;
+  --darker-bg: #0a0a0a;
+  --card-bg: #1e1e1e;
+  --text-color: #e0e0e0;
+  --text-muted: #a0a0a0;
+  --border-color: #333;
+  --gradient-start: #007bff;
+  --gradient-end: #00c6ff;
 }
 
-.navbar-nav .nav-item {
-  margin-left: 10px;
+.dark-theme {
+  background-color: var(--dark-bg);
+  color: var(--text-color);
+  font-family: 'Poppins', sans-serif;
 }
 
-.navbar-nav .nav-link {
+/* Navigation */
+.navbar-dark {
+  background-color: rgba(10, 10, 10, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Sections */
+.dark-mode {
+  background-color: var(--dark-bg);
+  color: var(--text-color);
+}
+
+.dark-section {
+  background-color: var(--darker-bg);
+  color: var(--text-color);
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 100px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top right, rgba(0, 123, 255, 0.1), transparent 70%);
+  z-index: 0;
+}
+
+.hero-section .container {
+  position: relative;
+  z-index: 1;
+}
+
+.text-gradient {
+  background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.brand-highlight {
+  color: var(--primary-color);
   font-weight: bold;
-  padding: 8px 15px;
-  border-radius: 5px;
 }
 
-.navbar-nav .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* ============================= */
-/*      AFFICHAGE DES VOITURES    */
-/* ============================= */
-.card {
+.hero-image-container {
+  position: relative;
   border-radius: 10px;
   overflow: hidden;
-  transition: transform 0.2s ease-in-out;
-  display: flex;
-  flex-direction: column;
 }
 
-.card:hover {
-  transform: scale(1.05);
+.glow-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(0, 123, 255, 0.3), transparent 70%);
+  pointer-events: none;
 }
 
-.card-img-top {
-  height: 180px;
-  object-fit: cover;
-}
-
-.card-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  flex-grow: 1;
-  padding: 15px;
-}
-
-.card-title {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.card-text {
-  font-size: 14px;
-  color: #555;
-}
-
+/* Buttons */
 .btn-primary {
-  background-color: #007bff;
+  background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
   border: none;
-  padding: 10px;
-  font-size: 14px;
-  font-weight: bold;
+  transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
-  background-color: #0056b3;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3);
 }
 
-/* ============================= */
-/*      RESPONSIVE DESIGN         */
-/* ============================= */
-@media (max-width: 768px) {
-  .col-md-4 {
-      width: 100%;
-  }
+.btn-outline-light {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--text-color);
 }
 
-
-/* ============================= */
-/*      FORMULAIRE               */
-/* ============================= */
-.form-container {
-  max-width: 400px;
-  margin: 50px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.form-container input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.form-container button {
-  width: 100%;
-  padding: 10px;
-  background: #343a40;
+.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
-.form-container button:hover {
-  background: #495057;
+.btn-glow {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
 }
 
-.error {
-  color: red;
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.btn-glow:hover::after {
+  opacity: 1;
+}
+
+/* Feature Cards */
+.feature-card {
+  background-color: var(--card-bg);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0, 123, 255, 0.2);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  color: var(--primary-color);
+  background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+/* Section Titles */
+.section-title {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 40px;
+  padding-bottom: 15px;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+}
+
+/* Car Showcase */
+.car-card {
+  background-color: var(--card-bg);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.car-card:hover {
+  transform: translateY(-10px);
+}
+
+.car-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.car-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.car-card:hover .car-image img {
+  transform: scale(1.1);
+}
+
+.car-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+  padding: 8px 15px;
+  border-bottom-left-radius: 15px;
+}
+
+.car-price {
+  color: white;
   font-weight: bold;
 }
 
+.car-details {
+  padding: 20px;
+}
+
+.car-details h4 {
+  margin-bottom: 10px;
+  color: white;
+}
+
+.car-details p {
+  color: var(--text-muted);
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+
+/* Testimonial Cards */
+.testimonial-card {
+  background-color: var(--card-bg);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+}
+
+.testimonial-card:before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 4rem;
+  color: rgba(0, 123, 255, 0.2);
+  font-family: serif;
+  line-height: 1;
+}
+
+.testimonial-author h5 {
+  color: white;
+}
+
+.testimonial-author small {
+  color: var(--text-muted);
+}
+
+/* CTA Section */
+.cta-section {
+  background: linear-gradient(135deg, #121212 0%, #1e3c72 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(0, 123, 255, 0.3), transparent 70%);
+}
+
+.cta-section .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Formulaires en mode sombre */
+.form-container {
+  background-color: var(--card-bg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-container input,
+.form-container textarea,
+.form-container select {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.form-container input:focus,
+.form-container textarea:focus,
+.form-container select:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+  color: white;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 60px 0;
+    text-align: center;
+  }
+  
+  .hero-section img {
+    margin-top: 30px;
+  }
+  
+  .section-title::after {
+    width: 60px;
+  }
+}

@@ -15,6 +15,6 @@ $voitures = $query->fetchAll(PDO::FETCH_ASSOC);
 // Afficher la page d'accueil
 echo $twig->render('accueil.twig', [
     'voitures' => $voitures,
-    'session' => $_SESSION, // Envoyer toute la session à Twig
+    'session' => $_SESSION, 
     'userConnected' => $userConnected
 ]);
