@@ -1,13 +1,22 @@
 <?php
-$host = "localhost"; // Changer si hébergé en ligne
-$dbname = "asmotors";
-$username = "root";  // Modifier si nécessaire
-$password = "";      // Modifier si nécessaire
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
+$host = $_ENV['DB_HOST'];
+$port = $_ENV['DB_PORT'];
+$db   = $_ENV['DB_NAME'];
+$user = $_ENV['DB_USER'];
+$pass = $_ENV['DB_PASSWORD'];
+
+$dsn = "pgsql:host=$host;port=$port;dbname=$db";
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO($dsn, $user, $pass, [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+    ]);
 } catch (PDOException $e) {
-    die("Erreur : " . $e->getMessage());
+    die("Erreur de connexion : " . $e->getMessage());
 }
 ?>
