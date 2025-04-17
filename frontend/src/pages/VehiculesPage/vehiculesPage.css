@@ -1,0 +1,55 @@
+.vehicules-page {
+  padding: 50px 20px;
+}
+
+.vehicules-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Grille responsive */
+  gap: 30px; /* Espacement plus important entre les cartes */
+  justify-content: center; /* Centrer les cartes */
+  padding: 30px;
+}
+
+.vehicule-card {
+  background-color: var(--card-bg-color);
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%; /* La largeur est gérée par la grille */
+  max-width: 400px; /* Largeur maximale pour chaque carte */
+  margin: 0 auto; /* Centrer les cartes */
+  border: 2px solid var(--primary-color); /* Déplacer la bordure ici */
+}
+
+.vehicule-card:hover {
+  transform: scale(1.05);
+}
+
+.vehicule-card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.vehicule-card h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.vehicule-card p {
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.vehicule-card button {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .vehicules-list {
+    grid-template-columns: 1fr; /* Une seule colonne sur les petits écrans */
+    gap: 15px;
+  }
+}

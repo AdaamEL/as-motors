@@ -1,0 +1,53 @@
+.features-section {
+  padding: 40px 20px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  text-align: center;
+}
+
+.features-title {
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: var(--primary-color);
+}
+
+.features-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Grille responsive */
+  gap: 20px;
+  justify-content: center;
+}
+
+.feature-card {
+  background-color: var(--card-bg-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.feature-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.feature-icon {
+  width: 60px; /* Largeur de l'image */
+  height: 60px; /* Hauteur de l'image */
+  object-fit: contain; /* Ajuste l'image sans la déformer */
+  display: block; /* S'assurer que l'image s'affiche comme un bloc */
+  margin-left: auto; /* Centrer horizontalement */
+  margin-right: auto; /* Centrer horizontalement */
+}
+
+.feature-title {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+}
+
+.feature-description {
+  font-size: 16px;
+  line-height: 1.5;
+}

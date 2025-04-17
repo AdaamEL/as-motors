@@ -1,0 +1,26 @@
+.footer {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  text-align: center;
+  padding: 40px 0; /* Augmenter la hauteur */
+  font-size: 18px; /* Texte plus grand */
+  width: 100%;
+}
+
+.footer-links {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 30px; /* Espacement entre les liens */
+}
+
+.footer-links a {
+  color: var(--text-color);
+  font-size: 18px; /* Texte plus grand */
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: var(--primary-color);
+}

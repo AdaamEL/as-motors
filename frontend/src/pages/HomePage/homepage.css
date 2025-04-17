@@ -1,0 +1,18 @@
+/* Homepage styles */
+.car-showcase {
+  padding: 20px;
+}
+
+.car-showcase h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #e60000;
+}
+
+.car-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}

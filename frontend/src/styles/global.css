@@ -1,0 +1,82 @@
+:root {
+  --primary-color: #ff0000; /* Rouge */
+  --secondary-color: #000000; /* Noir */
+  --text-color: #ffffff; /* Blanc */
+  --background-color: #121212; /* Noir profond */
+  --card-bg-color: #1e1e1e; /* Gris foncé */
+  --font-family: 'Poppins', sans-serif, 'Segoe UI Emoji', 'Apple Color Emoji'; /* Police moderne */
+  --font-size-base: 18px; /* Taille de base réduite */
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 100%;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base); /* Appliquer la taille de base */
+  background-color: var(--background-color);
+  color: var(--text-color);
+  overflow-x: hidden;
+}
+
+h1 {
+  font-size: 64px; /* Agrandir les titres */
+  font-family: 'Poppins', sans-serif;
+}
+
+h2 {
+  font-size: 48px;
+  font-family: 'Poppins', sans-serif;
+}
+
+h3 {
+  font-size: 28px;
+  font-family: 'Poppins', sans-serif;
+}
+
+p {
+  font-size: 22px;
+  line-height: 1.6; /* Meilleure lisibilité */
+}
+
+button {
+  font-size: 22px; /* Boutons plus grands */
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.1); /* Zoom au survol */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  p {
+    font-size: 12px;
+  }
+}

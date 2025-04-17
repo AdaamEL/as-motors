@@ -14,6 +14,8 @@ app.use(cors()); // Activer CORS
 app.use(express.json()); // Permettre la réception de JSON dans les requêtes
 app.use(express.urlencoded({ extended: true })); // Permettre la réception de données URL-encoded
 
+app.use('/uploads', express.static('uploads'));
+
 // Routes
 const vehiculeRoutes = require('./routes/vehiculeRoutes');
 const authRoutes = require('./routes/authRoutes');

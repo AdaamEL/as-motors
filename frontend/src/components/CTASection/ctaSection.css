@@ -1,0 +1,37 @@
+.cta-section {
+  background: linear-gradient(90deg, #ff0000, #ff4d4d); /* Dégradé rouge moderne */
+  color: var(--text-color);
+  text-align: center;
+  padding: 50px 20px; /* Plus d'espace pour un effet premium */
+}
+
+.cta-section h2 {
+  font-size: 48px; /* Titre plus grand */
+  margin-bottom: 20px;
+  font-family: 'Poppins', sans-serif; /* Police moderne */
+}
+
+.cta-section p {
+  font-size: 22px; /* Texte plus grand */
+  margin-bottom: 40px;
+  line-height: 1.6; /* Meilleure lisibilité */
+}
+
+.cta-section .btn-primary {
+  font-size: 22px; /* Bouton plus grand */
+  padding: 20px 40px; /* Bouton plus large */
+  background-color: #181818; /* Fond noir */
+  color: #ffffff; /* Texte blanc */
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none; /* Supprimer le soulignement */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.cta-section .btn-primary:hover {
+  background-color: #ffffff; /* Fond blanc au survol */
+  color: #181818; /* Texte noir */
+  transform: scale(1.1); /* Zoom au survol */
+}

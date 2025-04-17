@@ -1,0 +1,72 @@
+.vehicule-card {
+  background-color: var(--card-bg-color);
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%; /* La largeur est gérée par la grille */
+  max-width: 400px; /* Largeur maximale pour chaque carte */
+  margin: 0 auto; /* Centrer les cartes */
+}
+
+.vehicule-card:hover {
+  transform: scale(1.08); /* Zoom plus important au survol */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.vehicule-image {
+  width: 100%; /* L'image occupe toute la largeur de la carte */
+  height: 250px; /* Fixer une hauteur uniforme */
+  object-fit: cover; /* Recadrer l'image pour qu'elle remplisse l'espace */
+  display: block; /* Éviter les espaces blancs sous l'image */
+  margin: 0; /* Supprimer les marges éventuelles */
+  border: none; /* Supprimer toute bordure */
+}
+
+.vehicule-info {
+  padding: 20px; /* Ajouter plus d'espace autour du texte */
+}
+
+.vehicule-info h2 {
+  margin: 10px 0;
+  font-size: 24px; /* Augmenter la taille de la police */
+  color: var(--primary-color);
+}
+
+.vehicule-info p {
+  margin: 5px 0;
+  font-size: 18px; /* Taille de police légèrement augmentée */
+}
+
+.disponible {
+  color: green;
+  font-weight: bold;
+}
+
+.indisponible {
+  color: red;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .vehicule-card {
+    max-width: 100%; /* S'assurer que les cartes occupent toute la largeur */
+    margin: 10px auto;
+  }
+  
+  .vehicule-image {
+    height: 200px; /* Réduire la hauteur des images */
+  }
+  
+  .vehicule-info {
+    padding: 10px;
+  }
+  
+  .vehicule-info h2 {
+    font-size: 18px;
+  }
+  
+  .vehicule-info p {
+    font-size: 14px;
+  }
+}
