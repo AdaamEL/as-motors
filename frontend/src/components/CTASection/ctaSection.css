@@ -1,5 +1,5 @@
 .cta-section {
-  background: linear-gradient(90deg, #ff0000, #ff4d4d); /* Dégradé rouge moderne */
+  background: linear-gradient(135deg, #121212, #ff0000); /* Dégradé rouge moderne */
   color: var(--text-color);
   text-align: center;
   padding: 50px 20px; /* Plus d'espace pour un effet premium */

@@ -8,4 +8,9 @@ router.post('/register', authController.register);
 // Connecter un utilisateur
 router.post('/login', authController.login);
 
+// Récupérer tous les utilisateurs
+router.get('/users', authController.getAllUsers);
+
+//router.put("/update-profile", authMiddleware, authController.updateProfile);
+
 module.exports = router;

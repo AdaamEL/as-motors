@@ -20,10 +20,12 @@ app.use('/uploads', express.static('uploads'));
 const vehiculeRoutes = require('./routes/vehiculeRoutes');
 const authRoutes = require('./routes/authRoutes');
 const contactRoutes = require('./routes/contactRoutes');
+const reservationRoutes = require('./routes/reservationRoutes');
 
 app.use('/api/vehicules', vehiculeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/reservations', reservationRoutes);
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 5000;
