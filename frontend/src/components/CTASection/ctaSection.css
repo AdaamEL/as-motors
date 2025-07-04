@@ -1,27 +1,31 @@
 .cta-section {
-  background: linear-gradient(135deg, #121212, #ff0000); /* Dégradé rouge moderne */
-  color: var(--text-color);
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); /* Dégradé clair */
+  color: var(--text-color); /* Texte noir */
   text-align: center;
-  padding: 50px 20px; /* Plus d'espace pour un effet premium */
+  padding: 50px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère */
 }
 
 .cta-section h2 {
   font-size: 48px; /* Titre plus grand */
   margin-bottom: 20px;
   font-family: 'Poppins', sans-serif; /* Police moderne */
+  color: var(--text-color); /* Couleur dynamique */
 }
 
 .cta-section p {
   font-size: 22px; /* Texte plus grand */
   margin-bottom: 40px;
   line-height: 1.6; /* Meilleure lisibilité */
+  color: var(--text-color); /* Couleur dynamique */
 }
 
 .cta-section .btn-primary {
   font-size: 22px; /* Bouton plus grand */
   padding: 20px 40px; /* Bouton plus large */
-  background-color: #181818; /* Fond noir */
-  color: #ffffff; /* Texte blanc */
+  background-color: var(--primary-color); /* Couleur dynamique */
+  color: var(--text-color); /* Texte dynamique */
   border: none;
   border-radius: 8px;
   font-weight: bold;
@@ -31,7 +35,7 @@
 }
 
 .cta-section .btn-primary:hover {
-  background-color: #ffffff; /* Fond blanc au survol */
-  color: #181818; /* Texte noir */
+  background-color: var(--secondary-color); /* Couleur secondaire au survol */
+  color: var(--background-color); /* Texte inversé */
   transform: scale(1.1); /* Zoom au survol */
 }

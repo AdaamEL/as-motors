@@ -13,10 +13,10 @@ const getVehiculeById = async (id) => {
 };
 
 // Ajouter un véhicule
-const addVehicule = async (vehicule) => {
+const createVehicle = async (vehicule) => {
   const { marque, modele, annee, prix_jour, image, disponible } = vehicule;
   const result = await pool.query(
-    'INSERT INTO voitures (marque, modele, annee, prix_jour, image, disponible) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+    'INSERT INTO vehicules (marque, modele, annee, prix_jour, image, disponible) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
     [marque, modele, annee, prix_jour, image, disponible]
   );
   return result.rows[0];
@@ -25,5 +25,5 @@ const addVehicule = async (vehicule) => {
 module.exports = {
   getVehicules,
   getVehiculeById,
-  addVehicule,
+  createVehicle,
 };

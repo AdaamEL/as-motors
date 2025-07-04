@@ -1,26 +1,21 @@
 .footer {
-  background-color: var(--secondary-color);
-  color: var(--text-color);
   text-align: center;
-  padding: 40px 0; /* Augmenter la hauteur */
-  font-size: 18px; /* Texte plus grand */
-  width: 100%;
-}
-
-.footer-links {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 30px; /* Espacement entre les liens */
-}
-
-.footer-links a {
+  padding: 20px;
+  background-color: var(--card-bg-color);
   color: var(--text-color);
-  font-size: 18px; /* Texte plus grand */
-  font-weight: bold;
-  transition: color 0.3s ease;
+  border-top: 1px solid var(--secondary-color);
 }
 
-.footer-links a:hover {
-  color: var(--primary-color);
+.btn-theme {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn-theme:hover {
+  background-color: var(--secondary-color);
 }

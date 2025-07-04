@@ -3,8 +3,10 @@
   grid-template-columns: 1.2fr 1fr; /* Réduire la largeur de l'image */
   align-items: center;
   padding: 70px 20px;
-  background: linear-gradient(135deg, #ff0000, #121212); /* Dégradé rouge-noir */
-  color: var(--text-color);
+  background: linear-gradient(135deg, var(--primary-color), var(--background-color)); /* Dégradé dynamique */
+  color: var(--text-color); /* Couleur dynamique */
+  border-radius: 10px; /* Coins arrondis */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère */
 }
 
 .hero-content {
@@ -15,12 +17,14 @@
 .hero-content h1 {
   font-size: 64px; /* Titre plus grand */
   margin-bottom: 20px;
+  color: var(--text-color); /* Couleur dynamique */
 }
 
 .hero-content p {
   font-size: 24px; /* Texte plus grand */
   margin-bottom: 30px;
   line-height: 1.6; /* Meilleure lisibilité */
+  color: var(--text-color); /* Couleur dynamique */
 }
 
 .hero-buttons {
@@ -32,30 +36,44 @@
 .hero-buttons button {
   font-size: 24px; /* Boutons plus grands */
   padding: 20px 40px;
+  background-color: var(--primary-color); /* Couleur dynamique */
+  color: var(--text-color); /* Texte dynamique */
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.hero-buttons button:hover {
+  background-color: var(--secondary-color); /* Couleur secondaire au survol */
+  color: var(--background-color); /* Texte inversé */
+  transform: scale(1.1); /* Zoom au survol */
 }
 
 .hero-image img {
   max-width: 90%; /* Réduire la taille de l'image */
   height: auto;
   border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Ombre pour un effet premium */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Ombre légère */
 }
 
 .container {
   max-width: 100%;
-  padding : 20px;
+  padding: 20px;
   justify-content: center;
 }
 
 @media (max-width: 768px) {
-  .hero{
-    padding: 10px 70px;
+  .hero {
+    padding: 10px 20px;
     text-align: center;
+    grid-template-columns: 1fr; /* Une seule colonne sur mobile */
   }
 
   .hero-buttons button {
-    font-size: 14px; /* Boutons plus grands */
-    padding: 20px 40px;
+    font-size: 18px; /* Boutons plus petits */
+    padding: 15px 30px;
   }
 
   .hero-image {
@@ -68,7 +86,7 @@
   }
 
   .hero-content h1 {
-    font-size: 45px; 
+    font-size: 45px;
     margin-bottom: 20px;
   }
 }

@@ -75,16 +75,39 @@ exports.getAllUsers = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   const { userId } = req.user; // Récupérer l'ID de l'utilisateur depuis le token
-  const { nom, email } = req.body;
+  const { nom, email, password } = req.body;
 
   try {
+    // Mettre à jour le nom et l'email
     await pool.query(
       "UPDATE users SET nom = $1, email = $2 WHERE id = $3",
       [nom, email, userId]
     );
+
+    // Mettre à jour le mot de passe si fourni
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await pool.query(
+        "UPDATE users SET mot_de_passe = $1 WHERE id = $2",
+        [hashedPassword, userId]
+      );
+    }
+
     res.status(200).json({ message: "Profil mis à jour avec succès." });
   } catch (err) {
     console.error("Erreur lors de la mise à jour du profil :", err);
     res.status(500).json({ message: "Erreur lors de la mise à jour du profil." });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await pool.query("DELETE FROM users WHERE id = $1", [id]);
+    res.status(200).json({ message: "Utilisateur supprimé avec succès." });
+  } catch (err) {
+    console.error("Erreur lors de la suppression de l'utilisateur :", err);
+    res.status(500).json({ message: "Erreur lors de la suppression de l'utilisateur." });
   }
 };

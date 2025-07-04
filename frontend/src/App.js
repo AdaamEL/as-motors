@@ -10,6 +10,7 @@ import AdminPage from './pages/AdminPage/AdminPage';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import AuthProvider  from "./services/authContext";
+import VehiculeDetail from './pages/VehiculeDetailPage/VehiculeDetailPage';
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/vehicules/:id" element={<VehiculeDetail />} />
         </Routes>
         <Footer />
       </Router>

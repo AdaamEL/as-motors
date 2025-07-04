@@ -1,68 +1,84 @@
 .profile-page {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-    max-width: 600px;
-    margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #121212;
+  color: #fff;
+  height: 805px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--text-color);
+}
+
+.profile-card {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.profile-form label {
+  font-weight: bold;
+  color: #fff;
+}
+
+.profile-form input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #2a2a2a;
+  color: #fff;
+}
+
+.profile-form input::placeholder {
+  color: #aaa;
+}
+
+.profile-form button {
+  padding: 10px;
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.profile-form button:hover {
+  background-color: #cc0000;
+}
+
+.message {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 1rem;
+  color: green;
+}
+
+@media (max-width: 768px) {
+  .profile-card {
+    padding: 15px;
   }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .profile-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .profile-form label {
-    font-weight: bold;
-  }
-  
+
   .profile-form input {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    font-size: 0.9rem;
   }
-  
+
   .profile-form button {
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-size: 0.9rem;
   }
-  
-  .profile-form button:hover {
-    background-color: #0056b3;
-  }
-  
-  .message {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 1rem;
-    color: green;
-  }
-  
-  @media (max-width: 768px) {
-    .profile-page {
-      padding: 10px;
-    }
-  
-    h1 {
-      font-size: 1.5rem;
-    }
-  
-    .profile-form input {
-      font-size: 0.9rem;
-    }
-  
-    .profile-form button {
-      font-size: 0.9rem;
-    }
-  }
+}

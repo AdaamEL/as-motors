@@ -5,6 +5,7 @@ export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // Stocke les infos de l'utilisateur
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Indique si les données utilisateur sont en cours de chargement
 
   // Vérifie si un utilisateur est connecté au chargement de l'application
   useEffect(() => {
@@ -15,6 +16,7 @@ const AuthProvider = ({ children }) => {
       setUser(JSON.parse(storedUser));
       setIsAuthenticated(true);
     }
+    setIsLoading(false); // Les données utilisateur ont été chargées
   }, []);
 
   // Fonction pour se connecter
@@ -34,7 +36,7 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
