@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api'; // URL de votre backend
+const API_URL = 'http://localhost:5432/api'; // URL de votre backend
 
 // Récupérer tous les véhicules
 export const getVehicules = async () => {

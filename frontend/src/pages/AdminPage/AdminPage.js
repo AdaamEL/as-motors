@@ -12,9 +12,9 @@ const AdminPage = () => {
     const fetchData = async () => {
       try {
         const [usersRes, vehiclesRes, reservationsRes] = await Promise.all([
-          fetch("http://localhost:5000/api/auth/users"),
-          fetch("http://localhost:5000/api/vehicules"),
-          fetch("http://localhost:5000/api/reservations"),
+          fetch("http://localhost:5432/api/auth/users"),
+          fetch("http://localhost:5432/api/vehicules"),
+          fetch("http://localhost:5432/api/reservations"),
         ]);
 
         setUsers(await usersRes.json());
@@ -32,7 +32,7 @@ const AdminPage = () => {
   // Supprimer un utilisateur
   const deleteUser = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/users/${id}`, { method: "DELETE" });
+      await fetch(`http://localhost:5432/api/users/${id}`, { method: "DELETE" });
       setUsers(users.filter((user) => user.id !== id));
     } catch (error) {
       console.error("Erreur lors de la suppression de l'utilisateur :", error);
@@ -42,7 +42,7 @@ const AdminPage = () => {
   // Supprimer un véhicule
   const deleteVehicle = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/vehicles/${id}`, { method: "DELETE" });
+      await fetch(`http://localhost:5432/api/vehicles/${id}`, { method: "DELETE" });
       setVehicles(vehicles.filter((vehicle) => vehicle.id !== id));
     } catch (error) {
       console.error("Erreur lors de la suppression du véhicule :", error);
@@ -52,7 +52,7 @@ const AdminPage = () => {
   // Modifier le statut d'une réservation
   const updateReservationStatus = async (id, newStatus) => {
     try {
-      await fetch(`http://localhost:5000/api/reservations/${id}`, {
+      await fetch(`http://localhost:5432/api/reservations/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ statut: newStatus }),

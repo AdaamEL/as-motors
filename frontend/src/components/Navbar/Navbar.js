@@ -1,6 +1,6 @@
+import "./navbar.css";
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../services/authContext";
-import "./navbar.css";
 import logoLight from "../../styles/logo_clair.png"; // Logo clair
 import logoDark from "../../styles/logo_sombre.png"; // Logo sombre
 
@@ -9,10 +9,21 @@ const Navbar = () => {
   const [isDarkTheme, setIsDarkTheme] = useState(false); // État du thème
   const { user, isAuthenticated, logout } = useContext(AuthContext);
 
-  // Vérifie si le thème sombre est activé
+  // Vérifie si le thème sombre est activé et écoute les changements
   useEffect(() => {
-    const isDark = document.body.classList.contains("dark-theme");
-    setIsDarkTheme(isDark);
+    const updateTheme = () => {
+      const isDark = document.body.classList.contains("dark-theme");
+      setIsDarkTheme(isDark);
+    };
+
+    // Vérifie le thème au chargement
+    updateTheme();
+
+    // Écoute les changements de classe sur le body
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+    return () => observer.disconnect(); // Nettoie l'observateur
   }, []);
 
   const toggleMenu = () => {

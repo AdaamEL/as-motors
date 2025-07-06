@@ -6,24 +6,9 @@
   padding: 10px 20px;
   background-color: var(--background-color);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.navbar-logo {
-  max-height: 200px;
-  width: auto;
-  margin-right: 20px;
-}
-
-.navbar a {
-  color: var(--text-color);
-  text-decoration: none;
-  font-size: 18px;
-  margin: 0 15px;
-  transition: color 0.3s ease;
-}
-
-.navbar a:hover {
-  color: var(--primary-color);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .navbar-container {
@@ -33,45 +18,62 @@
   width: 100%;
 }
 
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
+
 .navbar-logo img {
-  height: 200px;
+  max-height: 130px; /* Taille ajustée pour le logo */
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo img:hover {
+  transform: scale(1.1); /* Zoom léger au survol */
 }
 
 .navbar-links {
-  list-style: none;
   display: flex;
-  gap: 30px;
-  margin-left: 0px;
+  align-items: center;
+  list-style: none;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  display: inline-block; /* Assure un alignement horizontal */
 }
 
 .navbar-links a {
   color: var(--text-color);
-  font-size: 28px;
-  font-weight: bold;
-  transition: color 0.3s ease, background-color 0.3s ease;
+  font-size: 20px;
+  font-weight: 500;
   padding: 8px 12px;
-  border: 2px solid transparent;
   border-radius: 5px;
+  transition: color 0.3s ease, background-color 0.3s ease;
   text-decoration: none;
 }
 
 .navbar-links a:hover {
   color: var(--card-bg-color);
-  border-color: var(--card-bg-color);
   background-color: var(--text-color);
 }
 
 .navbar-buttons {
   display: flex;
-  gap: 20px;
+  align-items: center;
+  gap: 15px;
+  margin-left: auto; /* Pousse les boutons à droite */
 }
 
 .btn-primary {
   background-color: var(--primary-color);
-  color: var(--text-color);
-  padding: 10px 20px;
+  color: var(--card-bg-color);
+  padding: 12px 24px; /* Agrandir les boutons */
   border-radius: 8px;
-  font-size: 26px;
+  font-size: 16px;
   font-weight: bold;
   text-align: center;
   transition: background-color 0.3s ease, transform 0.3s ease;
@@ -81,15 +83,15 @@
 .btn-primary:hover {
   background-color: var(--text-color);
   color: var(--primary-color);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .btn-secondary {
   background-color: var(--card-bg-color);
   color: var(--text-color);
-  padding: 10px 20px;
+  padding: 12px 24px; /* Agrandir les boutons */
   border-radius: 8px;
-  font-size: 26px;
+  font-size: 16px;
   font-weight: bold;
   text-align: center;
   transition: background-color 0.3s ease, transform 0.3s ease;
@@ -99,7 +101,7 @@
 .btn-secondary:hover {
   background-color: var(--text-color);
   color: var(--card-bg-color);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 /* Hamburger menu styles */
@@ -116,46 +118,37 @@
   width: 25px;
   height: 3px;
   background-color: var(--text-color);
+  transition: transform 0.3s ease;
 }
 
 /* Responsive styles */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .navbar-links {
     display: none;
-    padding: 0;
-    margin: 0;
   }
-  
+
   .navbar-links.open {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: absolute;
-    top: 150px;
+    top: 60px;
     left: 0;
     width: 100%; /* Prendre toute la largeur */
-    background-color: var(--secondary-color);
+    background-color: var(--background-color);
     padding: 20px 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
   }
 
-  .navbar-links a,
-  .navbar-links .btn-primary,
-  .navbar-links .btn-secondary {
+  .navbar-links a {
     display: block; /* Les liens occupent toute la largeur */
-    margin: 0; /* Supprimer les marges */
-    width: 100vw; /* Prendre toute la largeur de la fenêtre */
+    width: 100%; /* Prendre toute la largeur */
     text-align: center;
-    padding: 10px 20px; /* Espacement interne */
+    padding: 10px 20px;
     font-size: 16px;
-    text-decoration: none; /* Supprimer les décorations */
-    border-top: 0.5px solid var(--text-color); /* Bordure supérieure */
-    border-bottom: 0.5px solid var(--text-color); /* Bordure inférieure */
-    color: var(--text-color); /* Couleur du texte */
-    background: none; /* Supprimer le fond */
-    transition: background-color 0.3s ease, color 0.3s ease;
-    box-sizing: border-box; /* Inclure les bordures dans la largeur */
+    border-top: 1px solid var(--secondary-color);
+    border-bottom: 1px solid var(--secondary-color);
   }
 
   .hamburger {
@@ -164,5 +157,21 @@
 
   .navbar-buttons {
     display: none; /* Masquer les boutons sur mobile */
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-logo img {
+    max-height: 30px; /* Réduire la taille du logo */
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .navbar-links a {
+    font-size: 14px;
   }
 }
