@@ -1,10 +1,11 @@
 const userModel = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const pool = require('../config/db');
 
 // Enregistrer un utilisateur
 exports.register = async (req, res) => {
-  const { nom, email, password } = req.body; // Ajout du champ nom
+  const { nom, email, password } = req.body; 
 
   try {
     const existingUser = await userModel.loginUser(email);
@@ -13,7 +14,7 @@ exports.register = async (req, res) => {
     }
 
     // Enregistrer l'utilisateur
-    const user = await userModel.registerUser(nom, email, password); // Passer le champ nom
+    const user = await userModel.registerUser(nom, email, password); 
     res.status(201).json({ message: "Utilisateur enregistré avec succès", user });
   } catch (err) {
     console.error("Erreur lors de l'enregistrement :", err); // Log de l'erreur
@@ -74,23 +75,22 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.updateProfile = async (req, res) => {
-  const { userId } = req.user; // Récupérer l'ID de l'utilisateur depuis le token
+  const { userId } = req.user;
   const { nom, email, password } = req.body;
 
   try {
-    // Mettre à jour le nom et l'email
-    await pool.query(
-      "UPDATE users SET nom = $1, email = $2 WHERE id = $3",
-      [nom, email, userId]
-    );
-
-    // Mettre à jour le mot de passe si fourni
+    console.log("Données reçues :", { userId, nom, email, password });
+    if (nom) {
+      await pool.query("UPDATE users SET nom = $1 WHERE id = $2", [nom, userId]);
+    }
+    
+    if (email) {
+      await pool.query("UPDATE users SET email = $1 WHERE id = $2", [email, userId]);
+    }
+    
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
-      await pool.query(
-        "UPDATE users SET mot_de_passe = $1 WHERE id = $2",
-        [hashedPassword, userId]
-      );
+      await pool.query("UPDATE users SET mot_de_passe = $1 WHERE id = $2", [hashedPassword, userId]);
     }
 
     res.status(200).json({ message: "Profil mis à jour avec succès." });

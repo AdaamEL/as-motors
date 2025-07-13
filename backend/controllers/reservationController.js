@@ -2,7 +2,8 @@ const reservationModel = require('../models/reservationModel');
 
 // Créer une réservation
 exports.createReservation = async (req, res) => {
-  const { userId, vehiculeId, dateDebut, dateFin } = req.body;
+  const userId = req.user.userId; 
+  const { vehiculeId, dateDebut, dateFin } = req.body;
 
   try {
     const newReservation = await reservationModel.createReservation({
@@ -20,13 +21,13 @@ exports.createReservation = async (req, res) => {
 
 // Récupérer les réservations de l'utilisateur connecté
 exports.getUserReservations = async (req, res) => {
-  const userId = req.user.id; // Assurez-vous que l'ID utilisateur est disponible dans `req.user`
+  const userId = req.user.userId; // ✅ Assurez-vous que req.user contient userId
 
   try {
     const reservations = await reservationModel.getUserReservations(userId);
     res.status(200).json(reservations);
   } catch (err) {
-    console.error("Erreur lors de la récupération des réservations de l'utilisateur :", err);
+    console.error("Erreur lors de la récupération des réservations :", err);
     res.status(500).json({ message: "Erreur lors de la récupération des réservations." });
   }
 };
@@ -45,11 +46,16 @@ exports.getAllReservations = async (req, res) => {
 // Mettre à jour une réservation
 exports.updateReservation = async (req, res) => {
   const { id } = req.params;
-  const { statut } = req.body;
+  const { dateDebut, dateFin, statut } = req.body;
 
   try {
-    await reservationModel.updateReservation(id, statut);
-    res.status(200).json({ message: "Réservation mise à jour avec succès." });
+    const updated = await reservationModel.updateReservation(id, { dateDebut, dateFin, statut });
+
+    if (!updated) {
+      return res.status(404).json({ message: "Réservation non trouvée." });
+    }
+
+    res.status(200).json(updated);
   } catch (err) {
     console.error("Erreur lors de la mise à jour de la réservation :", err);
     res.status(500).json({ message: "Erreur lors de la mise à jour de la réservation." });

@@ -6,6 +6,8 @@ const { authMiddleware, adminMiddleware } = require("../middlewares/authMiddlewa
 // Récupérer tous les véhicules
 router.get('/', vehiculeController.getVehicules);
 
+router.get('/:id/reservations', vehiculeController.getReservationsForVehicle);
+
 // Routes protégées pour les administrateurs
 router.post("/", authMiddleware, adminMiddleware, vehiculeController.createVehicle); // Ajouter un véhicule
 router.put("/:id", authMiddleware, adminMiddleware, vehiculeController.updateVehicle); // Modifier un véhicule

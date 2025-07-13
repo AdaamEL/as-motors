@@ -28,7 +28,7 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/reservations', reservationRoutes);
 
 // Démarrer le serveur
-const PORT = process.env.PORT || 5432;
+const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);
 });

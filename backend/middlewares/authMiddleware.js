@@ -14,7 +14,7 @@ const authMiddleware = (req, res, next) => {
 
     // Ajouter les informations utilisateur à l'objet req
     req.user = {
-      id: decoded.userId,
+      userId: decoded.userId,
       role: decoded.role,
     };
 

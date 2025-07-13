@@ -1,18 +1,19 @@
 const vehiculeModel = require('../models/vehiculeModel');
 const multer = require('multer');
 const path = require('path');
+const pool = require('../config/db');
 
 // Configuration de multer
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'public/uploads/'); 
-    },
-    filename: (req, file, cb) => {
-      cb(null, `${Date.now()}-${file.originalname}`);
-    },
-  });
-
+  destination: (req, file, cb) => {
+    cb(null, 'public/uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
 const upload = multer({ storage });
+
 // Récupérer tous les véhicules
 exports.getVehicules = async (req, res) => {
   try {
@@ -38,10 +39,10 @@ exports.getVehiculeById = async (req, res) => {
 
 // Ajouter un véhicule avec upload d'image
 exports.createVehicle = [
-  upload.single('image'), // Middleware multer
+  upload.single('image'),
   async (req, res) => {
     try {
-      const { marque, modele, annee, prix_jour, disponible } = req.body;
+      const { marque, modele, annee, prix_jour } = req.body;
       const image = req.file ? `uploads/${req.file.filename}` : 'uploads/default.jpg';
 
       const vehicule = await vehiculeModel.createVehicle({
@@ -49,8 +50,7 @@ exports.createVehicle = [
         modele,
         annee,
         prix_jour,
-        image,
-        disponible: disponible === 'true', // Convertir en boolean
+        image
       });
 
       res.status(201).json(vehicule);
@@ -58,7 +58,7 @@ exports.createVehicle = [
       console.error('Erreur lors de l\'ajout du véhicule :', err);
       res.status(500).json({ message: 'Erreur lors de l\'ajout du véhicule' });
     }
-  },
+  }
 ];
 
 // Supprimer un véhicule
@@ -77,13 +77,28 @@ exports.deleteVehicle = async (req, res) => {
 // Mettre à jour un véhicule
 exports.updateVehicle = async (req, res) => {
   const { id } = req.params;
-  const { marque, modele, annee, immatriculation, prix_jour, disponible, description } = req.body;
+  const { marque, modele, annee, prix_jour } = req.body;
 
   try {
-    const result = await pool.query(
-      "UPDATE vehicules SET marque = $1, modele = $2, annee = $3, immatriculation = $4, prix_jour = $5, disponible = $6, description = $7 WHERE id = $8 RETURNING *",
-      [marque, modele, annee, immatriculation, prix_jour, disponible, description, id]
-    );
+    // Mettre à jour uniquement les champs fournis
+    if (marque) {
+      await pool.query("UPDATE vehicules SET marque = $1 WHERE id = $2", [marque, id]);
+    }
+
+    if (modele) {
+      await pool.query("UPDATE vehicules SET modele = $1 WHERE id = $2", [modele, id]);
+    }
+
+    if (annee) {
+      await pool.query("UPDATE vehicules SET annee = $1 WHERE id = $2", [annee, id]);
+    }
+
+    if (prix_jour) {
+      await pool.query("UPDATE vehicules SET prix_jour = $1 WHERE id = $2", [prix_jour, id]);
+    }
+
+    // Récupérer et retourner le véhicule mis à jour
+    const result = await pool.query("SELECT * FROM vehicules WHERE id = $1", [id]);
 
     if (result.rowCount === 0) {
       return res.status(404).json({ message: "Véhicule non trouvé." });
@@ -93,5 +108,25 @@ exports.updateVehicle = async (req, res) => {
   } catch (err) {
     console.error("Erreur lors de la mise à jour du véhicule :", err);
     res.status(500).json({ message: "Erreur lors de la mise à jour du véhicule." });
+  }
+};
+
+
+// Obtenir les réservations d’un véhicule (plages utilisées dans le calendrier)
+exports.getReservationsForVehicle = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT date_debut, date_fin 
+       FROM reservations 
+       WHERE vehicule_id = $1`,
+      [id]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error("Erreur lors de la récupération des plages réservées :", err);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 };
