@@ -6,31 +6,36 @@ import "./loginPage.css";
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
-  const { login } = useContext(AuthContext); // Utiliser le contexte pour connecter l'utilisateur
+  const [loading, setLoading] = useState(false);
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // Réinitialiser les erreurs
+    setError(null);
+    setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5432/api/auth/login", {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Email ou mot de passe incorrect.");
-      }
-
       const data = await response.json();
-      login(data); // Connecter l'utilisateur
-      navigate("/"); // Rediriger vers la page d'accueil
+
+      if (!response.ok) throw new Error(data.message || "Erreur de connexion.");
+
+      login(data);
+      navigate("/");
     } catch (err) {
-      setError(err.message || "Une erreur est survenue. Veuillez réessayer.");
-      console.error("Erreur :", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,21 +47,23 @@ const LoginPage = () => {
           <label>Email :</label>
           <input
             type="email"
-            placeholder="Entrez votre email"
+            name="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={handleChange}
             required
           />
           <label>Mot de passe :</label>
           <input
             type="password"
-            placeholder="Entrez votre mot de passe"
+            name="password"
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            onChange={handleChange}
             required
           />
+          <button type="submit" disabled={loading}>
+            {loading ? "Connexion..." : "Se connecter"}
+          </button>
           {error && <p className="error-message">{error}</p>}
-          <button type="submit">Se connecter</button>
         </form>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5432/api'; // URL de votre backend
+const API_URL = 'http://localhost:3000/api';
 
 // Récupérer tous les véhicules
 export const getVehicules = async () => {
@@ -15,8 +15,10 @@ export const getVehiculeById = async (id) => {
 };
 
 // Ajouter un véhicule
-export const addVehicule = async (vehicule) => {
-  const response = await axios.post(`${API_URL}/vehicules`, vehicule);
+export const addVehicule = async (vehicule, token) => {
+  const response = await axios.post(`${API_URL}/vehicules`, vehicule, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return response.data;
 };
 
@@ -34,6 +36,6 @@ export const loginUser = async (user) => {
 
 // Envoyer un message de contact
 export const sendContactMessage = async (message) => {
-  const response = await axios.post(`${API_URL}/contact`, message);
+  const response = await axios.post(`${API_URL}/messages`, message);
   return response.data;
 };

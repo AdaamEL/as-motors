@@ -1,9 +1,17 @@
 module.exports = {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}", // Inclure tous les fichiers React
+    "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  darkMode: 'class',
   theme: {
-    extend: {}, // Ajouter vos personnalisations ici
+    extend: {
+      fontFamily: {
+        sans: ['Poppins', 'sans-serif'],
+      },
+      fontSize: {
+        base: '18px', // au lieu de 16px par défaut
+      },
+    },
   },
-  plugins: [], // Ajouter des plugins si nécessaire
+  plugins: [],
 };

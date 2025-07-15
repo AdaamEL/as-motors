@@ -1,25 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../../services/authContext";
 import "./adminPage.css";
 
 const AdminPage = () => {
+  const { user, isAuthenticated } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
-  const [vehicles, setVehicles] = useState([]);
+  const [vehicules, setVehicules] = useState([]);
   const [reservations, setReservations] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Charger les données depuis l'API
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
+    if (!isAuthenticated || user?.role !== "admin") return;
+
     const fetchData = async () => {
       try {
-        const [usersRes, vehiclesRes, reservationsRes] = await Promise.all([
-          fetch("http://localhost:5432/api/auth/users"),
-          fetch("http://localhost:5432/api/vehicules"),
-          fetch("http://localhost:5432/api/reservations"),
+        const [usersRes, vehiculesRes, reservationsRes, messagesRes] = await Promise.all([
+          fetch("http://localhost:3000/api/users", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:3000/api/vehicules", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:3000/api/reservations", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:3000/api/messages", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
         ]);
 
         setUsers(await usersRes.json());
-        setVehicles(await vehiclesRes.json());
+        setVehicules(await vehiculesRes.json());
         setReservations(await reservationsRes.json());
+        setMessages(await messagesRes.json());
         setLoading(false);
       } catch (error) {
         console.error("Erreur lors du chargement des données :", error);
@@ -27,150 +43,89 @@ const AdminPage = () => {
     };
 
     fetchData();
-  }, []);
+  }, [isAuthenticated, user, token]);
 
-  // Supprimer un utilisateur
   const deleteUser = async (id) => {
     try {
-      await fetch(`http://localhost:5432/api/users/${id}`, { method: "DELETE" });
-      setUsers(users.filter((user) => user.id !== id));
-    } catch (error) {
-      console.error("Erreur lors de la suppression de l'utilisateur :", error);
-    }
-  };
-
-  // Supprimer un véhicule
-  const deleteVehicle = async (id) => {
-    try {
-      await fetch(`http://localhost:5432/api/vehicles/${id}`, { method: "DELETE" });
-      setVehicles(vehicles.filter((vehicle) => vehicle.id !== id));
-    } catch (error) {
-      console.error("Erreur lors de la suppression du véhicule :", error);
-    }
-  };
-
-  // Modifier le statut d'une réservation
-  const updateReservationStatus = async (id, newStatus) => {
-    try {
-      await fetch(`http://localhost:5432/api/reservations/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ statut: newStatus }),
+      await fetch(`http://localhost:3000/api/users/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setReservations(
-        reservations.map((reservation) =>
-          reservation.id === id ? { ...reservation, statut: newStatus } : reservation
-        )
-      );
+      setUsers(users.filter((u) => u.id !== id));
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du statut :", error);
+      console.error("Erreur suppression utilisateur :", error);
     }
   };
 
-  if (loading) {
-    return <div className="admin-page">Chargement des données...</div>;
+  const deleteVehicule = async (id) => {
+    try {
+      await fetch(`http://localhost:3000/api/vehicules/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setVehicules(vehicules.filter((v) => v.id !== id));
+    } catch (error) {
+      console.error("Erreur suppression véhicule :", error);
+    }
+  };
+
+  if (!isAuthenticated || user?.role !== "admin") {
+    return <p>Accès refusé. Cette page est réservée aux administrateurs.</p>;
   }
+
+  if (loading) return <p>Chargement des données admin...</p>;
 
   return (
     <div className="admin-page">
-      <h1>Page Admin</h1>
+      <h1>Admin Dashboard</h1>
 
-      {/* Gestion des utilisateurs */}
       <section>
-        <h2>Gestion des utilisateurs</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nom</th>
-              <th>Email</th>
-              <th>Rôle</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.nom}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td>
-                  <button onClick={() => deleteUser(user.id)} className="btn-danger">
-                    Supprimer
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <h2>Utilisateurs</h2>
+        <ul>
+          {users.map((u) => (
+            <li key={u.id}>
+              {u.nom} ({u.email}) - {u.role}
+              {u.role !== "admin" && (
+                <button onClick={() => deleteUser(u.id)}>🗑 Supprimer</button>
+              )}
+            </li>
+          ))}
+        </ul>
       </section>
 
-      {/* Gestion des véhicules */}
       <section>
-        <h2>Gestion des véhicules</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Marque</th>
-              <th>Modèle</th>
-              <th>Prix/Jour</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {vehicles.map((vehicle) => (
-              <tr key={vehicle.id}>
-                <td>{vehicle.id}</td>
-                <td>{vehicle.marque}</td>
-                <td>{vehicle.modele}</td>
-                <td>{vehicle.prix_jour} €</td>
-                <td>
-                  <button onClick={() => deleteVehicle(vehicle.id)} className="btn-danger">
-                    Supprimer
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <h2>Véhicules</h2>
+        <ul>
+          {vehicules.map((v) => (
+            <li key={v.id}>
+              {v.marque} {v.modele} - {v.prix_jour} €/j
+              <button onClick={() => deleteVehicule(v.id)}>🗑 Supprimer</button>
+            </li>
+          ))}
+        </ul>
       </section>
 
-      {/* Gestion des réservations */}
       <section>
-        <h2>Gestion des réservations</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Client</th>
-              <th>Véhicule</th>
-              <th>Statut</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reservations.map((reservation) => (
-              <tr key={reservation.id}>
-                <td>{reservation.id}</td>
-                <td>{reservation.client_id}</td>
-                <td>{reservation.voiture_id}</td>
-                <td>{reservation.statut}</td>
-                <td>
-                  <select
-                    value={reservation.statut}
-                    onChange={(e) => updateReservationStatus(reservation.id, e.target.value)}
-                  >
-                    <option value="confirmé">Confirmé</option>
-                    <option value="en attente">En attente</option>
-                    <option value="annulé">Annulé</option>
-                  </select>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <h2>Réservations</h2>
+        <ul>
+          {reservations.map((r) => (
+            <li key={r.id}>
+              Utilisateur {r.user_id} | Véhicule {r.vehicule_id} | {r.date_debut} → {r.date_fin} | {r.statut}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section>
+        <h2>Messages</h2>
+        <ul>
+          {messages.map((m) => (
+            <li key={m.id}>
+              <strong>{m.nom}</strong> ({m.email}) - {m.sujet}<br />
+              {m.contenu}
+            </li>
+          ))}
+        </ul>
       </section>
     </div>
   );

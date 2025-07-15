@@ -65,12 +65,28 @@ exports.updateReservation = async (req, res) => {
 // Supprimer une réservation
 exports.deleteReservation = async (req, res) => {
   const { id } = req.params;
+  const userId = req.user.userId;
 
   try {
-    await reservationModel.deleteReservation(id);
+    const result = await pool.query(
+      'SELECT * FROM reservations WHERE id = $1',
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Réservation introuvable." });
+    }
+
+    const reservation = result.rows[0];
+
+    if (reservation.user_id !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({ message: "Action non autorisée." });
+    }
+
+    await pool.query('DELETE FROM reservations WHERE id = $1', [id]);
     res.status(200).json({ message: "Réservation supprimée avec succès." });
   } catch (err) {
-    console.error("Erreur lors de la suppression de la réservation :", err);
-    res.status(500).json({ message: "Erreur lors de la suppression de la réservation." });
+    console.error("Erreur lors de la suppression :", err);
+    res.status(500).json({ message: "Erreur serveur." });
   }
 };

@@ -1,14 +1,17 @@
 /* Navbar styles */
 .navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 20px;
-  background-color: var(--background-color);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 1000;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  background-color: white;
+  border-bottom: 1px solid #ddd;
+}
+
+.dark .navbar {
+  background-color: #1f2937; /* dark gray */
+  border-bottom: 1px solid #333;
 }
 
 .navbar-container {

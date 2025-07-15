@@ -4,33 +4,38 @@ import { AuthContext } from "../../services/authContext";
 import "./registerPage.css";
 
 const RegisterPage = () => {
-  const [formData, setFormData] = useState({ nom: "", email: "", password: "" });
+  const [formData, setFormData] = useState({ nom: "", email: "", mot_de_passe: "" });
   const [error, setError] = useState(null);
-  const { login } = useContext(AuthContext); // Utiliser le contexte pour connecter l'utilisateur
+  const [loading, setLoading] = useState(false);
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Gestion de la soumission du formulaire
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // Réinitialiser les erreurs
+    setError(null);
+    setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5432/api/auth/register", {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData), // Envoi uniquement des champs nécessaires
+        body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        throw new Error("Erreur lors de l'inscription. Veuillez vérifier vos informations.");
-      }
-
       const data = await response.json();
-      login(data); // Connecter l'utilisateur après l'inscription
-      navigate("/"); // Rediriger vers la page d'accueil
+
+      if (!response.ok) throw new Error(data.message || "Erreur lors de l'inscription.");
+
+      login(data);
+      navigate("/");
     } catch (err) {
-      setError(err.message || "Une erreur est survenue. Veuillez réessayer.");
-      console.error("Erreur :", err);
+      setError(err.message || "Une erreur est survenue.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,29 +47,31 @@ const RegisterPage = () => {
           <label>Nom :</label>
           <input
             type="text"
-            placeholder="Entrez votre nom"
+            name="nom"
             value={formData.nom}
-            onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
+            onChange={handleChange}
             required
           />
           <label>Email :</label>
           <input
             type="email"
-            placeholder="Entrez votre email"
+            name="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={handleChange}
             required
           />
           <label>Mot de passe :</label>
           <input
             type="password"
-            placeholder="Entrez votre mot de passe"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            name="mot_de_passe"
+            value={formData.mot_de_passe}
+            onChange={handleChange}
             required
           />
+          <button type="submit" disabled={loading}>
+            {loading ? "Inscription..." : "S'inscrire"}
+          </button>
           {error && <p className="error-message">{error}</p>}
-          <button type="submit">S'inscrire</button>
         </form>
       </div>
     </div>

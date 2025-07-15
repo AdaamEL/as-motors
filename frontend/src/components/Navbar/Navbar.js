@@ -1,95 +1,97 @@
-import "./navbar.css";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../services/authContext";
-import logoLight from "../../styles/logo_clair.png"; // Logo clair
-import logoDark from "../../styles/logo_sombre.png"; // Logo sombre
+import ThemeToggle from "../ThemeToggle/ThemeToggle";
+import { Menu, X } from "lucide-react";
+import logoClair from "../../styles/logo_clair.png";
+import logoSombre from "../../styles/logo_sombre.png";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false); // État du menu hamburger
-  const [isDarkTheme, setIsDarkTheme] = useState(false); // État du thème
   const { user, isAuthenticated, logout } = useContext(AuthContext);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // Vérifie si le thème sombre est activé et écoute les changements
-  useEffect(() => {
-    const updateTheme = () => {
-      const isDark = document.body.classList.contains("dark-theme");
-      setIsDarkTheme(isDark);
-    };
-
-    // Vérifie le thème au chargement
-    updateTheme();
-
-    // Écoute les changements de classe sur le body
-    const observer = new MutationObserver(updateTheme);
-    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-
-    return () => observer.disconnect(); // Nettoie l'observateur
-  }, []);
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   return (
-    <nav className="navbar">
-      <div className="navbar-container">
-        {/* Logo dynamique */}
-        <a href="/" className="navbar-logo">
+    <header className="navbar bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-md fixed top-0 w-full z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+        {/* Logo + Nom */}
+        <Link to="/" className="flex items-center gap-2">
           <img
-            src={isDarkTheme ? logoDark : logoLight}
-            alt="AS Motors Logo"
-            className="navbar-logo-img"
+            src={logoClair}
+            alt="AS Motors"
+            className="h-8 block dark:hidden"
           />
-        </a>
+          <img
+            src={logoSombre}
+            alt="AS Motors"
+            className="h-8 hidden dark:block"
+          />
+        </Link>
 
-        {/* Liens de navigation */}
-        <ul className={`navbar-links ${isOpen ? "open" : ""}`}>
-          <li>
-            <a href="/vehicules">Véhicules</a>
-          </li>
-          <li>
-            <a href="/contact">Contact</a>
-          </li>
-          {isAuthenticated && user.role === "admin" && (
-            <li>
-              <a href="/admin">Admin</a>
-            </li>
-          )}
+        {/* Desktop links */}
+        <nav className="hidden md:flex items-center space-x-6 font-medium text-lg">
+          <Link to="/" className="hover:text-blue-500">Accueil</Link>
+          <Link to="/vehicules" className="hover:text-blue-500">Véhicules</Link>
+          <Link to="/contact" className="hover:text-blue-500">Contact</Link>
+
           {isAuthenticated ? (
             <>
-              <li>
-                <a href="/profile">Profil</a>
-              </li>
-              <li>
-                <button onClick={logout} className="btn-secondary">
-                  Déconnexion
-                </button>
-              </li>
+              <Link to="/profile" className="hover:text-blue-500">Profil</Link>
+              {user?.role === "admin" && (
+                <Link to="/admin" className="hover:text-blue-500">Admin</Link>
+              )}
+              <button onClick={handleLogout} className="text-red-500 hover:underline">Déconnexion</button>
             </>
           ) : (
             <>
-              <li>
-                <a href="/register" className="btn-secondary">
-                  Inscription
-                </a>
-              </li>
-              <li>
-                <a href="/login" className="btn-primary">
-                  Connexion
-                </a>
-              </li>
+              <Link to="/login" className="hover:text-blue-500">Connexion</Link>
+              <Link to="/register" className="hover:text-blue-500">Inscription</Link>
             </>
           )}
-        </ul>
+        </nav>
 
-        {/* Bouton hamburger */}
-        <button className="hamburger" onClick={toggleMenu}>
-          <span className="hamburger-line"></span>
-          <span className="hamburger-line"></span>
-          <span className="hamburger-line"></span>
-        </button>
+        {/* Theme toggle & Mobile menu */}
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden text-gray-800 dark:text-gray-100"
+            aria-label="Ouvrir le menu"
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
-    </nav>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <nav className="md:hidden bg-white dark:bg-gray-900 px-4 py-4 space-y-4 text-center text-lg">
+          <Link to="/" onClick={() => setMenuOpen(false)}>Accueil</Link>
+          <Link to="/vehicules" onClick={() => setMenuOpen(false)}>Véhicules</Link>
+          <Link to="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
+
+          {isAuthenticated ? (
+            <>
+              <Link to="/profile" onClick={() => setMenuOpen(false)}>Profil</Link>
+              {user?.role === "admin" && (
+                <Link to="/admin" onClick={() => setMenuOpen(false)}>Admin</Link>
+              )}
+              <button onClick={handleLogout} className="text-red-500">Déconnexion</button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" onClick={() => setMenuOpen(false)}>Connexion</Link>
+              <Link to="/register" onClick={() => setMenuOpen(false)}>Inscription</Link>
+            </>
+          )}
+        </nav>
+      )}
+    </header>
   );
 };
 
