@@ -111,3 +111,17 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: "Erreur lors de la suppression de l'utilisateur." });
   }
 };
+
+exports.getMe = async (req, res) => {
+  const { userId } = req.user;
+  try {
+    const result = await pool.query("SELECT id, nom, email, role FROM users WHERE id = $1", [userId]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error("Erreur lors de la récupération de l'utilisateur :", err);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};

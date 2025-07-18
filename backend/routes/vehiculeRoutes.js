@@ -5,6 +5,7 @@ const { authMiddleware, adminMiddleware } = require("../middlewares/authMiddlewa
 
 // Récupérer tous les véhicules
 router.get('/', vehiculeController.getVehicules);
+router.get("/:id", vehiculeController.getVehiculeById);
 
 router.get('/:id/reservations', vehiculeController.getReservationsForVehicle);
 

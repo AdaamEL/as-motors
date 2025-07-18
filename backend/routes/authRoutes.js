@@ -11,6 +11,7 @@ router.post('/login', authController.login);
 
 // Récupérer tous les utilisateurs
 router.get('/users', authMiddleware, authController.getAllUsers);
+router.get("/me", authMiddleware, authController.getMe);
 
 router.put("/update-profile", authMiddleware, authController.updateProfile);
 

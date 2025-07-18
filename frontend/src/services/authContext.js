@@ -1,42 +1,89 @@
 import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+
+const API_URL = "http://localhost:5000/api";
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Stocke les infos de l'utilisateur
+  const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Indique si les données utilisateur sont en cours de chargement
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Vérifie si un utilisateur est connecté au chargement de l'application
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
     const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
 
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const isExpired = Date.now() >= decoded.exp * 1000;
+
+        if (isExpired) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+        } else if (storedUser) {
+          setUser(JSON.parse(storedUser));
+          setIsAuthenticated(true);
+        }
+      } catch (err) {
+        // Token invalide
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
     }
-    setIsLoading(false); // Les données utilisateur ont été chargées
+
+    setIsLoading(false);
   }, []);
 
-  // Fonction pour se connecter
-  const login = (userData) => {
-    setUser(userData.user); // Stocke les infos utilisateur
-    setIsAuthenticated(true);
-    localStorage.setItem("user", JSON.stringify(userData.user)); // Stocke les infos utilisateur
-    localStorage.setItem("token", userData.token); // Stocke le token JWT
+  // Connexion
+  const login = async (email, password) => {
+    try {
+      const res = await axios.post(`${API_URL}/auth/login`, {
+        email,
+        password,
+      });
+
+      const { token, user } = res.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
+      setIsAuthenticated(true);
+      return true;
+    } catch (err) {
+      console.error("Erreur de connexion :", err);
+      return false;
+    }
   };
 
-  // Fonction pour se déconnecter
+  // Inscription
+  const register = async (nom, email, password) => {
+    try {
+      await axios.post(`${API_URL}/auth/register`, {
+        nom,
+        email,
+        password,
+      });
+      return true;
+    } catch (err) {
+      console.error("Erreur d'inscription :", err);
+      return false;
+    }
+  };
+
+  // Déconnexion
   const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, isLoading, login, logout, register }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -1,20 +1,12 @@
-import React, { useState } from 'react';
-import './footer.css';
+import React from "react";
 
 const Footer = () => {
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
-
-  const toggleTheme = () => {
-    setIsDarkTheme(!isDarkTheme);
-    document.body.classList.toggle('dark-theme', !isDarkTheme);
-  };
-
   return (
-    <footer className="footer">
-      <p>&copy; 2023 AS Motors. Tous droits réservés.</p>
-      <button className="btn-theme" onClick={toggleTheme}>
-        {isDarkTheme ? 'Thème clair' : 'Thème sombre'}
-      </button>
+    <footer className="mt-auto w-full bg-white dark:bg-[#111] border-t border-gray-300 dark:border-gray-700 text-sm text-center text-gray-700 dark:text-gray-400 py-6 px-4">
+      <p>© {new Date().getFullYear()} <span className="font-semibold text-[#6B1E1E]">AS Motors</span>. Tous droits réservés.</p>
+      <p className="mt-1 text-xs">
+        Développé avec <span className="text-red-500">❤</span> en <span className="font-medium">React</span> + <span className="font-medium">Tailwind CSS</span>
+      </p>
     </footer>
   );
 };

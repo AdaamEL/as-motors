@@ -1,17 +1,68 @@
 const reservationModel = require('../models/reservationModel');
+const { getVehiculeById } = require("../models/vehiculeModel");
+const { getUserById } = require("../models/userModel");
+const nodemailer = require("nodemailer");
 
 // Créer une réservation
 exports.createReservation = async (req, res) => {
-  const userId = req.user.userId; 
-  const { vehiculeId, dateDebut, dateFin } = req.body;
+  const userId = req.user.userId;
+  const { vehicule_id, dateDebut, dateFin } = req.body;
 
   try {
+    // ✅ Création en base
     const newReservation = await reservationModel.createReservation({
       userId,
-      vehiculeId,
+      vehicule_id,
       dateDebut,
       dateFin,
     });
+
+    // ✅ Récupérer les infos véhicule et user
+    const vehicule = await getVehiculeById(vehicule_id);
+    const user = await getUserById(userId);
+
+    console.log("🚗 Vehicule ID:", vehicule_id);
+console.log("📦 Vehicule reçu:", vehicule);
+console.log("👤 User reçu:", user);
+    // ✅ Préparer contenu de l'e-mail
+    if (!vehicule || !user) {
+      console.error("⚠️ Données incomplètes pour l'envoi de l'e-mail.");
+    } else {
+    const emailContent = `
+🆕 Nouvelle réservation effectuée :
+
+👤 Utilisateur :
+- Nom : ${user.nom}
+- Email : ${user.email}
+
+🚗 Véhicule :
+- ${vehicule.marque} ${vehicule.modele} (${vehicule.annee})
+- Prix par jour : ${vehicule.prix_jour} €
+
+📅 Réservation :
+- Du : ${new Date(dateDebut).toLocaleDateString()}
+- Au : ${new Date(dateFin).toLocaleDateString()}
+- Statut : En attente
+`;
+
+    // ✅ Configuration Nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    // ✅ Envoi
+    await transporter.sendMail({
+      from: `"AS Motors" <${process.env.EMAIL_USER}>`,
+      to: process.env.ADMIN_EMAIL,
+      subject: "Nouvelle réservation – AS Motors",
+      text: emailContent,
+    });
+  }
+    // ✅ Réponse client
     res.status(201).json(newReservation);
   } catch (err) {
     console.error("Erreur lors de la création de la réservation :", err);
