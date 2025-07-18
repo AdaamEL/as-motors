@@ -22,9 +22,9 @@ const AdminPage = () => {
         const headers = { Authorization: `Bearer ${token}` };
 
         const [usersRes, vehiculesRes, reservationsRes] = await Promise.all([
-          fetch("http://localhost:5000/api/auth/users", { headers }),
-          fetch("http://localhost:5000/api/vehicules", { headers }),
-          fetch("http://localhost:5000/api/reservations", { headers }),
+          fetch("https://as-motors.onrender.com/api/auth/users", { headers }),
+          fetch("https://as-motors.onrender.com/api/vehicules", { headers }),
+          fetch("https://as-motors.onrender.com/api/reservations", { headers }),
         ]);
 
         if (usersRes.status === 401 || vehiculesRes.status === 401 || reservationsRes.status === 401) {
@@ -57,7 +57,7 @@ const AdminPage = () => {
 
   const deleteUser = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/users/${id}`, {
+      await fetch(`https://as-motors.onrender.com/api/users/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -69,7 +69,7 @@ const AdminPage = () => {
 
   const deleteVehicule = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/vehicules/${id}`, {
+      await fetch(`https://as-motors.onrender.com/api/vehicules/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

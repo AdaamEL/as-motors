@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/vehicules";
+const API_URL = "https://as-motors.onrender.com/api/vehicules";
 
 // ✅ Récupérer tous les véhicules (public)
 export const getAllVehicules = async () => {

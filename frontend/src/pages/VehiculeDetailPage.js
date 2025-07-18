@@ -29,7 +29,7 @@ const VehiculeDetailPage = () => {
 
     const fetchReservedDates = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/vehicules/${id}/reservations`);
+        const res = await fetch(`https://as-motors.onrender.com/api/vehicules/${id}/reservations`);
         const data = await res.json();
         const ranges = data.map((r) => ({
           start: new Date(r.date_debut),
@@ -58,7 +58,7 @@ const VehiculeDetailPage = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:5000/api/reservations", {
+      const response = await fetch("https://as-motors.onrender.com/api/reservations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
