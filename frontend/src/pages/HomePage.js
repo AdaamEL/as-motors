@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   return (
@@ -13,18 +14,18 @@ const HomePage = () => {
         </p>
 
         <div className="flex justify-center gap-4 flex-wrap">
-          <a
-            href="/vehicules"
+          <Link
+            to="/vehicules"
             className="bg-[#6B1E1E] hover:bg-[#5a1919] text-white px-6 py-3 rounded-lg font-semibold shadow-md transition"
           >
             Voir les véhicules
-          </a>
-          <a
-            href="/contact"
+          </Link>
+          <Link
+            to="/contact"
             className="border border-gray-400 text-gray-900 dark:text-white px-6 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
           >
             Nous contacter
-          </a>
+          </Link>
         </div>
       </div>
     </section>
