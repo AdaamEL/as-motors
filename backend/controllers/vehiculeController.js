@@ -1,132 +1,236 @@
-const vehiculeModel = require('../models/vehiculeModel');
+const pool = require('../config/db');
 const multer = require('multer');
 const path = require('path');
-const pool = require('../config/db');
+const fs = require('fs');
 
-// Configuration de multer
+const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
+
+// === Multer: multi-fichiers ===
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
+  destination: (req, file, cb) => cb(null, uploadsDir),
+  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
 });
-const upload = multer({ storage });
+const allowed = new Set(['image/jpeg','image/png','image/webp']);
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024, files: 8 },
+  fileFilter: (_, file, cb) => cb(allowed.has(file.mimetype) ? null : new Error('Invalid file type'), allowed.has(file.mimetype))
+});
 
-// Récupérer tous les véhicules
+exports.uploadImages = upload.array('images', 8);
+
+// === Helpers ===
+const buildUrl = (req, filename) => `${req.protocol}://${req.get('host')}/uploads/${filename}`;
+
+const getVehiculeRow = async (id) => {
+  const { rows } = await pool.query('SELECT * FROM vehicules WHERE id=$1', [id]);
+  return rows[0] || null;
+};
+
+const getVehiculeImages = async (vehiculeId) => {
+  const { rows } = await pool.query(
+    'SELECT id, filename, position FROM vehicule_images WHERE vehicule_id=$1 ORDER BY position ASC',
+    [vehiculeId]
+  );
+  return rows;
+};
+
+// === Public ===
 exports.getVehicules = async (req, res) => {
   try {
-    const vehicules = await vehiculeModel.getVehicules();
-    res.json(vehicules);
-  } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
-};
+    const { rows: vehs } = await pool.query('SELECT * FROM vehicules ORDER BY id DESC');
+    if (!vehs.length) return res.json([]);
 
-// Récupérer un véhicule par ID
-exports.getVehiculeById = async (req, res) => {
-  try {
-    const vehicule = await vehiculeModel.getVehiculeById(req.params.id);
-    if (!vehicule) {
-      return res.status(404).json({ message: 'Véhicule non trouvé' });
-    }
-    res.json(vehicule);
-  } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
-};
-
-// Ajouter un véhicule avec upload d'image
-exports.createVehicle = [
-  upload.single('image'),
-  async (req, res) => {
-    try {
-      const { marque, modele, annee, prix_jour } = req.body;
-      const image = req.file ? `uploads/${req.file.filename}` : 'uploads/default.jpg';
-
-      const vehicule = await vehiculeModel.createVehicle({
-        marque,
-        modele,
-        annee,
-        prix_jour,
-        image
-      });
-
-      res.status(201).json(vehicule);
-    } catch (err) {
-      console.error('Erreur lors de l\'ajout du véhicule :', err);
-      res.status(500).json({ message: 'Erreur lors de l\'ajout du véhicule' });
-    }
-  }
-];
-
-// Supprimer un véhicule
-exports.deleteVehicle = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    await pool.query("DELETE FROM vehicules WHERE id = $1", [id]);
-    res.status(200).json({ message: "Véhicule supprimé avec succès." });
-  } catch (err) {
-    console.error("Erreur lors de la suppression du véhicule :", err);
-    res.status(500).json({ message: "Erreur lors de la suppression du véhicule." });
-  }
-};
-
-// Mettre à jour un véhicule
-exports.updateVehicle = async (req, res) => {
-  const { id } = req.params;
-  const { marque, modele, annee, prix_jour } = req.body;
-
-  try {
-    // Mettre à jour uniquement les champs fournis
-    if (marque) {
-      await pool.query("UPDATE vehicules SET marque = $1 WHERE id = $2", [marque, id]);
-    }
-
-    if (modele) {
-      await pool.query("UPDATE vehicules SET modele = $1 WHERE id = $2", [modele, id]);
-    }
-
-    if (annee) {
-      await pool.query("UPDATE vehicules SET annee = $1 WHERE id = $2", [annee, id]);
-    }
-
-    if (prix_jour) {
-      await pool.query("UPDATE vehicules SET prix_jour = $1 WHERE id = $2", [prix_jour, id]);
-    }
-
-    // Récupérer et retourner le véhicule mis à jour
-    const result = await pool.query("SELECT * FROM vehicules WHERE id = $1", [id]);
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: "Véhicule non trouvé." });
-    }
-
-    res.status(200).json(result.rows[0]);
-  } catch (err) {
-    console.error("Erreur lors de la mise à jour du véhicule :", err);
-    res.status(500).json({ message: "Erreur lors de la mise à jour du véhicule." });
-  }
-};
-
-
-// Obtenir les réservations d’un véhicule (plages utilisées dans le calendrier)
-exports.getReservationsForVehicle = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const result = await pool.query(
-      `SELECT date_debut, date_fin 
-       FROM reservations 
-       WHERE vehicule_id = $1`,
-      [id]
+    const ids = vehs.map(v => v.id);
+    const { rows: imgs } = await pool.query(
+      'SELECT id, vehicule_id, filename, position FROM vehicule_images WHERE vehicule_id = ANY($1) ORDER BY vehicule_id, position',
+      [ids]
     );
 
-    res.status(200).json(result.rows);
+    const map = imgs.reduce((acc, r) => {
+      (acc[r.vehicule_id] ||= []).push(r);
+      return acc;
+    }, {});
+
+    const out = vehs.map(v => {
+      const images = (map[v.id] || []).map(r => ({ id: r.id, position: r.position, url: buildUrl(req, r.filename) }));
+      // Fallback si ancienne colonne image encore présente
+      if (!images.length && v.image) {
+        images.push({ id: null, position: 0, url: `/${v.image}` });
+      }
+      return { ...v, images };
+    });
+
+    res.json(out);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Error fetching vehicles' });
+  }
+};
+
+exports.getVehiculeById = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const v = await getVehiculeRow(id);
+    if (!v) return res.status(404).json({ message: 'Not found' });
+
+    const imgs = await getVehiculeImages(id);
+    const images = imgs.map(r => ({ id: r.id, position: r.position, url: buildUrl(req, r.filename) }));
+    if (!images.length && v.image) {
+      images.push({ id: null, position: 0, url: `/${v.image}` });
+    }
+    res.json({ ...v, images });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Error fetching vehicle' });
+  }
+};
+
+exports.getReservationsForVehicle = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { rows } = await pool.query(
+      'SELECT date_debut, date_fin FROM reservations WHERE vehicule_id=$1',
+      [id]
+    );
+    res.status(200).json(rows);
   } catch (err) {
     console.error("Erreur lors de la récupération des plages réservées :", err);
     res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+// === Admin: CRUD véhicule (hors images) ===
+exports.createVehicle = async (req, res) => {
+  try {
+    const { marque, modele, annee, prix_jour, description } = req.body;
+    const { rows } = await pool.query(
+      'INSERT INTO vehicules (marque, modele, annee, prix_jour, description) VALUES ($1,$2,$3,$4,$5) RETURNING *',
+      [marque, modele, annee, prix_jour, description || null]
+    );
+    res.status(201).json(rows[0]);
+  } catch (err) {
+    console.error("Erreur lors de l'ajout du véhicule :", err);
+    res.status(500).json({ message: "Erreur lors de l'ajout du véhicule" });
+  }
+};
+
+exports.updateVehicle = async (req, res) => {
+  const { id } = req.params;
+  const fields = ['marque','modele','annee','prix_jour','description'];
+  const sets = [];
+  const params = [];
+  let i = 1;
+  fields.forEach((f) => {
+    if (req.body[f] !== undefined) {
+      sets.push(`${f}=$${i++}`);
+      params.push(req.body[f]);
+    }
+  });
+  if (!sets.length) return res.json({ updated: 0 });
+  params.push(id);
+  try {
+    await pool.query(`UPDATE vehicules SET ${sets.join(', ')} WHERE id=$${i}`, params);
+    res.json({ updated: 1 });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Erreur de mise à jour' });
+  }
+};
+
+exports.deleteVehicle = async (req, res) => {
+  const client = await pool.connect();
+  const { id } = req.params;
+  try {
+    // Récupère les fichiers pour nettoyage
+    const { rows: files } = await client.query('SELECT filename FROM vehicule_images WHERE vehicule_id=$1', [id]);
+
+    await client.query('BEGIN');
+    await client.query('DELETE FROM vehicule_images WHERE vehicule_id=$1', [id]);
+    await client.query('DELETE FROM vehicules WHERE id=$1', [id]);
+    await client.query('COMMIT');
+
+    files.forEach(f => fs.promises.unlink(path.join(uploadsDir, f.filename)).catch(() => {}));
+    res.json({ deleted: 1 });
+  } catch (e) {
+    await client.query('ROLLBACK').catch(() => {});
+    console.error(e);
+    res.status(500).json({ message: 'Erreur lors de la suppression' });
+  } finally {
+    client.release();
+  }
+};
+
+// === Admin: Images ===
+exports.addVehiculeImages = async (req, res) => {
+  const vehiculeId = Number(req.params.id);
+  const files = req.files || [];
+  if (!vehiculeId) return res.status(400).json({ message: 'Vehicule id manquant' });
+  if (!files.length) return res.status(400).json({ message: 'Aucun fichier' });
+
+  try {
+    const { rows } = await pool.query('SELECT COALESCE(MAX(position), -1) AS max FROM vehicule_images WHERE vehicule_id=$1', [vehiculeId]);
+    let pos = rows[0].max + 1;
+
+    const params = [];
+    const values = [];
+    files.forEach((f) => {
+      params.push(vehiculeId, f.filename, pos++);
+      values.push(`($${params.length-2}, $${params.length-1}, $${params.length})`);
+    });
+
+    await pool.query(
+      `INSERT INTO vehicule_images (vehicule_id, filename, position) VALUES ${values.join(',')}`,
+      params
+    );
+
+    res.status(201).json({ added: files.length });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Erreur ajout images' });
+  }
+};
+
+exports.deleteVehiculeImage = async (req, res) => {
+  const vehiculeId = Number(req.params.id);
+  const imageId = Number(req.params.imageId);
+  try {
+    const { rows } = await pool.query(
+      'DELETE FROM vehicule_images WHERE id=$1 AND vehicule_id=$2 RETURNING filename',
+      [imageId, vehiculeId]
+    );
+    if (!rows.length) return res.status(404).json({ message: 'Image introuvable' });
+
+    const filePath = path.join(uploadsDir, rows[0].filename);
+    fs.promises.unlink(filePath).catch(() => {});
+    res.json({ deleted: imageId });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Erreur suppression image' });
+  }
+};
+
+exports.reorderVehiculeImages = async (req, res) => {
+  const vehiculeId = Number(req.params.id);
+  const order = req.body.order;
+  if (!Array.isArray(order)) return res.status(400).json({ message: 'Order invalide' });
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    for (let i = 0; i < order.length; i++) {
+      await client.query(
+        'UPDATE vehicule_images SET position=$1 WHERE id=$2 AND vehicule_id=$3',
+        [i, order[i], vehiculeId]
+      );
+    }
+    await client.query('COMMIT');
+    res.json({ ok: true });
+  } catch (e) {
+    await client.query('ROLLBACK').catch(() => {});
+    console.error(e);
+    res.status(500).json({ message: 'Erreur réordonnancement' });
+  } finally {
+    client.release();
   }
 };

@@ -1,22 +1,21 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 const pool = require('./config/db');
 
-// Charger les variables d'environnement
 dotenv.config();
 
-// Initialiser Express
 const app = express();
 
-// Middlewares
-app.use(cors()); // Activer CORS
-app.use(express.json()); // Permettre la réception de JSON dans les requêtes
-app.use(express.urlencoded({ extended: true })); // Permettre la réception de données URL-encoded
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/uploads', express.static('uploads'));
+// NEW: servir les fichiers uploadés
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
-// Routes
+// (tes imports de routes)
 const vehiculeRoutes = require('./routes/vehiculeRoutes');
 const authRoutes = require('./routes/authRoutes');
 const contactRoutes = require('./routes/contactRoutes');
@@ -27,7 +26,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/reservations', reservationRoutes);
 
-// Démarrer le serveur
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur le port ${PORT}`);

@@ -4,6 +4,7 @@ import { AuthContext } from "../services/authContext";
 import { getVehiculeById } from "../services/vehiculeService";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import VehiculeCarousel from "../components/vehicules/VehiculeCarousel";
 
 const VehiculeDetailPage = () => {
   const { id } = useParams();
@@ -21,28 +22,23 @@ const VehiculeDetailPage = () => {
       try {
         const data = await getVehiculeById(id);
         setVehicule(data);
-      } catch (error) {
-        console.error("Erreur de récupération du véhicule :", error);
-        setErrorMsg("Véhicule introuvable ou erreur serveur.");
-      }
-    };
 
-    const fetchReservedDates = async () => {
-      try {
+        // Récupération des plages réservées
         const res = await fetch(`https://as-motors.onrender.com/api/vehicules/${id}/reservations`);
-        const data = await res.json();
-        const ranges = data.map((r) => ({
-          start: new Date(r.date_debut),
-          end: new Date(r.date_fin),
-        }));
-        setReservedRanges(ranges);
+        if (res.ok) {
+          const reservations = await res.json();
+          const ranges = reservations.map((r) => ({
+            start: new Date(r.date_debut),
+            end: new Date(r.date_fin),
+          }));
+          setReservedRanges(ranges);
+        }
       } catch (error) {
-        console.error("Erreur récupération réservations :", error);
+        console.error("Erreur:", error);
       }
     };
 
     fetchVehicule();
-    fetchReservedDates();
   }, [id]);
 
   const handleReservation = async (e) => {
@@ -51,13 +47,12 @@ const VehiculeDetailPage = () => {
     setErrorMsg("");
 
     if (!dateDebut || !dateFin) {
-      setErrorMsg("Veuillez renseigner les deux dates.");
+      setErrorMsg("Veuillez sélectionner une plage de dates.");
       return;
     }
 
     try {
       const token = localStorage.getItem("token");
-
       const response = await fetch("https://as-motors.onrender.com/api/reservations", {
         method: "POST",
         headers: {
@@ -81,27 +76,53 @@ const VehiculeDetailPage = () => {
     }
   };
 
-  if (!vehicule && !errorMsg) return <p className="text-center py-20">Chargement...</p>;
-  if (errorMsg) return <p className="text-center py-20 text-red-500">{errorMsg}</p>;
+  if (!vehicule) {
+    return (
+      <div className="flex justify-center items-center min-h-[calc(100vh-6rem)]">
+        <p className="text-gray-700 dark:text-gray-300">Chargement...</p>
+      </div>
+    );
+  }
+
+  // NEW: construit la liste d’images depuis la nouvelle API (images[].url)
+  // Fallback: si pas d’array, on utilise l’ancienne colonne 'image'
+  const images =
+    Array.isArray(vehicule.images) && vehicule.images.length > 0
+      ? vehicule.images.map((i) => i.url)
+      : vehicule.image
+      ? [`/${vehicule.image}`]
+      : [];
 
   return (
     <div className="flex justify-center items-center px-4 py-12 min-h-[calc(100vh-6rem)]">
-      <div className="w-full max-w-3xl bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
-        <img
-          src={`/${vehicule.image}`}
-          alt={`${vehicule.marque} ${vehicule.modele}`}
-          className="w-full h-64 object-cover"
-        />
+      <div className="w-full max-w-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
+        {/* NEW: carrousel si plusieurs images, sinon fallback single */}
+        {images.length > 1 ? (
+          <VehiculeCarousel images={images} />
+        ) : (
+          images[0] && (
+            <img
+              src={images[0]}
+              alt={`${vehicule.marque} ${vehicule.modele}`}
+              className="w-full h-64 object-cover"
+            />
+          )
+        )}
+
         <div className="p-6 space-y-3">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             {vehicule.marque} {vehicule.modele}
           </h1>
-          <p className="text-gray-700 dark:text-gray-300">
-            <strong>Prix par jour :</strong> {vehicule.prix_jour} €
-          </p>
-          <p className="text-gray-700 dark:text-gray-300">
-            <strong>Année :</strong> {vehicule.annee}
-          </p>
+          {vehicule.prix_jour != null && (
+            <p className="text-gray-700 dark:text-gray-300">
+              <strong>Prix par jour :</strong> {vehicule.prix_jour} €
+            </p>
+          )}
+          {vehicule.annee != null && (
+            <p className="text-gray-700 dark:text-gray-300">
+              <strong>Année :</strong> {vehicule.annee}
+            </p>
+          )}
 
           {isAuthenticated ? (
             <form onSubmit={handleReservation} className="space-y-4 pt-4">
@@ -131,20 +152,16 @@ const VehiculeDetailPage = () => {
                   className="px-4 py-2 border rounded-md w-full dark:bg-gray-800 dark:text-white"
                 />
               </div>
-              <p className="text-sm text-red-500">* Les dates grisées sont déjà réservées</p>
 
               <button
                 type="submit"
-                className="bg-[#6B1E1E] hover:bg-[#5a1919] text-white px-6 py-2 rounded-md font-semibold transition"
+                className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition"
               >
                 Réserver
               </button>
-              {message && (
-                <p className="text-sm text-center text-green-600 dark:text-green-400">{message}</p>
-              )}
-              {errorMsg && (
-                <p className="text-sm text-center text-red-600 dark:text-red-400">{errorMsg}</p>
-              )}
+
+              {message && <p className="text-sm text-center text-green-600 dark:text-green-400">{message}</p>}
+              {errorMsg && <p className="text-sm text-center text-red-600 dark:text-red-400">{errorMsg}</p>}
             </form>
           ) : (
             <p className="text-gray-700 dark:text-gray-300">
