@@ -7,9 +7,19 @@ const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
 
 // === Multer: multi-fichiers ===
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsDir),
-  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
+  destination: (req, file, cb) => {
+    const vehiculeId = req.params.id || req.body.vehicule_id;
+    const dest = path.join(uploadsDir, String(vehiculeId));
+    fs.mkdirSync(dest, { recursive: true }); // crée le dossier si nécessaire
+    cb(null, dest);
+  },
+  filename: (req, file, cb) => {
+    const unique = Date.now();
+    const safeName = file.originalname.replace(/\s+/g, '-').toLowerCase();
+    cb(null, `${unique}-${safeName}`);
+  }
 });
+
 const allowed = new Set(['image/jpeg','image/png','image/webp']);
 const upload = multer({
   storage,
@@ -20,7 +30,8 @@ const upload = multer({
 exports.uploadImages = upload.array('images', 8);
 
 // === Helpers ===
-const buildUrl = (req, filename) => `${req.protocol}://${req.get('host')}/uploads/${filename}`;
+const buildUrl = (req, vehiculeId, filename) =>
+  `${req.protocol}://${req.get('host')}/uploads/${vehiculeId}/${filename}`;
 
 const getVehiculeRow = async (id) => {
   const { rows } = await pool.query('SELECT * FROM vehicules WHERE id=$1', [id]);
@@ -53,7 +64,11 @@ exports.getVehicules = async (req, res) => {
     }, {});
 
     const out = vehs.map(v => {
-      const images = (map[v.id] || []).map(r => ({ id: r.id, position: r.position, url: buildUrl(req, r.filename) }));
+      const images = imgs.map(r => ({
+        id: r.id,
+        position: r.position,
+        url: buildUrl(req, r.vehicule_id, r.filename),
+      }));
       // Fallback si ancienne colonne image encore présente
       if (!images.length && v.image) {
         images.push({ id: null, position: 0, url: `/${v.image}` });
@@ -75,7 +90,11 @@ exports.getVehiculeById = async (req, res) => {
     if (!v) return res.status(404).json({ message: 'Not found' });
 
     const imgs = await getVehiculeImages(id);
-    const images = imgs.map(r => ({ id: r.id, position: r.position, url: buildUrl(req, r.filename) }));
+    const images = imgs.map(r => ({
+        id: r.id,
+        position: r.position,
+        url: buildUrl(req, r.vehicule_id, r.filename),
+      }));
     if (!images.length && v.image) {
       images.push({ id: null, position: 0, url: `/${v.image}` });
     }
