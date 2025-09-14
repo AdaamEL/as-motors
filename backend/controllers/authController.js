@@ -124,3 +124,16 @@ exports.me = async (req, res) => {
     return res.status(500).json({ message: 'Erreur serveur' });
   }
 };
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    // RGPD : ne JAMAIS renvoyer mot_de_passe
+    const { rows } = await pool.query(
+      'SELECT id, nom, prenom, email, role FROM users ORDER BY id DESC'
+    );
+    res.json(rows);
+  } catch (e) {
+    console.error('getAllUsers error:', e);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
