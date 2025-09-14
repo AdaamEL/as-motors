@@ -2,91 +2,75 @@ import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const API_URL = "https://as-motors.onrender.com/api";
+const API = "https://as-motors.onrender.com/api";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext({
+  user: null,
+  isAuthenticated: false,
+  login: async () => {},
+  logout: () => {},
+  register: async () => {},
+  loginWithGoogle: async () => {},
+});
 
-const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        const isExpired = Date.now() >= decoded.exp * 1000;
-
-        if (isExpired) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-        } else if (storedUser) {
-          setUser(JSON.parse(storedUser));
-          setIsAuthenticated(true);
-        }
-      } catch (err) {
-        // Token invalide
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-      }
+    const t = localStorage.getItem("token");
+    const u = localStorage.getItem("user");
+    if (t && u) {
+      setIsAuthenticated(true);
+      try { setUser(JSON.parse(u)); } catch {}
     }
-
-    setIsLoading(false);
   }, []);
 
-  // Connexion
-  const login = async (email, password) => {
-    try {
-      const res = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        password,
-      });
-
-      const { token, user } = res.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      setUser(user);
-      setIsAuthenticated(true);
-      return true;
-    } catch (err) {
-      console.error("Erreur de connexion :", err);
-      return false;
-    }
+  const login = async ({ email, password }) => {
+    const res = await axios.post(`${API}/api/auth/login`, { email, password });
+    const { token, user } = res.data;
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+    setIsAuthenticated(true);
+    setUser(user);
+    return user;
   };
 
-  // Inscription
-  const register = async (nom, email, password) => {
-    try {
-      await axios.post(`${API_URL}/auth/register`, {
-        nom,
-        email,
-        password,
-      });
-      return true;
-    } catch (err) {
-      console.error("Erreur d'inscription :", err);
-      return false;
-    }
-  };
-
-  // Déconnexion
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setUser(null);
     setIsAuthenticated(false);
+    setUser(null);
+  };
+
+  // NEW: on étend register pour nom + prenom + consent
+  const register = async ({ nom, prenom, email, password, consent }) => {
+    // Le backend doit accepter ces champs.
+    await axios.post(`${API}/api/auth/register`, {
+      nom,
+      prenom,
+      email,
+      password,
+      consent: !!consent,
+    });
+    // pas de login auto → écran “inscription OK”, puis redirection login
+  };
+
+  const loginWithGoogle = async (credential) => {
+    const res = await axios.post(`${API}/api/auth/google`, { credential });
+    const { token, user } = res.data;
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+    setIsAuthenticated(true);
+    setUser(user);
+    return user;
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, isAuthenticated, isLoading, login, logout, register }}
-    >
+    <AuthContext.Provider value={{ user, isAuthenticated, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export default AuthProvider;

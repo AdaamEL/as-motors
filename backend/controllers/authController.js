@@ -1,127 +1,126 @@
-const userModel = require('../models/userModel');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+// as-motors/backend/controllers/authController.js
 const pool = require('../config/db');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { validationResult } = require('express-validator');
 
-// Enregistrer un utilisateur
+const JWT_SECRET = process.env.JWT_SECRET || 'change_me';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
+
+// Helpers
+const normalizeEmail = (email) => String(email || '').trim().toLowerCase();
+const sanitizeName = (s) => String(s || '').trim();
+
+// ------------------------- REGISTER -------------------------
 exports.register = async (req, res) => {
-  const { nom, email, password } = req.body; 
-
-  try {
-    const existingUser = await userModel.loginUser(email);
-    if (existingUser) {
-      return res.status(400).json({ message: "Cet email est déjà utilisé." });
-    }
-
-    // Enregistrer l'utilisateur
-    const user = await userModel.registerUser(nom, email, password); 
-    res.status(201).json({ message: "Utilisateur enregistré avec succès", user });
-  } catch (err) {
-    console.error("Erreur lors de l'enregistrement :", err); // Log de l'erreur
-    res.status(500).json({ message: "Erreur lors de l'enregistrement" });
+  // Si des validations ont été posées dans la route (express-validator)
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ message: errors.array()[0]?.msg || 'Données invalides.' });
   }
-};
-
-// Connecter un utilisateur
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
 
   try {
-    // Vérifier si l'utilisateur existe
-    const user = await userModel.loginUser(email);
-    if (!user) {
-      return res.status(400).json({ message: "Email ou mot de passe incorrect." });
+    const { nom, prenom, email, password, consent } = req.body;
+
+    // Garde-fous (au cas où la route n'aurait pas de validation)
+    const _nom = sanitizeName(nom);
+    const _prenom = sanitizeName(prenom);
+    const _email = normalizeEmail(email);
+    const _password = String(password || '');
+
+    if (!_nom || !_prenom) return res.status(400).json({ message: 'Nom et prénom sont requis.' });
+    if (!_email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(_email))
+      return res.status(400).json({ message: 'Email invalide.' });
+
+    // Règles mot de passe (alignées avec l’UI)
+    if (_password.length < 12
+      || !/[A-Z]/.test(_password)
+      || !/[a-z]/.test(_password)
+      || !/\d/.test(_password)
+      || !/[^A-Za-z0-9]/.test(_password)) {
+      return res.status(400).json({ message: 'Le mot de passe ne respecte pas les critères.' });
     }
 
-    // Vérifier le mot de passe
-    const isPasswordValid = await bcrypt.compare(password, user.mot_de_passe);
-    if (!isPasswordValid) {
-      return res.status(400).json({ message: "Email ou mot de passe incorrect." });
+    // Consentement RGPD (optionnel mais conseillé)
+    if (consent !== true && consent !== 'true') {
+      return res.status(400).json({ message: 'Le consentement est requis.' });
     }
 
-    // Générer un token JWT
-    const token = jwt.sign(
-      { userId: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+    // Unicité email
+    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [_email]);
+    if (existing.rows.length) {
+      return res.status(409).json({ message: 'Cet email est déjà utilisé.' });
+    }
+
+    // Hash
+    const hash = await bcrypt.hash(_password, 12);
+
+    // Insertion (role par défaut: user)
+    const { rows } = await pool.query(
+      `INSERT INTO users (nom, prenom, email, mot_de_passe, role)
+       VALUES ($1, $2, $3, $4, 'user')
+       RETURNING id, nom, prenom, email, role`,
+      [_nom, _prenom, _email, hash]
     );
 
-    // Retourner le token et les informations utilisateur
-    res.status(200).json({
-      message: "Connexion réussie",
-      token,
-      user: {
-        id: user.id,
-        nom: user.nom,
-        email: user.email,
-        role: user.role,
-      },
-    });
-  } catch (err) {
-    console.error("Erreur lors de la connexion :", err);
-    res.status(500).json({ message: "Erreur lors de la connexion" });
+    // (Optionnel) journal RGPD : vous pouvez créer une table consentements si souhaité
+    // await pool.query(
+    //   `INSERT INTO consentements (user_id, type, date) VALUES ($1, 'inscription', NOW())`,
+    //   [rows[0].id]
+    // );
+
+    return res.status(201).json({ user: rows[0] });
+  } catch (e) {
+    console.error('Register error:', e);
+    return res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 
-// Récupérer tous les utilisateurs
-exports.getAllUsers = async (req, res) => {
+// ------------------------- LOGIN -------------------------
+exports.login = async (req, res) => {
   try {
-    const users = await userModel.getAllUsers();
-    res.status(200).json(users);
-  } catch (err) {
-    console.error("Erreur lors de la récupération des utilisateurs :", err);
-    res.status(500).json({ message: "Erreur lors de la récupération des utilisateurs" });
+    const email = normalizeEmail(req.body.email);
+    const password = String(req.body.password || '');
+
+    const { rows } = await pool.query(
+      'SELECT id, nom, prenom, email, mot_de_passe, role FROM users WHERE email = $1',
+      [email]
+    );
+    if (!rows.length) return res.status(401).json({ message: 'Identifiants invalides' });
+
+    const user = rows[0];
+    const ok = await bcrypt.compare(password, user.mot_de_passe);
+    if (!ok) return res.status(401).json({ message: 'Identifiants invalides' });
+
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    delete user.mot_de_passe;
+    return res.json({ token, user });
+  } catch (e) {
+    console.error('Login error:', e);
+    return res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 
-exports.updateProfile = async (req, res) => {
-  const { userId } = req.user;
-  const { nom, email, password } = req.body;
-
+// ------------------------- ME (profil courant) -------------------------
+exports.me = async (req, res) => {
   try {
-    console.log("Données reçues :", { userId, nom, email, password });
-    if (nom) {
-      await pool.query("UPDATE users SET nom = $1 WHERE id = $2", [nom, userId]);
-    }
-    
-    if (email) {
-      await pool.query("UPDATE users SET email = $1 WHERE id = $2", [email, userId]);
-    }
-    
-    if (password) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      await pool.query("UPDATE users SET mot_de_passe = $1 WHERE id = $2", [hashedPassword, userId]);
-    }
+    const userId = req.user?.id; // nécessite un middleware d’auth qui peuple req.user
+    if (!userId) return res.status(401).json({ message: 'Non autorisé' });
 
-    res.status(200).json({ message: "Profil mis à jour avec succès." });
-  } catch (err) {
-    console.error("Erreur lors de la mise à jour du profil :", err);
-    res.status(500).json({ message: "Erreur lors de la mise à jour du profil." });
-  }
-};
+    const { rows } = await pool.query(
+      'SELECT id, nom, prenom, email, role FROM users WHERE id = $1',
+      [userId]
+    );
+    if (!rows.length) return res.status(404).json({ message: 'Utilisateur introuvable' });
 
-exports.deleteUser = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    await pool.query("DELETE FROM users WHERE id = $1", [id]);
-    res.status(200).json({ message: "Utilisateur supprimé avec succès." });
-  } catch (err) {
-    console.error("Erreur lors de la suppression de l'utilisateur :", err);
-    res.status(500).json({ message: "Erreur lors de la suppression de l'utilisateur." });
-  }
-};
-
-exports.getMe = async (req, res) => {
-  const { userId } = req.user;
-  try {
-    const result = await pool.query("SELECT id, nom, email, role FROM users WHERE id = $1", [userId]);
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
-    }
-    res.status(200).json(result.rows[0]);
-  } catch (err) {
-    console.error("Erreur lors de la récupération de l'utilisateur :", err);
-    res.status(500).json({ message: "Erreur serveur" });
+    return res.json(rows[0]);
+  } catch (e) {
+    console.error('Me error:', e);
+    return res.status(500).json({ message: 'Erreur serveur' });
   }
 };
