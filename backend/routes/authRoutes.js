@@ -1,10 +1,11 @@
 const express = require('express');
 const { body } = require('express-validator');
-const router = express.Router();
 const authController = require('../controllers/authController');
-const { authMiddleware } = require("../middlewares/authMiddleware");
+const { authMiddleware, adminMiddleware } = require('../middlewares/authMiddleware');
 
-// Validations d’inscription (express-validator)
+const router = express.Router();
+
+// Validations
 const registerValidation = [
   body('nom').trim().isLength({ min: 1, max: 80 }).withMessage('Nom requis'),
   body('prenom').trim().isLength({ min: 1, max: 80 }).withMessage('Prénom requis'),
@@ -18,20 +19,17 @@ const registerValidation = [
   body('consent').custom(v => v === true || v === 'true').withMessage('Consentement requis'),
 ];
 
-// Validations de login (sobres)
 const loginValidation = [
   body('email').isEmail().withMessage('Email invalide').normalizeEmail(),
   body('password').isLength({ min: 1 }).withMessage('Mot de passe requis'),
 ];
 
+// Auth
 router.post('/register', registerValidation, authController.register);
-router.post('/login', loginValidation, authController.login);
+router.post('/login',    loginValidation,    authController.login);
 
-// Récupérer tous les utilisateurs
-router.get('/users', authMiddleware, authController.getAllUsers);
-router.get("/me", authMiddleware, authController.getMe);
-
-router.put("/update-profile", authMiddleware, authController.updateProfile);
+// Admin: liste des users (⚠️ nécessite auth + admin)
+router.get('/users', authMiddleware, adminMiddleware, authController.getAllUsers);
 
 // Supprimer un utilisateur
 router.delete("/users/:id", authMiddleware, authController.deleteUser);
