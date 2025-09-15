@@ -1,12 +1,14 @@
 import React, { useEffect, useRef } from "react";
 
-const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+// CRA: les env sont dans process.env et doivent commencer par REACT_APP_
+const CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
 
 export default function GoogleSignInButton({ onCredential }) {
   const ref = useRef(null);
 
   useEffect(() => {
-    if (!window.google || !ref.current || !CLIENT_ID) return;
+    if (!CLIENT_ID) return;                // pas de client → pas d'init
+    if (!window.google || !ref.current) return;
 
     window.google.accounts.id.initialize({
       client_id: CLIENT_ID,
@@ -26,6 +28,8 @@ export default function GoogleSignInButton({ onCredential }) {
       width: 320,
     });
   }, []);
+
+  if (!CLIENT_ID) return null;
 
   return (
     <div className="w-full flex justify-center">
