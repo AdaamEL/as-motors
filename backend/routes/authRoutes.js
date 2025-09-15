@@ -27,6 +27,7 @@ const loginValidation = [
 // Auth
 router.post('/register', registerValidation, authController.register);
 router.post('/login',    loginValidation,    authController.login);
+router.post('/google', authController.googleLogin);
 
 // Admin: liste des users (⚠️ nécessite auth + admin)
 router.get('/users', authMiddleware, adminMiddleware, authController.getAllUsers);

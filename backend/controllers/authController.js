@@ -125,3 +125,59 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur' });
   }
 };
+
+// ------------------------- GOOGLE LOGIN -------------------------
+const { OAuth2Client } = require("google-auth-library");
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+exports.googleLogin = async (req, res) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ message: "Token Google manquant" });
+    }
+
+    // Vérifie le token Google
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const email = payload.email;
+    const prenom = payload.given_name || "";
+    const nom = payload.family_name || "";
+
+    // Vérifie si l’utilisateur existe déjà
+    let userResult = await pool.query(
+      "SELECT id, nom, prenom, email, role FROM users WHERE email = $1",
+      [email]
+    );
+
+    let user;
+    if (userResult.rows.length) {
+      user = userResult.rows[0];
+    } else {
+      // Crée un user si inexistant
+      const insert = await pool.query(
+        `INSERT INTO users (nom, prenom, email, role)
+         VALUES ($1, $2, $3, 'user')
+         RETURNING id, nom, prenom, email, role`,
+        [nom, prenom, email]
+      );
+      user = insert.rows[0];
+    }
+
+    // Génère un JWT interne
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    res.json({ token, user });
+  } catch (e) {
+    console.error("Google login error:", e);
+    res.status(500).json({ message: "Échec de l’authentification Google" });
+  }
+};
