@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../services/authContext";
-import GoogleSignInButton from "../components/auth/GoogleSignInButton";
+import GoogleSignInButton from "../components/Auth/GoogleSignInButton";
 
 export default function LoginPage() {
   const navigate = useNavigate();
