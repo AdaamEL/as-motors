@@ -10,9 +10,11 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
 const normalizeEmail = (e) => String(e || '').trim().toLowerCase();
 const sanitize = (s) => String(s || '').trim();
 
+// ------------------------- REGISTER -------------------------
 exports.register = async (req, res) => {
   const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ message: errors.array()[0]?.msg || 'Données invalides.' });
+  if (!errors.isEmpty())
+    return res.status(400).json({ message: errors.array()[0]?.msg || 'Données invalides.' });
 
   try {
     const { nom, prenom, email, password, consent } = req.body;
@@ -22,11 +24,13 @@ exports.register = async (req, res) => {
     const _password = String(password || '');
 
     if (!_nom || !_prenom) return res.status(400).json({ message: 'Nom et prénom requis.' });
-    if (!_email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(_email)) return res.status(400).json({ message: 'Email invalide.' });
+    if (!_email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(_email))
+      return res.status(400).json({ message: 'Email invalide.' });
     if (_password.length < 12 || !/[A-Z]/.test(_password) || !/[a-z]/.test(_password) || !/\d/.test(_password) || !/[^A-Za-z0-9]/.test(_password)) {
       return res.status(400).json({ message: 'Le mot de passe ne respecte pas les critères.' });
     }
-    if (!(consent === true || consent === 'true')) return res.status(400).json({ message: 'Le consentement est requis.' });
+    if (!(consent === true || consent === 'true'))
+      return res.status(400).json({ message: 'Le consentement est requis.' });
 
     const exists = await pool.query('SELECT id FROM users WHERE email = $1', [_email]);
     if (exists.rows.length) return res.status(409).json({ message: 'Cet email est déjà utilisé.' });
@@ -46,6 +50,7 @@ exports.register = async (req, res) => {
   }
 };
 
+// ------------------------- LOGIN -------------------------
 exports.login = async (req, res) => {
   try {
     const email = normalizeEmail(req.body.email);
@@ -73,7 +78,7 @@ exports.login = async (req, res) => {
 // ------------------------- ME (profil courant) -------------------------
 exports.me = async (req, res) => {
   try {
-    const userId = req.user?.id; // nécessite un middleware d’auth qui peuple req.user
+    const userId = req.user?.id; // 🔧 cohérent avec authMiddleware
     if (!userId) return res.status(401).json({ message: 'Non autorisé' });
 
     const { rows } = await pool.query(
@@ -89,15 +94,34 @@ exports.me = async (req, res) => {
   }
 };
 
+// ------------------------- GET ALL USERS (ADMIN) -------------------------
 exports.getAllUsers = async (req, res) => {
   try {
-    // RGPD : ne JAMAIS renvoyer mot_de_passe
     const { rows } = await pool.query(
       'SELECT id, nom, prenom, email, role FROM users ORDER BY id DESC'
     );
     res.json(rows);
   } catch (e) {
     console.error('getAllUsers error:', e);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
+// ------------------------- DELETE USER (ADMIN) -------------------------
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = Number(req.params.id);
+    if (!userId) return res.status(400).json({ message: "ID utilisateur invalide." });
+
+    // On peut empêcher la suppression de soi-même si voulu :
+    // if (req.user.id === userId) return res.status(400).json({ message: "Impossible de supprimer votre propre compte." });
+
+    const { rowCount } = await pool.query('DELETE FROM users WHERE id = $1', [userId]);
+    if (!rowCount) return res.status(404).json({ message: "Utilisateur introuvable." });
+
+    res.json({ deleted: userId });
+  } catch (e) {
+    console.error('deleteUser error:', e);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 };
