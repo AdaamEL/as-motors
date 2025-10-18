@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async ({ email, password }) => {
-    const res = await axios.post(`${API}/api/auth/login`, { email, password });
+    const res = await axios.post(`${API}/auth/login`, { email, password });
     const { token, user } = res.data;
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
@@ -46,7 +46,7 @@ export function AuthProvider({ children }) {
   // NEW: on étend register pour nom + prenom + consent
   const register = async ({ nom, prenom, email, password, consent }) => {
     // Le backend doit accepter ces champs.
-    await axios.post(`${API}/api/auth/register`, {
+    await axios.post(`${API}/auth/register`, {
       nom,
       prenom,
       email,
@@ -57,7 +57,7 @@ export function AuthProvider({ children }) {
   };
 
   const loginWithGoogle = async (credential) => {
-    const res = await axios.post(`${API}/api/auth/google`, { credential });
+    const res = await axios.post(`${API}/auth/google`, { credential });
     const { token, user } = res.data;
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
