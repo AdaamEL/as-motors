@@ -21,10 +21,10 @@ const authRoutes = require('./routes/authRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
 
-app.use('/api/vehicules', vehiculeRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/contact', contactRoutes);
-app.use('/api/reservations', reservationRoutes);
+app.use('/vehicules', vehiculeRoutes);
+app.use('/auth', authRoutes);
+app.use('/contact', contactRoutes);
+app.use('/reservations', reservationRoutes);
 
 const PORT = 5000;
 app.listen(PORT, () => {

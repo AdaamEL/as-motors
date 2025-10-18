@@ -97,14 +97,14 @@ export default function LoginPage() {
         </p>
 
         {/* Divider */}
-        <div className="my-4 flex items-center gap-3">
+        {/* <div className="my-4 flex items-center gap-3">
           <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
           <span className="text-xs text-gray-500 dark:text-gray-400">ou</span>
           <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
-        </div>
+        </div> */}
 
         {/* Google Sign-In */}
-        <GoogleSignInButton onCredential={onGoogleCredential} />
+        {/* <GoogleSignInButton onCredential={onGoogleCredential} /> */}
       </div>
     </div>
   );
