@@ -4,9 +4,14 @@ import axios from "axios";
 const BASE = (process.env.REACT_APP_API_URL || "https://as-motors.onrender.com/api");
 const api = axios.create({
   baseURL: BASE || undefined, 
-  withCredentials: true,
+  withCredentials: false,
 });
 
+api.interceptors.request.use((cfg) => {
+  const token = localStorage.getItem("token"); 
+  if (token) cfg.headers.Authorization = `Bearer ${token}`;
+  return cfg;
+});
 
 const Card = ({ className = "", children }) => (
   <div className={`bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-200/60 dark:ring-zinc-800 rounded-2xl ${className}`}>
