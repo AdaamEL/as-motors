@@ -8,7 +8,15 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.set('trust proxy', 1); 
+
+app.use(cors({
+  origin: ['https://as-motors.netlify.app'],
+  credentials: true,
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
+}));
+app.options('*', cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
