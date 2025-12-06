@@ -2,6 +2,7 @@ const pool = require('../config/db');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { uploadMultiple } = require('../middlewares/uploads');
 
 const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
 
@@ -29,80 +30,41 @@ const upload = multer({
 
 exports.uploadImages = upload.array('images', 8);
 
-// === Helpers ===
-const buildUrl = (req, vehiculeId, filename) =>
-  `${req.protocol}://${req.get('host')}/uploads/${vehiculeId}/${filename}`;
-
-const getVehiculeRow = async (id) => {
-  const { rows } = await pool.query('SELECT * FROM vehicules WHERE id=$1', [id]);
-  return rows[0] || null;
-};
-
-const getVehiculeImages = async (vehiculeId) => {
-  const { rows } = await pool.query(
-    'SELECT id, filename, position FROM vehicule_images WHERE vehicule_id=$1 ORDER BY position ASC',
-    [vehiculeId]
-  );
-  return rows;
-};
-
 // === Public ===
 exports.getVehicules = async (req, res) => {
-  try {
-    const { rows: vehs } = await pool.query('SELECT * FROM vehicules ORDER BY id DESC');
-    if (!vehs.length) return res.json([]);
-
-    const ids = vehs.map(v => v.id);
-    const { rows: imgs } = await pool.query(
-      'SELECT id, vehicule_id, filename, position FROM vehicule_images WHERE vehicule_id = ANY($1) ORDER BY vehicule_id, position',
-      [ids]
-    );
-
-    const map = imgs.reduce((acc, r) => {
-      (acc[r.vehicule_id] ||= []).push(r);
-      return acc;
-    }, {});
-
-    const out = vehs.map(v => {
-      const images = imgs.map(r => ({
-        id: r.id,
-        position: r.position,
-        url: buildUrl(req, r.vehicule_id, r.filename),
-      }));
-      // Fallback si ancienne colonne image encore présente
-      if (!images.length && v.image) {
-        images.push({ id: null, position: 0, url: `/${v.image}` });
-      }
-      return { ...v, images };
-    });
-
-    res.json(out);
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ message: 'Error fetching vehicles' });
-  }
+    try {
+        // Sélectionne toutes les colonnes nécessaires (sauf les chemins d'images inutiles)
+        const result = await pool.query('SELECT * FROM vehicules');
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error("Erreur lors de la récupération des véhicules:", err.message);
+        res.status(500).json({ msg: 'Erreur serveur.' });
+    }
 };
 
 exports.getVehiculeById = async (req, res) => {
-  try {
-    const id = Number(req.params.id);
-    const v = await getVehiculeRow(id);
-    if (!v) return res.status(404).json({ message: 'Not found' });
+    const { id } = req.params;
+    try {
+        // Sélectionne toutes les colonnes nécessaires (sauf les chemins d'images inutiles)
+        const query = `
+            SELECT *
+            FROM vehicules
+            WHERE id = $1;
+        `;
+        const result = await pool.query(query, [id]);
 
-    const imgs = await getVehiculeImages(id);
-    const images = imgs.map(r => ({
-        id: r.id,
-        position: r.position,
-        url: buildUrl(req, r.vehicule_id, r.filename),
-      }));
-    if (!images.length && v.image) {
-      images.push({ id: null, position: 0, url: `/${v.image}` });
+        if (result.rowCount === 0) {
+            return res.status(404).json({ msg: 'Véhicule non trouvé.' });
+        }
+        
+        const vehicule = result.rows[0];
+
+        res.status(200).json(vehicule);
+
+    } catch (err) {
+        console.error("Erreur lors de la récupération du véhicule:", err.message);
+        res.status(500).json({ msg: 'Erreur serveur.' });
     }
-    res.json({ ...v, images });
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ message: 'Error fetching vehicle' });
-  }
 };
 
 exports.getReservationsForVehicle = async (req, res) => {
@@ -180,76 +142,3 @@ exports.deleteVehicle = async (req, res) => {
   }
 };
 
-// === Admin: Images ===
-exports.addVehiculeImages = async (req, res) => {
-  const vehiculeId = Number(req.params.id);
-  const files = req.files || [];
-  if (!vehiculeId) return res.status(400).json({ message: 'Vehicule id manquant' });
-  if (!files.length) return res.status(400).json({ message: 'Aucun fichier' });
-
-  try {
-    const { rows } = await pool.query('SELECT COALESCE(MAX(position), -1) AS max FROM vehicule_images WHERE vehicule_id=$1', [vehiculeId]);
-    let pos = rows[0].max + 1;
-
-    const params = [];
-    const values = [];
-    files.forEach((f) => {
-      params.push(vehiculeId, f.filename, pos++);
-      values.push(`($${params.length-2}, $${params.length-1}, $${params.length})`);
-    });
-
-    await pool.query(
-      `INSERT INTO vehicule_images (vehicule_id, filename, position) VALUES ${values.join(',')}`,
-      params
-    );
-
-    res.status(201).json({ added: files.length });
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ message: 'Erreur ajout images' });
-  }
-};
-
-exports.deleteVehiculeImage = async (req, res) => {
-  const vehiculeId = Number(req.params.id);
-  const imageId = Number(req.params.imageId);
-  try {
-    const { rows } = await pool.query(
-      'DELETE FROM vehicule_images WHERE id=$1 AND vehicule_id=$2 RETURNING filename',
-      [imageId, vehiculeId]
-    );
-    if (!rows.length) return res.status(404).json({ message: 'Image introuvable' });
-
-    const filePath = path.join(uploadsDir, rows[0].filename);
-    fs.promises.unlink(filePath).catch(() => {});
-    res.json({ deleted: imageId });
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ message: 'Erreur suppression image' });
-  }
-};
-
-exports.reorderVehiculeImages = async (req, res) => {
-  const vehiculeId = Number(req.params.id);
-  const order = req.body.order;
-  if (!Array.isArray(order)) return res.status(400).json({ message: 'Order invalide' });
-
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-    for (let i = 0; i < order.length; i++) {
-      await client.query(
-        'UPDATE vehicule_images SET position=$1 WHERE id=$2 AND vehicule_id=$3',
-        [i, order[i], vehiculeId]
-      );
-    }
-    await client.query('COMMIT');
-    res.json({ ok: true });
-  } catch (e) {
-    await client.query('ROLLBACK').catch(() => {});
-    console.error(e);
-    res.status(500).json({ message: 'Erreur réordonnancement' });
-  } finally {
-    client.release();
-  }
-};

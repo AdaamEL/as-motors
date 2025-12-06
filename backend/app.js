@@ -12,10 +12,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// NEW: servir les fichiers uploadés
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
-// (tes imports de routes)
 const vehiculeRoutes = require('./routes/vehiculeRoutes');
 const authRoutes = require('./routes/authRoutes');
 const contactRoutes = require('./routes/contactRoutes');

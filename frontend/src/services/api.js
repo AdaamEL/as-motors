@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:5000/api';
+
+export const UPLOADS_URL = 'http://localhost:5000/uploads';
 
 // Récupérer tous les véhicules
 export const getVehicules = async () => {

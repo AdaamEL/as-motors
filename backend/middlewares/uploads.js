@@ -1,28 +1,50 @@
 // middlewares/upload.js
 const multer = require('multer');
 const path = require('path');
-const crypto = require('crypto');
+const fs = require('fs');
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, '..', 'uploads')),
+  // Destination: où stocker les images
+  destination: (req, file, cb) => {
+    // Les images seront stockées dans public/uploads/vehicules/
+    // Assurez-vous que ce chemin est correct par rapport à votre backend/app.js
+    const dir = path.join(__dirname, '..', 'public', 'uploads', 'vehicules');
+
+    // Crée le répertoire s'il n'existe pas
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+
+  // Filename: comment nommer les fichiers
   filename: (req, file, cb) => {
-    const id = crypto.randomBytes(8).toString('hex');
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `${Date.now()}-${id}${ext}`);
-  }
+    // Crée un nom de fichier unique et lisible : nom_original-timestamp.ext
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const originalName = path.parse(file.originalname).name;
+    const extension = path.extname(file.originalname);
+    
+    cb(null, originalName + '-' + uniqueSuffix + extension);
+  },
 });
 
-const allowed = new Set(['image/jpeg', 'image/png', 'image/webp']);
+// --- 2. Configuration du Filtre (optionnel mais recommandé) ---
+const fileFilter = (req, file, cb) => {
+  // Accepte seulement les images (JPEG, PNG, GIF)
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Le fichier doit être une image'), false);
+  }
+};
 
 const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024, files: 8 },
-  fileFilter: (_, file, cb) => {
-    if (!allowed.has(file.mimetype)) {
-      return cb(new Error('Invalid file type'), false);
-    }
-    cb(null, true);
-  }
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, 
+  fileFilter: fileFilter,
 });
 
-module.exports = upload;
+const uploadSingle = upload.single('image'); 
+const uploadMultiple = upload.array('images', 10); 
+
+module.exports = { uploadSingle, uploadMultiple };
