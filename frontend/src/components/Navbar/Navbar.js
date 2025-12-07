@@ -33,20 +33,20 @@ const Navbar = () => {
         </Link>
 
         <nav className="hidden md:flex gap-6 text-xl font-medium text-gray-800 dark:text-gray-200">
-          <Link to="/" className="hover:text-[#6B1E1E]">Accueil</Link>
-          <Link to="/vehicules" className="hover:text-[#6B1E1E]">Véhicules</Link>
-          <Link to="/contact" className="hover:text-[#6B1E1E]">Contact</Link>
+          <Link to="/" className="hover:text-brand-primary">Accueil</Link>
+          <Link to="/vehicules" className="hover:text-brand-primary">Véhicules</Link>
+          <Link to="/contact" className="hover:text-brand-primary">Contact</Link>
 
           {isAuthenticated ? (
             <>
-              <Link to="/profile">Profil</Link>
-              {user?.role === "admin" && <Link to="/admin">Admin</Link>}
-              <button onClick={handleLogout} className="text-red-500 hover:underline">Déconnexion</button>
+              <Link to="/profile" className="hover:text-brand-primary">Profil</Link>
+              {user?.role === "admin" && <Link to="/admin" className="hover:text-brand-primary">Admin</Link>}
+              <button onClick={handleLogout} className="text-red-500 hover:text-red-400">Déconnexion</button>
             </>
           ) : (
             <>
-              <Link to="/login">Connexion</Link>
-              <Link to="/register">Inscription</Link>
+              <Link to="/login" className="hover:text-brand-primary">Connexion</Link>
+              <Link to="/register" className="hover:text-brand-primary">Inscription</Link>
             </>
           )}
         </nav>
@@ -64,20 +64,20 @@ const Navbar = () => {
       </div>
 
       {menuOpen && (
-        <div className="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0 items-center">
-          <Link to="/" onClick={() => setMenuOpen(false)}>Accueil</Link>
-          <Link to="/vehicules" onClick={() => setMenuOpen(false)}>Véhicules</Link>
-          <Link to="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
+        <div className="md:hidden flex flex-col items-start px-4 py-4 space-y-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200">
+          <Link to="/" onClick={() => setMenuOpen(false)} className="block w-full hover:text-brand-primary">Accueil</Link>
+          <Link to="/vehicules" onClick={() => setMenuOpen(false)} className="block w-full hover:text-brand-primary">Véhicules</Link>
+          <Link to="/contact" onClick={() => setMenuOpen(false)} className="block w-full hover:text-brand-primary">Contact</Link>
           {isAuthenticated ? (
             <>
-              <Link to="/profile" onClick={() => setMenuOpen(false)}>Profil</Link>
-              {user?.role === "admin" && <Link to="/admin" onClick={() => setMenuOpen(false)}>Admin</Link>}
-              <button onClick={handleLogout} className="text-red-500">Déconnexion</button>
+              <Link to="/profile" onClick={() => setMenuOpen(false)} className="block w-full hover:text-brand-primary">Profil</Link>
+              {user?.role === "admin" && <Link to="/admin" onClick={() => setMenuOpen(false)} className="block w-full hover:text-brand-primary">Admin</Link>}
+              <button onClick={handleLogout} className="text-red-500 w-full text-left">Déconnexion</button>
             </>
           ) : (
             <>
-              <Link to="/login" onClick={() => setMenuOpen(false)}>Connexion</Link>
-              <Link to="/register" onClick={() => setMenuOpen(false)}>Inscription</Link>
+              <Link to="/login" onClick={() => setMenuOpen(false)} className="block w-full hover:text-brand-primary">Connexion</Link>
+              <Link to="/register" onClick={() => setMenuOpen(false)} className="block w-full hover:text-brand-primary">Inscription</Link>
             </>
           )}
         </div>
