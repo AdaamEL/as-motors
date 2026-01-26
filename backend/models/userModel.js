@@ -2,12 +2,23 @@ const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 
 // Enregistrer un utilisateur
-const registerUser = async (nom, email, password) => {
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const result = await pool.query(
-    'INSERT INTO users (nom, email, mot_de_passe, role) VALUES ($1, $2, $3, $4) RETURNING *',
-    [nom, email, hashedPassword, 'user'] 
-  );
+const createUser = async (userData) => {
+  const { nom, prenom, email, password_hash, role, telephone, adresse, numero_permis } = userData;
+  
+  const query = `
+    INSERT INTO users (nom, prenom, email, password_hash, role, telephone, adresse, numero_permis)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    RETURNING id, nom, prenom, email, role;
+  `;
+  
+  const values = [nom, prenom, email, password_hash, role || 'client', telephone, adresse, numero_permis];
+  const result = await pool.query(query, values);
+  return result.rows[0];
+};
+
+const findUserByEmail = async (email) => {
+  const query = 'SELECT * FROM users WHERE email = $1';
+  const result = await pool.query(query, [email]);
   return result.rows[0];
 };
 
@@ -29,8 +40,9 @@ const getUserById = async (id) => {
 };
 
 module.exports = {
-  registerUser,
+  createUser,
   loginUser,
   getAllUsers,
   getUserById,
+  findUserByEmail
 };

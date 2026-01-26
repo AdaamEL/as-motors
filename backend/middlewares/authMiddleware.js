@@ -13,12 +13,8 @@ const authMiddleware = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Ajouter les informations utilisateur à l'objet req
-    req.user = {
-      userId: decoded.userId,
-      role: decoded.role,
-    };
+    req.user = decoded; // C'est ici que l'ID est injecté
 
-    // Passer au middleware ou contrôleur suivant
     next();
   } catch (err) {
     console.error("Erreur lors de la vérification du token :", err);

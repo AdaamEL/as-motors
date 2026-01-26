@@ -2,7 +2,7 @@
 const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
+const userModel = require('../models/userModel');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'change_me';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
@@ -12,67 +12,65 @@ const sanitize = (s) => String(s || '').trim();
 
 // ------------------------- REGISTER -------------------------
 exports.register = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty())
-    return res.status(400).json({ message: errors.array()[0]?.msg || 'Données invalides.' });
-
   try {
-    const { nom, prenom, email, password, consent } = req.body;
-    const _nom = sanitize(nom);
-    const _prenom = sanitize(prenom);
-    const _email = normalizeEmail(email);
-    const _password = String(password || '');
+    // On récupère TOUS les champs du formulaire
+    const { nom, prenom, email, password, telephone, adresse, numero_permis } = req.body;
 
-    if (!_nom || !_prenom) return res.status(400).json({ message: 'Nom et prénom requis.' });
-    if (!_email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(_email))
-      return res.status(400).json({ message: 'Email invalide.' });
-    if (_password.length < 12 || !/[A-Z]/.test(_password) || !/[a-z]/.test(_password) || !/\d/.test(_password) || !/[^A-Za-z0-9]/.test(_password)) {
-      return res.status(400).json({ message: 'Le mot de passe ne respecte pas les critères.' });
-    }
-    if (!(consent === true || consent === 'true'))
-      return res.status(400).json({ message: 'Le consentement est requis.' });
+    // Vérif email existant
+    const existingUser = await userModel.findUserByEmail(email);
+    if (existingUser) return res.status(400).json({ message: "Email déjà utilisé" });
 
-    const exists = await pool.query('SELECT id FROM users WHERE email = $1', [_email]);
-    if (exists.rows.length) return res.status(409).json({ message: 'Cet email est déjà utilisé.' });
+    // Hashage
+    const salt = await bcrypt.genSalt(10);
+    const password_hash = await bcrypt.hash(password, salt);
 
-    const hash = await bcrypt.hash(_password, 12);
-    const { rows } = await pool.query(
-      `INSERT INTO users (nom, prenom, email, mot_de_passe, role)
-       VALUES ($1, $2, $3, $4, 'user')
-       RETURNING id, nom, prenom, email, role`,
-      [_nom, _prenom, _email, hash]
-    );
+    // Création (role 'client' par défaut)
+    const newUser = await userModel.createUser({
+      nom, prenom, email, password_hash, role: 'client', telephone, adresse, numero_permis
+    });
 
-    res.status(201).json({ user: rows[0] });
-  } catch (e) {
-    console.error('Register error:', e);
-    res.status(500).json({ message: 'Erreur serveur' });
+    res.status(201).json({ message: "Utilisateur créé", user: newUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 };
 
 // ------------------------- LOGIN -------------------------
 exports.login = async (req, res) => {
-  try {
-    const email = normalizeEmail(req.body.email);
-    const password = String(req.body.password || '');
+    try {
+        const { email, password } = req.body;
 
-    const { rows } = await pool.query(
-      'SELECT id, nom, prenom, email, mot_de_passe, role FROM users WHERE email=$1',
-      [email]
-    );
-    if (!rows.length) return res.status(401).json({ message: 'Identifiants invalides' });
+        const user = await userModel.findUserByEmail(email);
+        if (!user) {
+            return res.status(400).json({ message: 'Identifiants invalides' });
+        }
 
-    const user = rows[0];
-    const ok = await bcrypt.compare(password, user.mot_de_passe);
-    if (!ok) return res.status(401).json({ message: 'Identifiants invalides' });
+        const isMatch = await bcrypt.compare(password, user.password_hash);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Identifiants invalides' });
+        }
 
-    const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-    delete user.mot_de_passe;
-    res.json({ token, user });
-  } catch (e) {
-    console.error('Login error:', e);
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
+        const token = jwt.sign(
+            { id: user.id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            token,
+            user: {
+                id: user.id,
+                nom: user.nom,
+                prenom: user.prenom,
+                email: user.email,
+                role: user.role
+            }
+        });
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({ message: 'Erreur lors de la connexion' });
+    }
 };
 
 // ------------------------- ME (profil courant) -------------------------
@@ -126,58 +124,4 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// ------------------------- GOOGLE LOGIN -------------------------
-const { OAuth2Client } = require("google-auth-library");
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-exports.googleLogin = async (req, res) => {
-  try {
-    const { credential } = req.body;
-    if (!credential) {
-      return res.status(400).json({ message: "Token Google manquant" });
-    }
-
-    // Vérifie le token Google
-    const ticket = await googleClient.verifyIdToken({
-      idToken: credential,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-
-    const payload = ticket.getPayload();
-    const email = payload.email;
-    const prenom = payload.given_name || "";
-    const nom = payload.family_name || "";
-
-    // Vérifie si l’utilisateur existe déjà
-    let userResult = await pool.query(
-      "SELECT id, nom, prenom, email, role FROM users WHERE email = $1",
-      [email]
-    );
-
-    let user;
-    if (userResult.rows.length) {
-      user = userResult.rows[0];
-    } else {
-      // Crée un user si inexistant
-      const insert = await pool.query(
-        `INSERT INTO users (nom, prenom, email, role)
-         VALUES ($1, $2, $3, 'user')
-         RETURNING id, nom, prenom, email, role`,
-        [nom, prenom, email]
-      );
-      user = insert.rows[0];
-    }
-
-    // Génère un JWT interne
-    const token = jwt.sign(
-      { id: user.id, role: user.role },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
-    );
-
-    res.json({ token, user });
-  } catch (e) {
-    console.error("Google login error:", e);
-    res.status(500).json({ message: "Échec de l’authentification Google" });
-  }
-};

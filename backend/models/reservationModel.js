@@ -1,67 +1,44 @@
 const pool = require('../config/db');
 
-// Créer une réservation
-exports.createReservation = async (reservation) => {
-  const { userId, vehiculeId, dateDebut, dateFin } = reservation;
-
-  const result = await pool.query(
-    `INSERT INTO reservations (user_id, vehicule_id, date_debut, date_fin) 
-     VALUES ($1, $2, $3, $4) RETURNING *`,
-    [userId, vehiculeId, dateDebut, dateFin]
-  );
-
-  return result.rows[0];
+const createReservation = async (data) => {
+    const { user_id, vehicule_id, date_debut, date_fin, montant_total, statut } = data;
+    const query = `
+        INSERT INTO reservations (user_id, vehicule_id, date_debut, date_fin, montant_total, statut)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *
+    `;
+    const values = [user_id, vehicule_id, date_debut, date_fin, montant_total, statut];
+    const result = await pool.query(query, values);
+    return result.rows[0];
 };
 
-// Récupérer les réservations d'un utilisateur
-exports.getUserReservations = async (req, res) => {
-  const userId = req.user.userId;
-
-  try {
-    const reservations = await reservationModel.getUserReservations(userId);
-    res.status(200).json(reservations);
-  } catch (err) {
-    console.error("Erreur lors de la récupération des réservations :", err);
-    res.status(500).json({ message: "Erreur lors de la récupération des réservations." });
-  }
+const getReservationsByUser = async (userId) => {
+    const query = `
+        SELECT r.*, v.marque, v.modele 
+        FROM reservations r
+        JOIN vehicules v ON r.vehicule_id = v.id
+        WHERE r.user_id = $1
+        ORDER BY r.date_creation DESC
+    `;
+    const result = await pool.query(query, [userId]);
+    return result.rows;
 };
 
-// Récupérer toutes les réservations
-exports.getAllReservations = async () => {
-  const result = await pool.query('SELECT * FROM reservations');
-  return result.rows;
+const checkAvailability = async (vehiculeId, dateDebut, dateFin) => {
+    // Logique SQL : On cherche une réservation qui CHEVAUCHE les dates demandées
+    // et qui n'est pas annulée.
+    const query = `
+        SELECT * FROM reservations 
+        WHERE vehicule_id = $1 
+        AND statut != 'annulée'
+        AND (
+            (date_debut <= $3 AND date_fin >= $2) -- Chevauchement classique
+        )
+    `;
+    const result = await pool.query(query, [vehiculeId, dateDebut, dateFin]);
+    
+    // Si on trouve une ligne, c'est que c'est PAS disponible (return false)
+    return result.rows.length === 0; 
 };
 
-// Mettre à jour une réservation (champs partiels)
-exports.updateReservation = async (id, data) => {
-  const { dateDebut, dateFin, statut } = data;
-
-  if (dateDebut) {
-    await pool.query(
-      "UPDATE reservations SET date_debut = $1 WHERE id = $2",
-      [dateDebut, id]
-    );
-  }
-
-  if (dateFin) {
-    await pool.query(
-      "UPDATE reservations SET date_fin = $1 WHERE id = $2",
-      [dateFin, id]
-    );
-  }
-
-  if (statut) {
-    await pool.query(
-      "UPDATE reservations SET statut = $1 WHERE id = $2",
-      [statut, id]
-    );
-  }
-
-  const result = await pool.query("SELECT * FROM reservations WHERE id = $1", [id]);
-  return result.rows[0];
-};
-
-// Supprimer une réservation
-exports.deleteReservation = async (id) => {
-  await pool.query("DELETE FROM reservations WHERE id = $1", [id]);
-};
+module.exports = { createReservation, getReservationsByUser, checkAvailability };

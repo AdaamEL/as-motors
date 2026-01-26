@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../services/authContext";
 
 const pwdRules = [
-  { key: "length", test: (s) => s.length >= 12, label: "Au moins 12 caractères" },
+  { key: "length", test: (s) => s.length >= 10, label: "Au moins 10 caractères" },
   { key: "upper", test: (s) => /[A-Z]/.test(s), label: "Une majuscule" },
   { key: "lower", test: (s) => /[a-z]/.test(s), label: "Une minuscule" },
   { key: "digit", test: (s) => /\d/.test(s), label: "Un chiffre" },
