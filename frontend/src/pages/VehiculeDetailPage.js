@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { format } from 'date-fns';
 import { useParams, useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -105,8 +106,8 @@ const VehiculeDetailPage = () => {
       // POST direct via api pour gérer finement les statuts
       const response = await api.post('/reservations', {
         vehicule_id: vehicule.id,
-        date_debut: dateDebut.toISOString().split('T')[0],
-        date_fin: dateFin.toISOString().split('T')[0],
+        date_debut: format(dateDebut, 'yyyy-MM-dd'),
+        date_fin: format(dateFin, 'yyyy-MM-dd'),
         modele_cle: vehicule.modele_cle // CRUCIAL pour le calcul backend
       });
 
