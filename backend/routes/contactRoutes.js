@@ -6,4 +6,7 @@ const { authMiddleware, adminMiddleware } = require("../middlewares/authMiddlewa
 // Envoyer un message de contact
 router.post('/', contactController.sendMessage);
 
+// Récupérer tous les messages (admin only)
+router.get('/', authMiddleware, adminMiddleware, contactController.getAllMessages);
+
 module.exports = router;

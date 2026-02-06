@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const API = process.env.REACT_APP_API_URL || "https://as-motors.onrender.com";
+const API = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 export const AuthContext = createContext({
   user: null,
@@ -18,9 +18,32 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    // Optionnel: purger la session au démarrage de l'app pour éviter les sessions "fantômes"
+    // Si vous voulez TOUJOURS être déconnecté au rechargement, décommentez:
+    // localStorage.removeItem("token");
+    // localStorage.removeItem("user");
+    
     const t = localStorage.getItem("token");
     const u = localStorage.getItem("user");
+
+    const isTokenExpired = (token) => {
+      try {
+        const decoded = jwtDecode(token);
+        if (!decoded?.exp) return false;
+        return Date.now() >= decoded.exp * 1000;
+      } catch {
+        return true;
+      }
+    };
+
     if (t && u) {
+      if (isTokenExpired(t)) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setIsAuthenticated(false);
+        setUser(null);
+        return;
+      }
       setIsAuthenticated(true);
       try { setUser(JSON.parse(u)); } catch {}
     }
@@ -41,6 +64,8 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("user");
     setIsAuthenticated(false);
     setUser(null);
+    // Force le rechargement de la page pour nettoyer le cache
+    window.location.href = "/login";
   };
 
   // NEW: on étend register pour nom + prenom + consent

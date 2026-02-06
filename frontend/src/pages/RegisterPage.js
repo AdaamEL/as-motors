@@ -1,214 +1,178 @@
-// src/pages/RegisterPage.js
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../services/authContext";
 
+// Tes règles de validation existantes
 const pwdRules = [
-  { key: "length", test: (s) => s.length >= 10, label: "Au moins 10 caractères" },
-  { key: "upper", test: (s) => /[A-Z]/.test(s), label: "Une majuscule" },
-  { key: "lower", test: (s) => /[a-z]/.test(s), label: "Une minuscule" },
-  { key: "digit", test: (s) => /\d/.test(s), label: "Un chiffre" },
-  { key: "special", test: (s) => /[^A-Za-z0-9]/.test(s), label: "Un caractère spécial" },
+  { key: "length", test: (s) => s.length >= 8, label: "8 caractères minimum" },
+  { key: "upper", test: (s) => /[A-Z]/.test(s), label: "1 majuscule" },
+  { key: "lower", test: (s) => /[a-z]/.test(s), label: "1 minuscule" },
+  { key: "digit", test: (s) => /[0-9]/.test(s), label: "1 chiffre" },
+  { key: "special", test: (s) => /[!@#$%^&*]/.test(s), label: "1 caractère spécial (!@#$%^&*)" },
 ];
 
-export default function RegisterPage() {
-  const navigate = useNavigate();
+const RegisterPage = () => {
+  const [formData, setFormData] = useState({
+    nom: "",
+    prenom: "",
+    email: "",
+    password: "",
+    telephone: "", // Ajouté pour le backend
+    adresse: ""    // Ajouté pour le backend
+  });
+
+  const [pwdFocus, setPwdFocus] = useState(false);
+  const [error, setError] = useState("");
   const { register } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const [nom, setNom] = useState("");
-  const [prenom, setPrenom] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [consent, setConsent] = useState(false);
+  const validatePassword = (pwd) => {
+    return pwdRules.every((rule) => rule.test(pwd));
+  };
 
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState("");
-  const [ok, setOk] = useState("");
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  const pwdOk = pwdRules.every((r) => r.test(password));
-  const matchOk = password && password === confirm;
-
-  const canSubmit =
-    nom.trim() &&
-    prenom.trim() &&
-    email.trim() &&
-    pwdOk &&
-    matchOk &&
-    consent &&
-    !loading;
-
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setErr("");
-    setOk("");
+    setError("");
 
-    if (!canSubmit) {
-      setErr("Veuillez corriger les champs indiqués.");
+    if (!validatePassword(formData.password)) {
+      setError("Le mot de passe ne respecte pas les critères de sécurité.");
       return;
     }
 
     try {
-      setLoading(true);
-
-      await register({
-        nom: nom.trim(),
-        prenom: prenom.trim(),
-        email: email.trim(),
-        password,
-        consent: true,
-      });
-
-      setOk("Compte créé avec succès. Redirection...");
-      setTimeout(() => navigate("/login"), 900);
-    } catch (e) {
-      const msg = e?.response?.data?.message || e?.message || "Erreur lors de l'inscription.";
-      setErr(msg);
-    } finally {
-      setLoading(false);
+      await register(formData);
+      navigate("/profile");
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "Erreur lors de l'inscription.");
     }
   };
 
   return (
-    <div className="min-h-[calc(100vh-6rem)] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow p-6">
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-          Créer un compte
-        </h1>
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 py-12 pt-32 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white dark:bg-slate-800/80 p-10 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700">
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white">Créer un compte</h2>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            Ou <Link to="/login" className="font-medium text-blue-700 dark:text-blue-400 hover:text-blue-600 transition-colors">connectez-vous</Link>
+          </p>
+        </div>
 
-        <form onSubmit={onSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {error && (
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded" role="alert">
+            <p>{error}</p>
+          </div>
+        )}
+
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Nom</label>
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Prénom</label>
               <input
+                name="prenom"
                 type="text"
-                value={nom}
-                onChange={(e) => setNom(e.target.value)}
-                className="w-full px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
-                autoComplete="family-name"
                 required
+                className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 placeholder-slate-500 text-slate-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mt-1"
+                onChange={handleChange}
               />
             </div>
             <div>
-              <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Prénom</label>
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Nom</label>
               <input
+                name="nom"
                 type="text"
-                value={prenom}
-                onChange={(e) => setPrenom(e.target.value)}
-                className="w-full px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
-                autoComplete="given-name"
                 required
+                className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 placeholder-slate-500 text-slate-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mt-1"
+                onChange={handleChange}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Email</label>
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
             <input
+              name="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
-              autoComplete="email"
               required
+              className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 placeholder-slate-500 text-slate-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mt-1"
+              onChange={handleChange}
             />
           </div>
 
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">Mot de passe</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white"
-              autoComplete="new-password"
+          {/* Nouveaux champs requis par le backend */}
+          <div className="grid grid-cols-1 gap-4">
+            <div>
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Téléphone *</label>
+              <input
+              name="telephone"
+              type="tel"
               required
-            />
-            <ul className="mt-2 space-y-1 text-sm">
-              {pwdRules.map((r) => {
-                const ok = r.test(password);
-                return (
-                  <li
-                    key={r.key}
-                    className={`flex items-center gap-2 ${
-                      ok ? "text-green-600 dark:text-green-400" : "text-gray-500 dark:text-gray-400"
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-2.5 w-2.5 rounded-full ${
-                        ok ? "bg-green-600 dark:bg-green-400" : "bg-gray-400"
-                      }`}
-                    />
-                    {r.label}
-                  </li>
-                );
-              })}
-            </ul>
+              placeholder="06 12 34 56 78"
+              className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 placeholder-slate-500 text-slate-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mt-1"
+              onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Adresse complète *</label>
+              <input
+              name="adresse"
+              type="text"
+              required
+              placeholder="10 rue de la Paix, Paris"
+              className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 placeholder-slate-500 text-slate-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mt-1"
+              onChange={handleChange}
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
-              Confirmer le mot de passe
-            </label>
+          {/* Champ mot de passe avec ta logique de validation visuelle */}
+          <div className="relative">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Mot de passe</label>
             <input
+              name="password"
               type="password"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              className={`w-full px-3 py-2 rounded-md border dark:bg-gray-800 dark:text-white ${
-                confirm.length > 0 && !matchOk ? "border-red-500" : ""
-              }`}
-              autoComplete="new-password"
               required
+              className="appearance-none rounded-lg relative block w-full px-3 py-3 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 placeholder-slate-500 text-slate-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm mt-1"
+              onChange={handleChange}
+              onFocus={() => setPwdFocus(true)}
+              onBlur={() => setPwdFocus(false)}
             />
-            {confirm.length > 0 && !matchOk && (
-              <p className="text-xs text-red-600 dark:text-red-400 mt-1">
-                Les mots de passe ne correspondent pas.
-              </p>
+            
+            {/* Popup des règles qui s'affiche au focus */}
+            {pwdFocus && (
+              <div className="absolute left-0 bottom-full mb-2 w-full bg-white dark:bg-slate-900 p-3 rounded shadow-lg border border-slate-200 dark:border-slate-700 text-xs z-10">
+                <p className="font-bold mb-2 text-slate-700 dark:text-slate-200">Conditions du mot de passe :</p>
+                <ul className="space-y-1">
+                  {pwdRules.map((rule) => {
+                    const isValid = rule.test(formData.password);
+                    return (
+                      <li key={rule.key} className={`flex items-center ${isValid ? "text-green-600" : "text-slate-500"}`}>
+                        <span className={`mr-2 ${isValid ? "text-green-500" : "text-slate-400"}`}>
+                          {isValid ? "✔" : "○"}
+                        </span>
+                        {rule.label}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             )}
           </div>
 
-          <label className="flex items-start gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={consent}
-              onChange={(e) => setConsent(e.target.checked)}
-              className="mt-0.5"
-              required
-            />
-            <span className="text-gray-700 dark:text-gray-300">
-              J’accepte la{" "}
-              <Link to="/politique-de-confidentialite" className="underline">
-                Politique de confidentialité
-              </Link>{" "}
-              et les{" "}
-              <Link to="/cgu" className="underline">
-                CGU
-              </Link>
-              .
-            </span>
-          </label>
-
           <button
             type="submit"
-            disabled={!canSubmit}
-            className={`w-full py-2 rounded-md text-white transition ${
-              canSubmit ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"
-            }`}
+            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-900 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shadow-lg"
           >
-            {loading ? "Création..." : "Créer mon compte"}
+            S'inscrire
           </button>
-
-          {err && <p className="text-sm text-red-600 dark:text-red-400 text-center">{err}</p>}
-          {ok && <p className="text-sm text-green-600 dark:text-green-400 text-center">{ok}</p>}
         </form>
-
-        <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-          Déjà un compte ?{" "}
-          <Link to="/login" className="underline">
-            Se connecter
-          </Link>
-        </p>
       </div>
     </div>
   );
-}
+};
+
+export default RegisterPage;

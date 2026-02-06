@@ -6,7 +6,7 @@
 }
 
 .features-title {
-  font-size: 38px;
+  font-size: 32px;
   margin-bottom: 30px;
   color: var(--text-color);
 }
@@ -20,16 +20,17 @@
 
 .feature-card {
   background-color: var(--card-bg-color);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   text-align: center;
 }
 
 .feature-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
 }
 
 .feature-icon {
@@ -42,12 +43,31 @@
 }
 
 .feature-title {
-  font-size: 30px;
+  font-size: 20px;
   margin-bottom: 10px;
   color: var(--primary-color);
 }
 
 .feature-description {
-  font-size: 23px;
+  font-size: 16px;
   line-height: 1.5;
+  color: var(--muted-color);
+}
+
+@media (max-width: 768px) {
+  .features-title {
+    font-size: 26px;
+  }
+
+  .feature-card {
+    padding: 16px;
+  }
+
+  .feature-title {
+    font-size: 18px;
+  }
+
+  .feature-description {
+    font-size: 14px;
+  }
 }

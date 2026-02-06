@@ -1,54 +1,47 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { getAllVehicules } from "../services/vehiculeService";
+import VehiculeCard from "../components/VehiculeCard/VehiculeCard";
 
 const VehiculesPage = () => {
   const [vehicules, setVehicules] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchVehicules = async () => {
       try {
         const data = await getAllVehicules();
+        console.log("Données reçues dans VehiculesPage :", data); // LOG IMPORTANT
         setVehicules(data);
-      } catch (error) {
-        console.error("Erreur chargement véhicules :", error);
+      } catch (err) {
+        console.error("Erreur fetch:", err);
+        setError("Impossible de charger les véhicules.");
+      } finally {
+        setLoading(false);
       }
     };
     fetchVehicules();
   }, []);
 
+  if (loading) return <div className="text-center py-20 pt-32">Chargement...</div>;
+  if (error) return <div className="text-center py-20 pt-32 text-red-600">{error}</div>;
+
   return (
-    <div className="max-w-6xl mx-auto px-4 pt-24 pb-12 min-h-[calc(100vh-6rem)]">
-      <h1 className="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-white">
-        Tous nos véhicules disponibles
+    // Ajout de pt-24 pour éviter que la navbar cache le titre
+    <div className="container mx-auto px-4 py-12 pt-24 min-h-screen bg-slate-50 dark:bg-slate-900">
+      <h1 className="text-4xl font-extrabold text-center mb-12 text-slate-900 dark:text-white">
+        Nos Véhicules Disponibles
       </h1>
-      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {vehicules.map((vehicule) => (
-          <Link
-            to={`/vehicules/${vehicule.id}`}
-            key={vehicule.id}
-            className="bg-white dark:bg-gray-900 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition"
-          >
-            <img
-              src={`/${vehicule.image}`}
-              alt={`${vehicule.marque} ${vehicule.modele}`}
-              className="w-full h-48 object-cover"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "/placeholder.jpg"; // optionnel si image manquante
-              }}
-            />
-            <div className="p-4 space-y-2">
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-                {vehicule.marque} {vehicule.modele}
-              </h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                {vehicule.annee} • {vehicule.prix_jour} €/jour
-              </p>
-            </div>
-          </Link>
-        ))}
-      </div>
+      
+      {vehicules.length === 0 ? (
+        <p className="text-center text-slate-600 dark:text-slate-400">Aucun véhicule trouvé.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {vehicules.map((vehicule) => (
+            <VehiculeCard key={vehicule.id} vehicule={vehicule} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
