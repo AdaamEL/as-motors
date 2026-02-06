@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+export const API_ROOT = process.env.REACT_APP_API_ROOT || 'https://as-motors.onrender.com';
+const API_URL = process.env.REACT_APP_API_URL || `${API_ROOT}/api`;
 
 const api = axios.create({
     baseURL: API_URL,

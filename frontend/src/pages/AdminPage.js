@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../services/authContext";
-import api from "../services/api";
+import api, { API_ROOT } from "../services/api";
 
 export default function AdminPage() {
   const { user } = useContext(AuthContext);
@@ -265,7 +265,7 @@ export default function AdminPage() {
                                 {r.statut === "confirmée" && (
                                   r.devis_path ? (
                                     <a
-                                      href={r.devis_path}
+                                      href={`${API_ROOT}${r.devis_path}`}
                                       target="_blank"
                                       rel="noreferrer"
                                       className="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors"

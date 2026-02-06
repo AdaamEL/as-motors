@@ -266,7 +266,7 @@ const uploadDevis = async (req, res) => {
             try {
                 const userInfo = await userModel.getUserById(reservation.user_id);
                 const vehiculeInfo = await vehiculeModel.getVehiculeById(reservation.vehicule_id);
-                const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+                const frontendUrl = process.env.FRONTEND_URL || "https://as-motors.netlify.app";
                 const devisUrl = `${frontendUrl}${devisPath}`;
 
                 const vehiculeLabel = vehiculeInfo

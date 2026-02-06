@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../services/authContext";
-import api from "../services/api";
+import api, { API_ROOT } from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 const ProfilePage = () => {
@@ -163,7 +163,7 @@ const ProfilePage = () => {
 
                       {res.devis_path && (
                         <a
-                          href={res.devis_path}
+                          href={`${API_ROOT}${res.devis_path}`}
                           target="_blank"
                           rel="noreferrer"
                           className="bg-white rounded-lg px-5 py-3 border border-blue-200 text-blue-700 font-semibold text-sm shadow-sm hover:shadow-md transition-all"

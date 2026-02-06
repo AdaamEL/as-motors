@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
-const devisDir = path.join(__dirname, '..', '..', 'frontend', 'public', 'uploads', 'devis');
+const devisDir = path.join(__dirname, '..', 'public', 'uploads', 'devis');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
