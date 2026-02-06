@@ -266,8 +266,8 @@ const uploadDevis = async (req, res) => {
             try {
                 const userInfo = await userModel.getUserById(reservation.user_id);
                 const vehiculeInfo = await vehiculeModel.getVehiculeById(reservation.vehicule_id);
-                const frontendUrl = process.env.FRONTEND_URL || "https://as-motors.netlify.app";
-                const devisUrl = `${frontendUrl}${devisPath}`;
+                const backendUrl = process.env.BACKEND_URL || "https://as-motors.onrender.com";
+                const devisUrl = `${backendUrl}${devisPath}`;
 
                 const vehiculeLabel = vehiculeInfo
                     ? `${vehiculeInfo.marque || ""} ${vehiculeInfo.modele || ""}`.trim()

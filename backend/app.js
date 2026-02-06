@@ -25,8 +25,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// NEW: servir les fichiers uploadés
-app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+// Servir les fichiers uploadés (Render disk ou local)
+const uploadPath = process.env.UPLOAD_PATH || path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadPath));
 
 // (tes imports de routes)
 const vehiculeRoutes = require('./routes/vehiculeRoutes');

@@ -3,7 +3,8 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
-const devisDir = path.join(__dirname, '..', 'public', 'uploads', 'devis');
+const baseUploadPath = process.env.UPLOAD_PATH || path.join(__dirname, '..', 'uploads');
+const devisDir = path.join(baseUploadPath, 'devis');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
