@@ -5,13 +5,10 @@ const { authMiddleware, adminMiddleware } = require("../middlewares/authMiddlewa
 const { uploadMultiple } = require('../middlewares/uploads');
 
 // Public
-router.get('/', vehiculeController.getVehicules);
+router.get('/', vehiculeController.getAllVehicules);
 router.get('/:id', vehiculeController.getVehiculeById);
-router.get('/:id/reservations', authMiddleware, adminMiddleware, vehiculeController.getReservationsForVehicle);
 
 // Admin CRUD véhicule (sans images)
-router.post('/', authMiddleware, adminMiddleware, vehiculeController.createVehicle);
-router.put('/:id', authMiddleware, adminMiddleware, vehiculeController.updateVehicle);
-router.delete('/:id', authMiddleware, adminMiddleware, vehiculeController.deleteVehicle);
+router.post('/', authMiddleware, adminMiddleware, vehiculeController.createVehicule);
 
 module.exports = router;

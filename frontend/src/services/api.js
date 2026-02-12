@@ -1,43 +1,29 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+export const API_ROOT = process.env.REACT_APP_API_ROOT || 'https://as-motors.onrender.com';
+const API_URL = process.env.REACT_APP_API_URL || `${API_ROOT}/api`;
 
-export const UPLOADS_URL = 'http://localhost:5000/uploads';
+const api = axios.create({
+    baseURL: API_URL,
+    headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+    },
+});
 
-// Récupérer tous les véhicules
-export const getVehicules = async () => {
-  const response = await axios.get(`${API_URL}/vehicules`);
-  return response.data;
-};
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
-// Récupérer un véhicule par ID
-export const getVehiculeById = async (id) => {
-  const response = await axios.get(`${API_URL}/vehicules/${id}`);
-  return response.data;
-};
-
-// Ajouter un véhicule
-export const addVehicule = async (vehicule, token) => {
-  const response = await axios.post(`${API_URL}/vehicules`, vehicule, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return response.data;
-};
-
-// Enregistrer un utilisateur
-export const registerUser = async (user) => {
-  const response = await axios.post(`${API_URL}/auth/register`, user);
-  return response.data;
-};
-
-// Connecter un utilisateur
-export const loginUser = async (user) => {
-  const response = await axios.post(`${API_URL}/auth/login`, user);
-  return response.data;
-};
-
-// Envoyer un message de contact
-export const sendContactMessage = async (message) => {
-  const response = await axios.post(`${API_URL}/messages`, message);
-  return response.data;
-};
+export default api;

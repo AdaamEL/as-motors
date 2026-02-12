@@ -31,3 +31,13 @@ exports.sendMessage = async (req, res) => {
     res.status(500).json({ message: "Erreur lors de l'envoi de l'e-mail." });
   }
 };
+
+exports.getAllMessages = async (req, res) => {
+  try {
+    const messages = await contactModel.getAllMessages();
+    res.status(200).json(messages);
+  } catch (err) {
+    console.error("Erreur lors de la récupération des messages :", err);
+    res.status(500).json({ message: "Erreur lors de la récupération des messages." });
+  }
+};

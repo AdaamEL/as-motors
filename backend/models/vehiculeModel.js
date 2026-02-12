@@ -1,29 +1,41 @@
 const pool = require('../config/db');
 
-// Récupérer tous les véhicules
-const getVehicules = async () => {
-  const result = await pool.query('SELECT * FROM vehicules');
-  return result.rows;
+const getAllVehicules = async () => {
+    const result = await pool.query('SELECT * FROM vehicules ORDER BY id ASC');
+    return result.rows;
 };
 
-// Récupérer un véhicule par ID
 const getVehiculeById = async (id) => {
-  const result = await pool.query('SELECT * FROM vehicules WHERE id = $1', [id]);
-  return result.rows[0];
+    const result = await pool.query('SELECT * FROM vehicules WHERE id = $1', [id]);
+    return result.rows[0];
 };
 
-// Ajouter un véhicule
-const createVehicle = async (vehicule) => {
-  const { marque, modele, annee, prix_jour, image } = vehicule;
-  const result = await pool.query(
-    'INSERT INTO vehicules (marque, modele, annee, prix_jour, image) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-    [marque, modele, annee, prix_jour, image]
-  );
-  return result.rows[0];
+const createVehicule = async (vehicule) => {
+    const { 
+        marque, modele, annee, immatriculation, type_boite, 
+        carburant, places, prix_base_journalier, image_url, description 
+    } = vehicule;
+
+    const query = `
+        INSERT INTO vehicules (
+            marque, modele, annee, immatriculation, type_boite, 
+            carburant, places, prix_base_journalier, image_url, description
+        ) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+        RETURNING *
+    `;
+    
+    const values = [
+        marque, modele, annee, immatriculation, type_boite, 
+        carburant, places, prix_base_journalier, image_url, description
+    ];
+
+    const result = await pool.query(query, values);
+    return result.rows[0];
 };
 
 module.exports = {
-  getVehicules,
-  getVehiculeById,
-  createVehicle,
+    getAllVehicules,
+    getVehiculeById,
+    createVehicule
 };

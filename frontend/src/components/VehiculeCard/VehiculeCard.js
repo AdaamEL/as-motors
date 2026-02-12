@@ -1,52 +1,57 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './vehiculeCard.css';
 
-const STATIC_PRIMARY_IMAGES = {
-    '1': '/uploads/vehicules/clio-alpine-primary.jpg', 
-    '2': '/uploads/vehicules/mercedes-a250e-primary.jpg'
-};
-
+// Je reçois l'objet complet "vehicule" depuis le parent
 const VehiculeCard = ({ vehicule }) => {
-    const vehiculeId = vehicule.id ? vehicule.id.toString() : 'default';
-    
-    const imagePath = STATIC_PRIMARY_IMAGES[vehiculeId] || STATIC_PRIMARY_IMAGES['default'];
+  const imagePath = `/uploads/${vehicule.image_url}/${vehicule.image_url}-primary.jpg`;
 
-    const marque = vehicule.marque || 'Marque Inconnue';
-    const modele = vehicule.modele || 'Modèle Inconnu';
-    const prix = vehicule.prix || 'N/A';
-    
-    return (
-        <div className="vehicule-card border rounded-lg shadow-md overflow-hidden bg-white dark:bg-gray-800 transition-shadow hover:shadow-xl">
-            
-            <Link to={`/vehicules/${vehicule.id}`}>
-                <img 
-                    src={imagePath} 
-                    alt={`${marque} ${modele}`} 
-                    className="w-full h-48 object-cover" 
-                />
-            </Link>
+  return (
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+      {/* Container image avec hauteur fixe et object-cover pour le recadrage */}
+      <div className="relative h-56 w-full overflow-hidden">
+        <img
+          src={imagePath}
+          alt={vehicule.marque}
+          // "object-cover" va couper l'image pour remplir le cadre sans déformation
+          className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "/uploads/automobile.png"; // Fallback si l'image n'existe pas
+          }}
+        />
+      </div>
 
-            <div className="p-4 flex flex-col">
-                <h3 className="text-xl font-bold mb-1 dark:text-white">
-                    {marque} <span className="font-semibold text-blue-600 dark:text-blue-400">{modele}</span>
-                </h3>
-                
-                <div className="flex justify-between items-center mt-2">
-                    <p className="text-2xl font-extrabold text-green-600 dark:text-green-400">
-                        {prix} €
-                        <span className="text-sm font-normal text-gray-500 dark:text-gray-400"> / jour</span>
-                    </p>
-                    
-                    <Link 
-                        to={`/vehicules/${vehicule.id}`} 
-                        className="bg-blue-600 text-white py-2 px-4 rounded-full text-sm font-semibold hover:bg-blue-700 transition duration-300"
-                    >
-                        Réserver
-                    </Link>
-                </div>
-            </div>
+      <div className="p-6">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">
+              {vehicule.marque} {vehicule.modele}
+            </h3>
+            <p className="text-gray-500 text-sm">{vehicule.categorie}</p>
+          </div>
         </div>
-    );
+
+        <div className="flex items-center text-gray-600 text-sm mb-6 space-x-4">
+          <span className="flex items-center">
+            <i className="fas fa-tachometer-alt mr-2"></i>
+            {vehicule.kilometrage || "0"} km
+          </span>
+          <span className="flex items-center">
+            <i className="fas fa-cogs mr-2"></i>
+            Auto
+          </span>
+        </div>
+
+        <Link
+          to={`/vehicules/${vehicule.id}`}
+          className="block w-full text-center bg-gray-900 text-white py-3 rounded-lg hover:bg-gray-800 transition-colors font-semibold"
+        >
+          Voir les détails
+        </Link>
+      </div>
+    </div>
+  );
 };
 
 export default VehiculeCard;

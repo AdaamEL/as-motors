@@ -1,17 +1,18 @@
 .vehicule-card {
   background-color: var(--card-bg-color);
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   width: 100%; /* La largeur est gérée par la grille */
   max-width: 400px; /* Largeur maximale pour chaque carte */
   margin: 0 auto; /* Centrer les cartes */
 }
 
 .vehicule-card:hover {
-  transform: scale(1.08); /* Zoom plus important au survol */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
 }
 
 .vehicule-image {
@@ -29,13 +30,14 @@
 
 .vehicule-info h2 {
   margin: 10px 0;
-  font-size: 24px; /* Augmenter la taille de la police */
+  font-size: 20px;
   color: var(--primary-color);
 }
 
 .vehicule-info p {
   margin: 5px 0;
-  font-size: 18px; /* Taille de police légèrement augmentée */
+  font-size: 16px;
+  color: var(--muted-color);
 }
 
 .disponible {

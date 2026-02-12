@@ -8,11 +8,26 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+// Configuration CORS explicite pour le développement local
+const corsOptions = {
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3001',
+    'https://as-motors.netlify.app'
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+// Servir les fichiers uploadés (Render disk ou local)
+const uploadPath = process.env.UPLOAD_PATH || path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadPath));
 
 const vehiculeRoutes = require('./routes/vehiculeRoutes');
 const authRoutes = require('./routes/authRoutes');
