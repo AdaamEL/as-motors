@@ -29,7 +29,6 @@ app.use(express.urlencoded({ extended: true }));
 const uploadPath = process.env.UPLOAD_PATH || path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(uploadPath));
 
-// (tes imports de routes)
 const vehiculeRoutes = require('./routes/vehiculeRoutes');
 const authRoutes = require('./routes/authRoutes');
 const contactRoutes = require('./routes/contactRoutes');

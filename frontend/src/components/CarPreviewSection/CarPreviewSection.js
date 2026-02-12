@@ -4,8 +4,8 @@ import './carPreviewSection.css';
 const CarPreviewSection = () => {
   const cars = [
     {
-      name: 'Tesla Model 3',
-      image: '/uploads/tesla-model3.jpg',
+      name: 'Clio V Alpine',
+      image: '/uploads/vehicules/clio-alpine-primary.jpg',
       price: '150 €/jour',
     },
     {

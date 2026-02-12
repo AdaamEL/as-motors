@@ -1,60 +1,172 @@
-import { useEffect, useState, useCallback } from "react";
-import useEmblaCarousel from "embla-carousel-react";
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-export default function VehiculeCarousel({ images = [] }) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [scrollSnaps, setScrollSnaps] = useState([]);
+// --- MAPPING STATIQUE DES GALERIES ---
+const STATIC_VEHICULE_GALLERIES = {
+  '1': [
+    '/uploads/vehicules/clio-alpine-primary.jpg',
+    '/uploads/vehicules/clio-alpine-1.jpg',
+    '/uploads/vehicules/clio-alpine-2.jpg',
+    '/uploads/vehicules/clio-alpine-3.jpg',
+  ],
+  '2': [
+    '/uploads/vehicules/mercedes-a250e-primary.jpg',
+    '/uploads/vehicules/mercedes-a250e-1.jpg',
+    '/uploads/vehicules/mercedes-a250e-2.jpg',
+    '/uploads/vehicules/mercedes-a250e-3.jpg',
+  ],
+  default: ['/uploads/default.jpg'],
+};
 
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
+// Variants Framer Motion pour les transitions
+const variants = {
+  enter: (direction) => ({
+    x: direction > 0 ? 150 : -150,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction) => ({
+    x: direction > 0 ? -150 : 150,
+    opacity: 0,
+  }),
+};
+
+const VehiculeCarousel = ({ vehiculeId }) => {
+  const key = vehiculeId ? String(vehiculeId) : 'default';
+  const galleryImages =
+    STATIC_VEHICULE_GALLERIES[key] || STATIC_VEHICULE_GALLERIES.default;
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+
+  // swipe tactile
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchEndX, setTouchEndX] = useState(null);
 
   useEffect(() => {
-    if (!emblaApi) return;
-    setScrollSnaps(emblaApi.scrollSnapList());
-    emblaApi.on("select", onSelect);
-    onSelect();
-  }, [emblaApi, onSelect]);
+    setCurrentIndex(0);
+    setDirection(0);
+  }, [key]);
 
-  useEffect(() => {
-    if (emblaApi) emblaApi.reInit();
-  }, [emblaApi, images]);
+  const goTo = (index, dir = 0) => {
+    setDirection(dir);
+    setCurrentIndex(index);
+  };
 
-  if (!images?.length) return null;
+  const nextImage = () => {
+    goTo(
+      currentIndex + 1 < galleryImages.length ? currentIndex + 1 : 0,
+      1
+    );
+  };
+
+  const prevImage = () => {
+    goTo(
+      currentIndex - 1 >= 0 ? currentIndex - 1 : galleryImages.length - 1,
+      -1
+    );
+  };
+
+  // Gestions des événements tactiles
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.changedTouches[0].clientX);
+    setTouchEndX(null);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEndX(e.changedTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX === null || touchEndX === null) return;
+
+    const deltaX = touchStartX - touchEndX;
+    const threshold = 50;
+
+    if (Math.abs(deltaX) > threshold) {
+      if (deltaX > 0) nextImage();   // swipe gauche → suivant
+      else prevImage();              // swipe droite → précédent
+    }
+
+    setTouchStartX(null);
+    setTouchEndX(null);
+  };
+
+  const mainImage = galleryImages[currentIndex];
 
   return (
-    <div className="w-full">
-      <div className="overflow-hidden rounded-2xl" ref={emblaRef}>
-        <div className="flex">
-          {images.map((src, i) => (
-            <div key={i} className="min-w-full">
-              <img
-                src={src}
-                alt={`Image ${i + 1}`}
-                className="w-full h-64 md:h-96 object-cover"
-                loading={i === 0 ? "eager" : "lazy"}
-              />
-            </div>
-          ))}
-        </div>
+    <div className="vehicule-carousel-container">
+      {/* IMAGE PRINCIPALE + FLECHES */}
+      <div
+        className="main-image mb-4 relative h-72 sm:h-80 md:h-96 rounded-lg overflow-hidden shadow-lg bg-black"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Image animée, en absolute pour éviter le “saut blanc” */}
+        <AnimatePresence initial={false} custom={direction}>
+          <motion.img
+            key={currentIndex}
+            src={mainImage}
+            alt={`Véhicule ${key} vue principale`}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ type: 'tween', duration: 0.4, ease: 'easeInOut' }}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </AnimatePresence>
+
+        {/* Flèche gauche (desktop / tablette) */}
+        <button
+          type="button"
+          onClick={prevImage}
+          className="hidden sm:flex items-center justify-center absolute left-3 top-1/2 -translate-y-1/2
+                     w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white
+                     shadow-md backdrop-blur-sm z-10 transition"
+        >
+          ‹
+        </button>
+
+        {/* Flèche droite */}
+        <button
+          type="button"
+          onClick={nextImage}
+          className="hidden sm:flex items-center justify-center absolute right-3 top-1/2 -translate-y-1/2
+                     w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white
+                     shadow-md backdrop-blur-sm z-10 transition"
+        >
+          ›
+        </button>
       </div>
 
-      <div className="flex items-center justify-center gap-2 mt-3">
-        {scrollSnaps.map((_, i) => (
-          <button
-            key={i}
-            aria-label={`Aller à l'image ${i + 1}`}
-            onClick={() => emblaApi && emblaApi.scrollTo(i)}
-            className={`h-2.5 w-2.5 rounded-full transition ${
-              selectedIndex === i
-                ? "bg-gray-900 dark:bg-gray-100"
-                : "bg-gray-300 dark:bg-gray-600"
-            }`}
+      {/* MINIATURES */}
+      <div className="thumbnails-gallery flex space-x-3 p-1 overflow-hidden">
+        {galleryImages.map((imageSrc, index) => (
+          <img
+            key={index}
+            src={imageSrc}
+            alt={`Vignette ${index + 1}`}
+            onClick={() =>
+              goTo(index, index > currentIndex ? 1 : -1)
+            }
+            className={`w-20 h-20 object-cover cursor-pointer rounded-md transition duration-200
+              ${
+                index === currentIndex
+                  ? 'border-4 border-blue-600 dark:border-blue-400'
+                  : 'border-2 border-gray-300 hover:border-blue-300'
+              }
+            `}
           />
         ))}
       </div>
     </div>
   );
-}
+};
+
+export default VehiculeCarousel;

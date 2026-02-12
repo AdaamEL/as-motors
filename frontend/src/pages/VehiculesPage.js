@@ -20,6 +20,7 @@ const VehiculesPage = () => {
         setLoading(false);
       }
     };
+
     fetchVehicules();
   }, []);
 

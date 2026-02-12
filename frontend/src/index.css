@@ -35,4 +35,237 @@ body {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Ancien fond de gradient simple */
+    .animated-background {
+      background: radial-gradient(circle at 10% 20%, rgba(107, 30, 30, 0.1) 0%, rgba(200, 200, 200, 0.05) 50%, rgba(107, 30, 30, 0.1) 100%);
+      background-size: 400% 400%;
+      animation: moveGradient 20s ease infinite alternate;
+    }
+    @keyframes moveGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Effet de lueur au survol pour les boutons principaux */
+    .btn-hover-glow:hover {
+      box-shadow: 0 0 10px rgba(107, 30, 30, 0.8), 0 0 20px rgba(107, 30, 30, 0.4);
+    }
+
+    /* NOUVEAU: Animation de démarrage et fond dynamique (pour thème sombre) */
+    .hero-cinematic-overlay {
+      /* Mouvement de grain/lumière subtil sur l'overlay sombre */
+      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.7) 70%);
+      animation: cinematicScroll 150s linear infinite;
+    }
+
+    @keyframes cinematicScroll {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 100% 100%; }
+    }
+
+    .start-engine-pulse {
+      /* Effet lumineux qui pulse, simulant l'allumage */
+      animation: pulseGlow 1.5s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 10px #6B1E1E, 0 0 20px #6B1E1E; }
+      100% { box-shadow: 0 0 30px #6B1E1E, 0 0 50px #6B1E1E; }
+    }
+
+    /* NOUVEAU: Mouvement de voiture subtil sur l'image */
+    .car-drift-effect {
+        transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transform: scale(1.05); /* Zoom subtil initial pour un effet "prêt à partir" */
+    }
+    .car-drift-effect:hover {
+        transform: scale(1.1) translateX(10px) rotate(0.5deg); /* Petit effet de mouvement au survol */
+    }
+
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.animated-background {
+  background: radial-gradient(circle at top left, #111827 0, #020617 40%, #020617 100%);
+}
+
+/* Léger drift / mouvement du fond hero */
+.car-drift-effect {
+  animation: car-drift 16s ease-in-out infinite alternate;
+}
+
+@keyframes car-drift {
+  0% {
+    transform: scale(1.05) translateX(0);
   }
+  100% {
+    transform: scale(1.08) translateX(-2%);
+  }
+}
+
+/* Overlay cinématographique (si tu veux la faire pulser très légèrement) */
+.hero-cinematic-overlay {
+  animation: hero-overlay-pulse 8s ease-in-out infinite alternate;
+}
+
+@keyframes hero-overlay-pulse {
+  0% {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.85);
+  }
+}
+
+/* Fade-in vers le haut pour le texte */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 700ms ease-out forwards;
+}
+
+/* Pulsation "démarrage moteur" sur le bouton principal */
+@keyframes start-engine-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(251, 255, 254, 0.5);
+  }
+  60% {
+    transform: scale(1.03);
+    box-shadow: 0 0 0 18px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.start-engine-pulse {
+  animation: start-engine-pulse 2s ease-out infinite;
+}
+
+/* ======== GLOBAL FULLSCREEN LAYER ======== */
+.car-global-layer {
+  position: fixed;           /* indépendant du layout */
+  bottom: 50px;              /* ajuste la hauteur selon ton hero */
+  left: 0;
+  width: 100vw;              /* traverse toute la fenêtre */
+  height: 100px;
+  pointer-events: none;      /* ne gêne pas les clics */
+  z-index: 50;
+  overflow: visible;
+}
+
+/* ======== ANIMATION ======== */
+.car-anim {
+  position: absolute;
+  bottom: 0;
+  animation: car-loop 10s linear infinite; /* ⚡ VITESSE = ici 5s */
+  width: max-content;
+  overflow: visible;
+}
+
+/* voiture qui part de la droite → gauche */
+@keyframes car-loop {
+  0%   { transform: translateX(110vw); opacity: 0.3; }
+  10%  { opacity: 1; }
+  50%  { transform: translateX(-10vw); opacity: 1; }
+  100% { transform: translateX(-120vw); opacity: 0.3; }
+}
+
+/* ======== ICON CAR ======== */
+.car-icon-img {
+  height: 30px;     /* 📱 taille mobile (réduite) */
+  width: auto;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+  animation: car-vibration 0.25s ease-in-out infinite alternate;
+}
+
+@media (min-width: 640px) { /* sm */
+  .car-icon-img {
+    height: 55px;
+  }
+}
+
+@media (min-width: 1024px) { /* lg */
+  .car-icon-img {
+    height: 65px;
+  }
+}
+
+@keyframes car-vibration {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-1.5px); }
+}
+
+/* ======== LIGHTS ======== */
+.car-light-front, .car-light-back {
+  position: absolute;
+  bottom: 12px;
+  width: 15px;
+  height: 8px;
+  border-radius: 30px;
+  filter: blur(3px);
+}
+
+.car-light-front {
+  left: 3px;
+  background: #6be4ff;
+  box-shadow: 0 0 12px #7ce8ff;
+  animation: front-light-glow 1.6s ease-in-out infinite alternate;
+}
+
+.car-light-back {
+  right: 6px;
+  background: #ff4a4a;
+  box-shadow: 0 0 10px #ff5e5e;
+  animation: back-light-glow 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes front-light-glow {
+  0% { opacity: 0.4; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes back-light-glow {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* ======== SMOKE ======== */
+.car-smoke {
+  position: absolute;
+  bottom: 8px;
+  right: -20px;
+  width: 12px;
+  height: 12px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 50%;
+  opacity: 0.8;
+  filter: blur(1px);
+  animation: smoke-puff 1.8s ease-out infinite;
+}
+
+.smoke-1 { animation-delay: 0s; }
+.smoke-2 { animation-delay: 0.4s; right: -24px; }
+.smoke-3 { animation-delay: 0.8s; right: -28px; }
+
+@keyframes smoke-puff {
+  0%   { transform: translateY(0) scale(1); opacity: 0.8; }
+  60%  { opacity: 0.4; }
+  100% { transform: translateY(-22px) scale(2.2); opacity: 0; }
+}

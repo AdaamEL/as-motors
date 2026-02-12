@@ -32,6 +32,6 @@ router.post('/login',    loginValidation,    authController.login);
 router.get('/users', authMiddleware, adminMiddleware, authController.getAllUsers);
 
 // Supprimer un utilisateur
-router.delete("/users/:id", authMiddleware, authController.deleteUser);
+router.delete("/users/:id", authMiddleware, adminMiddleware, authController.deleteUser);
 
 module.exports = router;
