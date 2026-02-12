@@ -9,19 +9,24 @@ import RegisterPage from "./pages/RegisterPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminPage from "./pages/AdminPage";
 import VehiculeDetail from "./pages/VehiculeDetailPage";
+import LegalMentionsPage from "./pages/LegalMentionsPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import CookiesPolicyPage from "./pages/CookiesPolicyPage";
+import TermsPage from "./pages/TermsPage";
 
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
+import CookieBanner from "./components/CookieBanner/CookieBanner";
 import AuthProvider from "./services/authContext";
 
 const App = () => {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+        <div className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-text)]">
           <Navbar />
 
-          <main className="flex-grow px-4 sm:px-6 md:px-8">
+          <main className="flex-grow">
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/vehicules" element={<VehiculesPage />} />
@@ -31,10 +36,15 @@ const App = () => {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/vehicules/:id" element={<VehiculeDetail />} />
+              <Route path="/legal/mentions" element={<LegalMentionsPage />} />
+              <Route path="/legal/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/legal/cookies" element={<CookiesPolicyPage />} />
+              <Route path="/legal/terms" element={<TermsPage />} />
             </Routes>
           </main>
 
           <Footer />
+          <CookieBanner />
         </div>
       </Router>
     </AuthProvider>

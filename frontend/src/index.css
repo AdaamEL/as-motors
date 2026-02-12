@@ -2,270 +2,247 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════
+   AS MOTORS — Premium Design System
+   ═══════════════════════════════════════════ */
+
+/* --- CSS Custom Properties --- */
 :root {
-  --primary-color: #2563eb;
-  --secondary-color: #0ea5e9;
-  --background-color: #f8fafc;
-  --text-color: #0f172a;
-  --card-bg-color: #ffffff;
-  --muted-color: #64748b;
-  --border-color: #e2e8f0;
+  --color-brand: #6B1E1E;
+  --color-brand-light: #8B2E2E;
+  --color-gold: #C9A961;
+  --color-gold-light: #D4BA7A;
+  --color-bg: #FAFAF8;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F5F5F3;
+  --color-text: #1A1A2E;
+  --color-text-muted: #6B7280;
+  --color-border: #E8E8E4;
+  --color-border-subtle: #F0F0EC;
+  --nav-bg: rgba(255, 255, 255, 0.85);
+  --nav-border: rgba(232, 232, 228, 0.8);
 }
 
 .dark {
-  --primary-color: #60a5fa;
-  --secondary-color: #38bdf8;
-  --background-color: #0b1220;
-  --text-color: #f8fafc;
-  --card-bg-color: #0f172a;
-  --muted-color: #94a3b8;
-  --border-color: #1f2937;
+  --color-bg: #0A0E1A;
+  --color-surface: #111827;
+  --color-surface-alt: #1A2040;
+  --color-text: #F5F5F0;
+  --color-text-muted: #9CA3AF;
+  --color-border: #1F2937;
+  --color-border-subtle: #1A1F2E;
+  --nav-bg: rgba(10, 14, 26, 0.88);
+  --nav-border: rgba(31, 41, 55, 0.8);
 }
 
+/* --- Base Styles --- */
 body {
-  background-color: var(--background-color);
-  color: var(--text-color);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-@layer utilities {
-    .animate-fade-in {
-      animation: fadeIn 1.2s ease-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Ancien fond de gradient simple */
-    .animated-background {
-      background: radial-gradient(circle at 10% 20%, rgba(107, 30, 30, 0.1) 0%, rgba(200, 200, 200, 0.05) 50%, rgba(107, 30, 30, 0.1) 100%);
-      background-size: 400% 400%;
-      animation: moveGradient 20s ease infinite alternate;
-    }
-    @keyframes moveGradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    
-    /* Effet de lueur au survol pour les boutons principaux */
-    .btn-hover-glow:hover {
-      box-shadow: 0 0 10px rgba(107, 30, 30, 0.8), 0 0 20px rgba(107, 30, 30, 0.4);
-    }
-
-    /* NOUVEAU: Animation de démarrage et fond dynamique (pour thème sombre) */
-    .hero-cinematic-overlay {
-      /* Mouvement de grain/lumière subtil sur l'overlay sombre */
-      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.7) 70%);
-      animation: cinematicScroll 150s linear infinite;
-    }
-
-    @keyframes cinematicScroll {
-      0% { background-position: 0% 0%; }
-      100% { background-position: 100% 100%; }
-    }
-
-    .start-engine-pulse {
-      /* Effet lumineux qui pulse, simulant l'allumage */
-      animation: pulseGlow 1.5s infinite alternate;
-    }
-
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 10px #6B1E1E, 0 0 20px #6B1E1E; }
-      100% { box-shadow: 0 0 30px #6B1E1E, 0 0 50px #6B1E1E; }
-    }
-
-    /* NOUVEAU: Mouvement de voiture subtil sur l'image */
-    .car-drift-effect {
-        transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        transform: scale(1.05); /* Zoom subtil initial pour un effet "prêt à partir" */
-    }
-    .car-drift-effect:hover {
-        transform: scale(1.1) translateX(10px) rotate(0.5deg); /* Petit effet de mouvement au survol */
-    }
-
+/* Scrollbar premium */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
 }
 
 .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
-.animated-background {
-  background: radial-gradient(circle at top left, #111827 0, #020617 40%, #020617 100%);
-}
-
-/* Léger drift / mouvement du fond hero */
-.car-drift-effect {
-  animation: car-drift 16s ease-in-out infinite alternate;
-}
-
-@keyframes car-drift {
-  0% {
-    transform: scale(1.05) translateX(0);
+/* --- Premium Component Classes --- */
+@layer components {
+  /* Bouton Premium principal */
+  .btn-premium {
+    @apply inline-flex items-center justify-center gap-2 
+           px-8 py-3.5 rounded-xl font-semibold text-sm
+           transition-all duration-300 ease-out
+           focus:outline-none focus:ring-2 focus:ring-offset-2;
   }
-  100% {
-    transform: scale(1.08) translateX(-2%);
+
+  .btn-brand {
+    @apply btn-premium text-white shadow-lg;
+    background: linear-gradient(135deg, #6B1E1E, #8B2E2E);
   }
-}
-
-/* Overlay cinématographique (si tu veux la faire pulser très légèrement) */
-.hero-cinematic-overlay {
-  animation: hero-overlay-pulse 8s ease-in-out infinite alternate;
-}
-
-@keyframes hero-overlay-pulse {
-  0% {
-    background-color: rgba(0, 0, 0, 0.7);
+  .btn-brand:hover {
+    @apply shadow-xl;
+    transform: translateY(-1px);
+    filter: brightness(1.1);
   }
-  100% {
-    background-color: rgba(0, 0, 0, 0.85);
+
+  .btn-gold {
+    @apply btn-premium text-navy-900 font-bold shadow-gold;
+    background: linear-gradient(135deg, #C9A961, #D4BA7A);
   }
-}
-
-/* Fade-in vers le haut pour le texte */
-@keyframes fade-in-up {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
+  .btn-gold:hover {
+    @apply shadow-gold-lg;
+    transform: translateY(-1px);
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
+
+  .btn-outline {
+    @apply btn-premium border-2 border-white/30 text-white 
+           hover:bg-white/10 hover:border-white/50;
   }
-}
 
-.animate-fade-in-up {
-  animation: fade-in-up 700ms ease-out forwards;
-}
-
-/* Pulsation "démarrage moteur" sur le bouton principal */
-@keyframes start-engine-pulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(251, 255, 254, 0.5);
+  /* Card premium */
+  .card-premium {
+    @apply bg-white dark:bg-navy-800 rounded-2xl 
+           border border-gray-100 dark:border-gray-800
+           shadow-premium transition-all duration-300;
   }
-  60% {
-    transform: scale(1.03);
-    box-shadow: 0 0 0 18px rgba(16, 185, 129, 0);
+  .card-premium:hover {
+    @apply shadow-premium-lg;
+    transform: translateY(-2px);
   }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+
+  /* Input premium */
+  .input-premium {
+    @apply w-full px-4 py-3 rounded-xl bg-white dark:bg-navy-800
+           border border-gray-200 dark:border-gray-700
+           text-gray-900 dark:text-white 
+           placeholder-gray-400 dark:placeholder-gray-500
+           focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand
+           transition-all duration-200;
   }
-}
 
-.start-engine-pulse {
-  animation: start-engine-pulse 2s ease-out infinite;
-}
+  /* Section heading premium */
+  .section-heading {
+    @apply font-display text-3xl sm:text-4xl lg:text-5xl font-bold 
+           text-gray-900 dark:text-white tracking-tight;
+  }
 
-/* ======== GLOBAL FULLSCREEN LAYER ======== */
-.car-global-layer {
-  position: fixed;           /* indépendant du layout */
-  bottom: 50px;              /* ajuste la hauteur selon ton hero */
-  left: 0;
-  width: 100vw;              /* traverse toute la fenêtre */
-  height: 100px;
-  pointer-events: none;      /* ne gêne pas les clics */
-  z-index: 50;
-  overflow: visible;
-}
+  .section-subheading {
+    @apply text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto mt-4;
+  }
 
-/* ======== ANIMATION ======== */
-.car-anim {
-  position: absolute;
-  bottom: 0;
-  animation: car-loop 10s linear infinite; /* ⚡ VITESSE = ici 5s */
-  width: max-content;
-  overflow: visible;
-}
-
-/* voiture qui part de la droite → gauche */
-@keyframes car-loop {
-  0%   { transform: translateX(110vw); opacity: 0.3; }
-  10%  { opacity: 1; }
-  50%  { transform: translateX(-10vw); opacity: 1; }
-  100% { transform: translateX(-120vw); opacity: 0.3; }
-}
-
-/* ======== ICON CAR ======== */
-.car-icon-img {
-  height: 30px;     /* 📱 taille mobile (réduite) */
-  width: auto;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
-  animation: car-vibration 0.25s ease-in-out infinite alternate;
-}
-
-@media (min-width: 640px) { /* sm */
-  .car-icon-img {
-    height: 55px;
+  /* Gold accent line */
+  .gold-accent {
+    @apply w-16 h-1 rounded-full mx-auto;
+    background: linear-gradient(90deg, #C9A961, #D4BA7A);
   }
 }
 
-@media (min-width: 1024px) { /* lg */
-  .car-icon-img {
-    height: 65px;
-  }
+/* --- Utility Animations --- */
+@layer utilities {
+  .animation-delay-100 { animation-delay: 100ms; }
+  .animation-delay-200 { animation-delay: 200ms; }
+  .animation-delay-300 { animation-delay: 300ms; }
+  .animation-delay-400 { animation-delay: 400ms; }
+  .animation-delay-500 { animation-delay: 500ms; }
+  .animation-delay-600 { animation-delay: 600ms; }
 }
 
-@keyframes car-vibration {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-1.5px); }
+/* --- Hero Section Specifics --- */
+.hero-gradient-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 14, 26, 0.15) 0%,
+    rgba(10, 14, 26, 0.4) 40%,
+    rgba(10, 14, 26, 0.88) 100%
+  );
 }
 
-/* ======== LIGHTS ======== */
-.car-light-front, .car-light-back {
-  position: absolute;
-  bottom: 12px;
-  width: 15px;
-  height: 8px;
-  border-radius: 30px;
-  filter: blur(3px);
+.hero-image-zoom {
+  animation: heroZoom 25s ease-in-out infinite alternate;
 }
 
-.car-light-front {
-  left: 3px;
-  background: #6be4ff;
-  box-shadow: 0 0 12px #7ce8ff;
-  animation: front-light-glow 1.6s ease-in-out infinite alternate;
+@keyframes heroZoom {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08); }
 }
 
-.car-light-back {
-  right: 6px;
-  background: #ff4a4a;
-  box-shadow: 0 0 10px #ff5e5e;
-  animation: back-light-glow 2.2s ease-in-out infinite alternate;
+/* --- Datepicker Overrides (premium) --- */
+.react-datepicker-wrapper {
+  width: 100%;
+}
+.react-datepicker__input-container {
+  width: 100%;
+}
+.react-datepicker__input-container input {
+  width: 100%;
+}
+.react-datepicker__day--selected,
+.react-datepicker__day--in-selecting-range,
+.react-datepicker__day--in-range {
+  background-color: #6B1E1E !important;
+  color: white !important;
+}
+.react-datepicker__day--keyboard-selected {
+  background-color: #8B2E2E !important;
+  color: white !important;
+}
+.react-datepicker__day--today {
+  font-weight: bold;
+  border: 2px solid #6B1E1E;
+}
+.react-datepicker__header {
+  background-color: #f9fafb !important;
+  border-bottom: 1px solid #e5e7eb;
+}
+.dark .react-datepicker__header {
+  background-color: #1f2937 !important;
+  border-bottom-color: #374151;
+}
+.dark .react-datepicker {
+  background-color: #111827;
+  border-color: #374151;
+  color: #f3f4f6;
+}
+.dark .react-datepicker__day {
+  color: #e5e7eb;
+}
+.dark .react-datepicker__day:hover {
+  background-color: #374151;
+}
+.dark .react-datepicker__day-name,
+.dark .react-datepicker__current-month {
+  color: #e5e7eb;
+}
+.react-datepicker__day--excluded {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  text-decoration: line-through;
+  cursor: not-allowed !important;
+  opacity: 0.6;
 }
 
-@keyframes front-light-glow {
-  0% { opacity: 0.4; transform: scale(1); }
-  100% { opacity: 1; transform: scale(1.2); }
+/* --- Glass morphism utilities --- */
+.glass {
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
 }
 
-@keyframes back-light-glow {
-  0% { opacity: 0.5; }
-  100% { opacity: 1; }
+.glass-light {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px) saturate(180%);
 }
 
-/* ======== SMOKE ======== */
-.car-smoke {
-  position: absolute;
-  bottom: 8px;
-  right: -20px;
-  width: 12px;
-  height: 12px;
-  background: rgba(255,255,255,0.7);
-  border-radius: 50%;
-  opacity: 0.8;
-  filter: blur(1px);
-  animation: smoke-puff 1.8s ease-out infinite;
+.glass-dark {
+  background: rgba(10, 14, 26, 0.82);
+  backdrop-filter: blur(16px) saturate(180%);
 }
 
-.smoke-1 { animation-delay: 0s; }
-.smoke-2 { animation-delay: 0.4s; right: -24px; }
-.smoke-3 { animation-delay: 0.8s; right: -28px; }
-
-@keyframes smoke-puff {
-  0%   { transform: translateY(0) scale(1); opacity: 0.8; }
-  60%  { opacity: 0.4; }
-  100% { transform: translateY(-22px) scale(2.2); opacity: 0; }
+/* --- Smooth page transitions --- */
+.page-enter {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 400ms ease, transform 400ms ease;
 }
