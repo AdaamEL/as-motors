@@ -6,21 +6,28 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/datepicker-custom.css';
 import { AuthContext } from '../services/authContext';
 import { getVehiculeById } from '../services/vehiculeService';
-import api from '../services/api'; // Import direct d'axios configuré
+import api from '../services/api';
+import VehiculeCarousel from '../components/vehicules/VehiculeCarousel';
+import { Fuel, Settings, Users, Gauge, Calendar, ArrowLeft, AlertCircle, CheckCircle2, X } from 'lucide-react';
 
-// Composant Modal simple pour l'alerte Devis
+/* ─── Devis Modal ─── */
 const DevisModal = ({ onClose }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white dark:bg-slate-900 p-8 rounded-lg max-w-md w-full mx-4 shadow-2xl border border-slate-200 dark:border-slate-700">
-      <h3 className="text-2xl font-bold text-primary mb-4">Demande de Devis</h3>
-      <p className="text-slate-600 dark:text-slate-300 mb-6">
-        Pour cette durée spécifique, nous devons établir un devis personnalisé.
-        Votre demande a été enregistrée avec le statut "En attente".
-        Notre équipe vous contactera rapidement.
+  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="relative bg-white dark:bg-navy-800 p-8 rounded-2xl max-w-md w-full shadow-premium-xl border border-gray-100 dark:border-gray-700 animate-scale-in">
+      <button onClick={onClose} className="absolute top-4 right-4 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+        <X className="w-5 h-5 text-gray-400" />
+      </button>
+      <div className="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand/20 flex items-center justify-center mb-5">
+        <CheckCircle2 className="w-6 h-6 text-brand dark:text-gold" />
+      </div>
+      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Demande enregistrée</h3>
+      <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
+        Votre demande de devis a été enregistrée avec succès.
+        Notre équipe vous contactera dans les plus brefs délais avec un devis personnalisé.
       </p>
       <button
         onClick={onClose}
-        className="w-full bg-blue-900 dark:bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-800 dark:hover:bg-blue-500"
+        className="w-full py-3 rounded-xl font-semibold text-white bg-brand hover:bg-brand-light transition-colors"
       >
         Compris
       </button>
@@ -42,19 +49,12 @@ const VehiculeDetailPage = () => {
   const [showDevisModal, setShowDevisModal] = useState(false);
   const [pricing, setPricing] = useState(null);
   const [blockedRanges, setBlockedRanges] = useState([]);
-  
-  // Pour la galerie, on sélectionne l'image affichée en grand
-  const [selectedImage, setSelectedImage] = useState('');
 
   useEffect(() => {
     const fetchVehicule = async () => {
       try {
         const data = await getVehiculeById(id);
         setVehicule(data);
-        // Initialiser l'image principale avec le chemin local
-        if (data && data.image_url) {
-          setSelectedImage(`/uploads/${data.image_url}/${data.image_url}-primary.jpg`);
-        }
       } catch (err) {
         setError("Impossible de charger le véhicule.");
       } finally {
@@ -67,7 +67,6 @@ const VehiculeDetailPage = () => {
         const res = await api.get(`/reservations/pricing/${id}`);
         setPricing(res.data?.pricing || null);
       } catch (err) {
-        console.error("Erreur pricing:", err.response?.status, err.message);
         setPricing(null);
       }
     };
@@ -77,7 +76,6 @@ const VehiculeDetailPage = () => {
         const res = await api.get(`/reservations/vehicule/${id}/blocked`);
         setBlockedRanges(res.data?.ranges || []);
       } catch (err) {
-        console.error("Erreur dates indisponibles:", err.response?.status, err.message);
         setBlockedRanges([]);
       }
     };
@@ -92,33 +90,22 @@ const VehiculeDetailPage = () => {
     setError('');
     setSuccessMsg('');
 
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
-    if (!dateDebut || !dateFin) {
-      setError('Veuillez sélectionner des dates de réservation.');
-      return;
-    }
+    if (!user) { navigate('/login'); return; }
+    if (!dateDebut || !dateFin) { setError('Veuillez sélectionner des dates de réservation.'); return; }
 
     try {
-      // POST direct via api pour gérer finement les statuts
       const response = await api.post('/reservations', {
         vehicule_id: vehicule.id,
         date_debut: format(dateDebut, 'yyyy-MM-dd'),
         date_fin: format(dateFin, 'yyyy-MM-dd'),
-        modele_cle: vehicule.modele_cle // CRUCIAL pour le calcul backend
+        modele_cle: vehicule.modele_cle
       });
 
-      // Gestion des réponses spécifiques du backend
       if (response.status === 200 && response.data.isDevis) {
-        setSuccessMsg(response.data.message || "Votre demande a bien été envoyée. Un devis sera réalisé.");
+        setSuccessMsg(response.data.message || "Votre demande a bien été envoyée.");
         setShowDevisModal(true);
       }
-
     } catch (err) {
-      // Gestion erreur 409 (Conflit / Non dispo)
       if (err.response && err.response.status === 409) {
         setError("Ce véhicule n'est pas disponible aux dates sélectionnées.");
       } else {
@@ -127,220 +114,211 @@ const VehiculeDetailPage = () => {
     }
   };
 
-  // Convertir les plages bloquées en format excludeDateIntervals
   const excludedRanges = blockedRanges.map(r => ({
     start: new Date(r.date_debut),
     end: new Date(r.date_fin)
   }));
 
-  if (loading) return <div className="text-center py-20">Chargement...</div>;
-  if (!vehicule) return <div className="text-center py-20">Véhicule introuvable.</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">
+        <div className="w-10 h-10 border-2 border-brand dark:border-gold border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
-  // Génération des chemins pour la galerie (on suppose 4 images secondaires pour l'exemple)
-  const galleryImages = [1, 2, 3, 4].map(
-    idx => `/uploads/${vehicule.image_url}/${vehicule.image_url}-${idx}.jpg`
-  );
+  if (!vehicule) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--color-bg)] pt-20">
+        <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+        <p className="text-lg text-gray-500 dark:text-gray-400">Véhicule introuvable.</p>
+        <button onClick={() => navigate('/vehicules')} className="mt-4 text-brand dark:text-gold font-medium hover:underline">
+          ← Retour aux véhicules
+        </button>
+      </div>
+    );
+  }
+
+  const specs = [
+    { icon: Fuel, label: "Motorisation", value: vehicule.motorisation || "Essence" },
+    { icon: Settings, label: "Transmission", value: vehicule.transmission || "Automatique" },
+    { icon: Users, label: "Places", value: `${vehicule.places || 5} places` },
+    { icon: Gauge, label: "Puissance", value: `${vehicule.puissance || "N/A"} ch` },
+  ];
 
   return (
-    <div className="container mx-auto px-4 py-12 pt-24 min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-[var(--color-bg)]">
       {showDevisModal && <DevisModal onClose={() => setShowDevisModal(false)} />}
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Section Images */}
-        <div className="space-y-4">
-          <div className="h-96 w-full rounded-2xl overflow-hidden shadow-lg bg-slate-100 dark:bg-slate-800">
-            <img
-              src={selectedImage}
-              alt={vehicule.modele}
-              className="w-full h-full object-cover" // Recadrage CSS
-              onError={(e) => e.target.src = "/uploads/automobile.png"}
-            />
-          </div>
-          
-          {/* Galerie miniatures */}
-          <div className="grid grid-cols-4 gap-4">
-            {/* Bouton pour revenir à la primary */}
-            <button 
-                onClick={() => setSelectedImage(`/uploads/${vehicule.image_url}/${vehicule.image_url}-primary.jpg`)}
-                className="h-24 rounded-lg overflow-hidden border-2 border-transparent hover:border-primary focus:outline-none"
-            >
-                <img 
-                    src={`/uploads/${vehicule.image_url}/${vehicule.image_url}-primary.jpg`} 
-                    className="w-full h-full object-cover" 
-                    alt="Principal"
-                />
-            </button>
-            
-            {/* Boucle sur les images secondaires */}
-            {galleryImages.map((imgSrc, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedImage(imgSrc)}
-                className="h-24 rounded-lg overflow-hidden border-2 border-transparent hover:border-primary focus:outline-none"
-              >
-                <img
-                  src={imgSrc}
-                  alt={`Vue ${index + 1}`}
-                  className="w-full h-full object-cover"
-                  onError={(e) => e.target.style.display = 'none'} // Cache si l'image n'existe pas
-                />
-              </button>
-            ))}
-          </div>
-        </div>
 
-        {/* Section Infos & Formulaire */}
-        <div>
-          <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-2">
-            {vehicule.marque} {vehicule.modele}
-          </h1>
-          <p className="text-xl text-primary font-semibold mb-6">{vehicule.categorie}</p>
+      {/* Back button bar */}
+      <div className="pt-24 pb-4 px-4 sm:px-6 max-w-7xl mx-auto">
+        <button
+          onClick={() => navigate('/vehicules')}
+          className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Retour aux véhicules
+        </button>
+      </div>
 
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl mb-8 border border-slate-200 dark:border-slate-700">
-            <h3 className="text-lg font-bold mb-4">Caractéristiques</h3>
-            <ul className="grid grid-cols-2 gap-y-2 text-slate-700 dark:text-slate-300">
-              <li><i className="fas fa-gas-pump w-8"></i> {vehicule.motorisation || 'Essence'}</li>
-              <li><i className="fas fa-cogs w-8"></i> {vehicule.transmission || 'Automatique'}</li>
-              <li><i className="fas fa-chair w-8"></i> {vehicule.places || 5} Places</li>
-              <li><i className="fas fa-tachometer-alt w-8"></i> {vehicule.puissance || 'N/A'} ch</li>
-            </ul>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+
+          {/* ═══ LEFT: Carousel (3/5 width on desktop) ═══ */}
+          <div className="lg:col-span-3">
+            <VehiculeCarousel vehiculeId={vehicule.id} />
           </div>
 
-          {pricing ? (
-            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl mb-8 border border-slate-200 dark:border-slate-700 shadow-sm">
-              <h3 className="text-lg font-bold mb-4">Grille tarifaire indicative</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
-                    <tr>
-                      <th className="text-left p-3">Forfait</th>
-                      <th className="text-left p-3">Prix</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-slate-200 dark:border-slate-700">
-                      <td className="p-3">24h semaine</td>
-                      <td className="p-3 font-semibold">{pricing.prix24hSemaine}€</td>
-                    </tr>
-                    <tr className="border-b border-slate-200 dark:border-slate-700">
-                      <td className="p-3">48h week‑end</td>
-                      <td className="p-3 font-semibold">{pricing.prix48hWeekend}€</td>
-                    </tr>
-                    <tr className="border-b border-slate-200 dark:border-slate-700">
-                      <td className="p-3">72h week‑end</td>
-                      <td className="p-3 font-semibold">{pricing.prix72hWeekend}€</td>
-                    </tr>
-                    <tr>
-                      <td className="p-3">Semaine</td>
-                      <td className="p-3 font-semibold">{pricing.prixSemaine}€</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <p className="text-xs text-slate-500 mt-3">
-                Tarifs indicatifs. Un devis final sera établi pour chaque demande.
-              </p>
+          {/* ═══ RIGHT: Info & Form (2/5 width on desktop) ═══ */}
+          <div className="lg:col-span-2 space-y-6">
+
+            {/* Title block */}
+            <div>
+              <span className="inline-block px-3 py-1 rounded-lg text-xs font-semibold bg-brand-50 dark:bg-gold-50/10 text-brand dark:text-gold mb-3">
+                {vehicule.categorie}
+              </span>
+              <h1 className="font-display text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
+                {vehicule.marque} {vehicule.modele}
+              </h1>
             </div>
-          ) : (
-            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl mb-8 border border-slate-200 dark:border-slate-700 shadow-sm">
-              <h3 className="text-lg font-bold mb-2">Grille tarifaire indicative</h3>
-              <p className="text-sm text-slate-500">Aucune grille tarifaire disponible pour ce véhicule.</p>
-            </div>
-          )}
 
-          <div className="border-t border-slate-200 dark:border-slate-700 pt-8">
-            <h3 className="text-2xl font-bold mb-6">Réserver ce véhicule</h3>
-            
-            {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {error}
-              </div>
-            )}
-            {successMsg && (
-              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {successMsg}
+            {/* Specs Grid */}
+            <div className="grid grid-cols-2 gap-3">
+              {specs.map(({ icon: Icon, label, value }) => (
+                <div key={label} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-navy-800/60 border border-gray-100 dark:border-gray-800">
+                  <div className="w-9 h-9 rounded-lg bg-white dark:bg-navy-700 flex items-center justify-center shadow-sm">
+                    <Icon className="w-4 h-4 text-brand dark:text-gold" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">{value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pricing Table */}
+            {pricing && (
+              <div className="rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+                <div className="px-5 py-4 bg-gray-50 dark:bg-navy-800/60 border-b border-gray-100 dark:border-gray-800">
+                  <h3 className="font-semibold text-gray-900 dark:text-white text-sm">Grille tarifaire indicative</h3>
+                </div>
+                <div className="divide-y divide-gray-100 dark:divide-gray-800">
+                  {[
+                    { label: "24h semaine", price: pricing.prix24hSemaine },
+                    { label: "48h week-end", price: pricing.prix48hWeekend },
+                    { label: "72h week-end", price: pricing.prix72hWeekend },
+                    { label: "Semaine", price: pricing.prixSemaine },
+                  ].map(({ label, price }) => (
+                    <div key={label} className="flex items-center justify-between px-5 py-3">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">{label}</span>
+                      <span className="text-sm font-bold text-gray-900 dark:text-white">{price}€</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="px-5 py-3 bg-gray-50 dark:bg-navy-800/30">
+                  <p className="text-xs text-gray-400">Tarifs indicatifs — devis personnalisé pour chaque demande.</p>
+                </div>
               </div>
             )}
 
-            <form onSubmit={handleReservation} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Du</label>
-                  <DatePicker
-                    selected={dateDebut}
-                    onChange={(date) => setDateDebut(date)}
-                    selectsStart
-                    startDate={dateDebut}
-                    endDate={dateFin}
-                    minDate={new Date()}
-                    excludeDateIntervals={excludedRanges}
-                    dateFormat="dd/MM/yyyy"
-                    required
-                    className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                    placeholderText="Sélectionner une date"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Au</label>
-                  <DatePicker
-                    selected={dateFin}
-                    onChange={(date) => setDateFin(date)}
-                    selectsEnd
-                    startDate={dateDebut}
-                    endDate={dateFin}
-                    minDate={dateDebut || new Date()}
-                    excludeDateIntervals={excludedRanges}
-                    dateFormat="dd/MM/yyyy"
-                    required
-                    className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                    placeholderText="Sélectionner une date"
-                  />
-                </div>
+            {/* ── Reservation Form ── */}
+            <div className="rounded-2xl border border-gray-100 dark:border-gray-800 p-5 sm:p-6 bg-white dark:bg-[#111827]">
+              <div className="flex items-center gap-2 mb-5">
+                <Calendar className="w-5 h-5 text-brand dark:text-gold" />
+                <h3 className="font-semibold text-gray-900 dark:text-white">Réserver ce véhicule</h3>
               </div>
 
-              {blockedRanges.length > 0 && (
-                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 px-4 py-3 rounded-lg text-sm">
-                  <p className="font-semibold mb-1">⚠️ Dates déjà réservées (désactivées dans le calendrier) :</p>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {blockedRanges.map((r, idx) => (
-                      <li key={idx}>
-                        {new Date(r.date_debut).toLocaleDateString("fr-FR")} → {new Date(r.date_fin).toLocaleDateString("fr-FR")}
-                      </li>
-                    ))}
-                  </ul>
+              {error && (
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 mb-4">
+                  <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+                </div>
+              )}
+              {successMsg && (
+                <div className="flex items-start gap-3 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 mb-4">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-emerald-700 dark:text-emerald-400">{successMsg}</p>
                 </div>
               )}
 
-                <div className="pt-4">
+              <form onSubmit={handleReservation} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Date de début</label>
+                    <DatePicker
+                      selected={dateDebut}
+                      onChange={(date) => setDateDebut(date)}
+                      selectsStart
+                      startDate={dateDebut}
+                      endDate={dateFin}
+                      minDate={new Date()}
+                      excludeDateIntervals={excludedRanges}
+                      dateFormat="dd/MM/yyyy"
+                      required
+                      className="input-premium !py-2.5 !text-sm"
+                      placeholderText="Sélectionner"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Date de fin</label>
+                    <DatePicker
+                      selected={dateFin}
+                      onChange={(date) => setDateFin(date)}
+                      selectsEnd
+                      startDate={dateDebut}
+                      endDate={dateFin}
+                      minDate={dateDebut || new Date()}
+                      excludeDateIntervals={excludedRanges}
+                      dateFormat="dd/MM/yyyy"
+                      required
+                      className="input-premium !py-2.5 !text-sm"
+                      placeholderText="Sélectionner"
+                    />
+                  </div>
+                </div>
+
+                {blockedRanges.length > 0 && (
+                  <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-xs">
+                    <p className="font-semibold text-amber-800 dark:text-amber-300 mb-1">Dates indisponibles :</p>
+                    <ul className="space-y-0.5 text-amber-700 dark:text-amber-400">
+                      {blockedRanges.map((r, idx) => (
+                        <li key={idx}>
+                          {new Date(r.date_debut).toLocaleDateString("fr-FR")} → {new Date(r.date_fin).toLocaleDateString("fr-FR")}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
                 {user ? (
-                  <div className="space-y-3">
+                  <div>
                     <button
                       type="submit"
-                      className="w-full bg-blue-900 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg transition-colors"
+                      className="w-full py-3.5 rounded-xl font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
+                      style={{ background: "linear-gradient(135deg, #6B1E1E, #8B2E2E)" }}
                     >
                       Demander un devis
                     </button>
-                    <p className="text-xs text-slate-500 text-center">
+                    <p className="text-xs text-gray-400 text-center mt-3">
                       Un devis personnalisé sera établi pour chaque demande.
                     </p>
                   </div>
                 ) : (
-                  <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                    <p className="text-yellow-800 dark:text-yellow-200 mb-2">Connectez-vous pour demander un devis</p>
-                    <button 
+                  <div className="text-center p-5 rounded-xl bg-gray-50 dark:bg-navy-800/40 border border-gray-100 dark:border-gray-800">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Connectez-vous pour réserver</p>
+                    <button
                       type="button"
                       onClick={() => navigate('/login')}
-                      className="bg-gray-900 dark:bg-slate-700 text-white px-6 py-2 rounded-lg text-sm"
+                      className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-brand hover:bg-brand-light transition-colors"
                     >
                       Se connecter
                     </button>
                   </div>
                 )}
-                </div>
-            </form>
-            <p className="text-xs text-slate-500 mt-4 text-center">
-              * Toute demande fait l'objet d'un devis personnalisé.
-            </p>
+              </form>
+            </div>
+
           </div>
         </div>
       </div>

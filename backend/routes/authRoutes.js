@@ -2,6 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 const authController = require('../controllers/authController');
 const { authMiddleware, adminMiddleware } = require('../middlewares/authMiddleware');
+const validateRequest = require('../middlewares/validateRequest');
 
 const router = express.Router();
 
@@ -25,8 +26,8 @@ const loginValidation = [
 ];
 
 // Auth
-router.post('/register', registerValidation, authController.register);
-router.post('/login',    loginValidation,    authController.login);
+router.post('/register', registerValidation, validateRequest, authController.register);
+router.post('/login',    loginValidation,    validateRequest, authController.login);
 
 // Admin: liste des users (⚠️ nécessite auth + admin)
 router.get('/users', authMiddleware, adminMiddleware, authController.getAllUsers);

@@ -2,12 +2,10 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../services/authContext";
 import GoogleSignInButton from "../components/Auth/GoogleSignInButton";
+import { LogIn, AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -15,10 +13,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
     if (error) setError("");
   };
 
@@ -26,113 +21,85 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-
     try {
-      // Utiliser la fonction login du context
       await login(formData);
       navigate("/");
-      
     } catch (err) {
       console.error(err);
-      setError(
-        err.response?.data?.message || 
-        "Impossible de se connecter. Vérifiez vos identifiants."
-      );
+      setError(err.response?.data?.message || "Impossible de se connecter. Vérifiez vos identifiants.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900 dark:text-white">
-          Connexion
-        </h2>
-        <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
-          Accédez à votre espace client
-        </p>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] px-4 py-12 pt-28">
+      <div className="w-full max-w-md space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <div className="gold-accent mx-auto mb-6" />
+          <h1 className="text-3xl font-bold font-display text-gray-900 dark:text-white">Connexion</h1>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Accédez à votre espace client</p>
+        </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white dark:bg-slate-800/80 py-8 px-4 shadow-xl border border-slate-200 dark:border-slate-700 sm:rounded-lg sm:px-10">
-          
+        {/* Card */}
+        <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 shadow-premium space-y-6">
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
-              {error}
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
+              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
             </div>
           )}
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
-              <label 
-                htmlFor="email" 
-                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
-              >
-                Adresse email
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
+              <label htmlFor="email" className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Adresse email</label>
+              <input id="email" name="email" type="email" autoComplete="email" required value={formData.email} onChange={handleChange} className="input-premium" />
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Mot de passe</label>
+              <input id="password" name="password" type="password" autoComplete="current-password" required value={formData.password} onChange={handleChange} className="input-premium" />
             </div>
 
-            <div>
-              <label 
-                htmlFor="password" 
-                className="block text-sm font-medium text-slate-700 dark:text-slate-300"
-              >
-                Mot de passe
-              </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-              >
-                {loading ? "Connexion..." : "Se connecter"}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-60"
+              style={{ background: "linear-gradient(135deg, #6B1E1E, #8B2E2E)" }}
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Connexion...
+                </>
+              ) : (
+                <>
+                  <LogIn className="w-4 h-4" />
+                  Se connecter
+                </>
+              )}
+            </button>
           </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-            </div>
+          {/* Divider */}
+          <div className="relative flex items-center">
+            <div className="flex-1 border-t border-gray-200 dark:border-gray-700" />
+            <span className="px-3 text-xs text-gray-400 dark:text-gray-500">ou</span>
+            <div className="flex-1 border-t border-gray-200 dark:border-gray-700" />
           </div>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Pas encore de compte ?{" "}
-              <Link to="/register" className="font-medium text-blue-700 dark:text-blue-400 hover:text-blue-600">
-                S'inscrire
-              </Link>
-            </p>
+          {/* Google */}
+          <div className="flex justify-center">
+            <GoogleSignInButton onCredential={(cred) => console.log("Google credential:", cred)} />
           </div>
+
+          {/* Link */}
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+            Pas encore de compte ?{" "}
+            <Link to="/register" className="font-semibold text-brand dark:text-gold hover:underline transition-colors">
+              S'inscrire
+            </Link>
+          </p>
         </div>
       </div>
     </div>
