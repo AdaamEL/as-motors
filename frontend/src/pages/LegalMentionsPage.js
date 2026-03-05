@@ -2,19 +2,19 @@ import React from "react";
 
 const Section = ({ title, children }) => (
   <section className="space-y-2">
-    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>
-    <div className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{children}</div>
+    <h2 className="text-lg font-semibold text-[var(--color-text)]">{title}</h2>
+    <div className="text-sm text-[var(--color-text-muted)] leading-relaxed">{children}</div>
   </section>
 );
 
 const LegalMentionsPage = () => {
   return (
-    <div className="min-h-screen bg-[var(--color-bg)]">
-      <div className="pt-32 pb-16 sm:pt-36 sm:pb-20 px-4 bg-gray-50 dark:bg-navy-800/30 border-b border-gray-100 dark:border-gray-800">
+    <div className="min-h-screen bg-[var(--color-bg)] pt-28">
+      <div className="pt-28 pb-16 sm:pt-32 sm:pb-20 px-4 bg-[var(--color-surface-alt)] border-b border-[var(--color-border)]">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="gold-accent mb-6" />
-          <h1 className="section-heading mb-4">Mentions légales</h1>
-          <p className="section-subheading">Informations légales de l’éditeur et de l’hébergeur</p>
+          <div className="w-20 h-1 mx-auto mb-6" style={{ background: "linear-gradient(to right, var(--color-brand), var(--color-brand-light))" }} />
+          <h1 className="text-4xl font-bold font-display text-[var(--color-text)] mb-4">Mentions légales</h1>
+          <p className="text-lg text-[var(--color-text-muted)]">Informations légales de l'éditeur et de l'hébergeur</p>
         </div>
       </div>
 
@@ -50,7 +50,7 @@ const LegalMentionsPage = () => {
           <p>Pour toute question, vous pouvez nous écrire à <strong>contact@as-motors.fr</strong>.</p>
         </Section>
 
-        <p className="text-xs text-gray-400 dark:text-gray-500">Dernière mise à jour : 12/02/2026</p>
+        <p className="text-xs text-[var(--color-text-muted)]">Dernière mise à jour : 12/02/2026</p>
       </div>
     </div>
   );

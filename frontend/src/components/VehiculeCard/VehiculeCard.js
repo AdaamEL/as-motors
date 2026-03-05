@@ -8,10 +8,10 @@ const VehiculeCard = ({ vehicule }) => {
   return (
     <Link
       to={`/vehicules/${vehicule.id}`}
-      className="group block rounded-2xl overflow-hidden bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 shadow-premium hover:shadow-premium-xl transition-all duration-500 hover:-translate-y-2"
+      className="group block rounded-2xl overflow-hidden bg-[var(--color-surface)] border border-[var(--color-border)] shadow-sm hover:shadow-md transition-all duration-500 hover:-translate-y-2"
     >
       {/* Image Container */}
-      <div className="relative h-56 sm:h-60 overflow-hidden bg-gray-100 dark:bg-navy-800">
+      <div className="relative h-56 sm:h-60 overflow-hidden bg-[var(--color-surface-alt)]">
         <img
           src={imagePath}
           alt={`${vehicule.marque} ${vehicule.modele}`}
@@ -26,7 +26,7 @@ const VehiculeCard = ({ vehicule }) => {
 
         {/* Category badge */}
         <div className="absolute top-4 left-4">
-          <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/90 dark:bg-navy-900/90 backdrop-blur-sm text-gray-800 dark:text-gray-200 shadow-sm">
+          <span className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/90 backdrop-blur-sm text-[var(--color-text)] shadow-sm">
             {vehicule.categorie}
           </span>
         </div>
@@ -49,12 +49,12 @@ const VehiculeCard = ({ vehicule }) => {
       {/* Content */}
       <div className="p-5 sm:p-6">
         {/* Title */}
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-brand dark:group-hover:text-gold transition-colors duration-300">
+        <h3 className="text-xl font-bold text-[var(--color-text)] mb-1 group-hover:text-[var(--color-brand)] transition-colors duration-300">
           {vehicule.marque} {vehicule.modele}
         </h3>
 
         {/* Specs row */}
-        <div className="flex items-center gap-4 mt-3 text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex items-center gap-4 mt-3 text-sm text-[var(--color-text-muted)]">
           <span className="inline-flex items-center gap-1.5">
             <Fuel className="w-3.5 h-3.5" />
             {vehicule.motorisation || "Essence"}
@@ -70,12 +70,12 @@ const VehiculeCard = ({ vehicule }) => {
         </div>
 
         {/* Divider + CTA */}
-        <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
-          <span className="text-sm font-semibold text-brand dark:text-gold">
+        <div className="mt-5 pt-4 border-t border-[var(--color-border)] flex items-center justify-between">
+          <span className="text-sm font-semibold text-[var(--color-brand)]">
             Voir les détails
           </span>
-          <div className="w-8 h-8 rounded-full bg-brand-50 dark:bg-gold-50/10 flex items-center justify-center group-hover:bg-brand dark:group-hover:bg-gold transition-colors duration-300">
-            <ArrowRight className="w-4 h-4 text-brand dark:text-gold group-hover:text-white dark:group-hover:text-navy-900 transition-colors duration-300" />
+          <div className="w-8 h-8 rounded-full bg-[var(--color-brand)]/10 flex items-center justify-center group-hover:bg-[var(--color-brand)] transition-colors duration-300">
+            <ArrowRight className="w-4 h-4 text-[var(--color-brand)] group-hover:text-white transition-colors duration-300" />
           </div>
         </div>
       </div>

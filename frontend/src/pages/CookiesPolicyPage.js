@@ -2,14 +2,14 @@ import React from "react";
 
 const Section = ({ title, children }) => (
   <section className="space-y-2">
-    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>
-    <div className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{children}</div>
+    <h2 className="text-lg font-semibold text-[var(--color-text)]">{title}</h2>
+    <div className="text-sm text-[var(--color-text-muted)] leading-relaxed">{children}</div>
   </section>
 );
 
 const CookiesPolicyPage = () => {
   return (
-    <div className="min-h-screen bg-[var(--color-bg)]">
+    <div className="min-h-screen bg-[var(--color-bg)] pt-28">
       <div className="pt-32 pb-16 sm:pt-36 sm:pb-20 px-4 bg-gray-50 dark:bg-navy-800/30 border-b border-gray-100 dark:border-gray-800">
         <div className="max-w-4xl mx-auto text-center">
           <div className="gold-accent mb-6" />

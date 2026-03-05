@@ -8,31 +8,31 @@
 
 /* --- CSS Custom Properties --- */
 :root {
-  --color-brand: #6B1E1E;
-  --color-brand-light: #8B2E2E;
-  --color-gold: #C9A961;
-  --color-gold-light: #D4BA7A;
-  --color-bg: #FAFAF8;
+  --color-brand: #DE8C3C;
+  --color-brand-light: #E8A052;
+  --color-gold: #DE8C3C;
+  --color-gold-light: #E8A052;
+  --color-bg: #F5E6D3;
   --color-surface: #FFFFFF;
-  --color-surface-alt: #F5F5F3;
-  --color-text: #1A1A2E;
-  --color-text-muted: #6B7280;
-  --color-border: #E8E8E4;
-  --color-border-subtle: #F0F0EC;
-  --nav-bg: rgba(255, 255, 255, 0.85);
-  --nav-border: rgba(232, 232, 228, 0.8);
+  --color-surface-alt: #FAF2E6;
+  --color-text: #3D2817;
+  --color-text-muted: #8B7355;
+  --color-border: #E8D5BF;
+  --color-border-subtle: #F0E4D4;
+  --nav-bg: rgba(245, 230, 211, 0.95);
+  --nav-border: rgba(232, 213, 191, 0.8);
 }
 
 .dark {
-  --color-bg: #0A0E1A;
-  --color-surface: #111827;
-  --color-surface-alt: #1A2040;
-  --color-text: #F5F5F0;
-  --color-text-muted: #9CA3AF;
-  --color-border: #1F2937;
-  --color-border-subtle: #1A1F2E;
-  --nav-bg: rgba(10, 14, 26, 0.88);
-  --nav-border: rgba(31, 41, 55, 0.8);
+  --color-bg: #F5E6D3;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #FAF2E6;
+  --color-text: #3D2817;
+  --color-text-muted: #8B7355;
+  --color-border: #E8D5BF;
+  --color-border-subtle: #F0E4D4;
+  --nav-bg: rgba(245, 230, 211, 0.95);
+  --nav-border: rgba(232, 213, 191, 0.8);
 }
 
 /* --- Base Styles --- */

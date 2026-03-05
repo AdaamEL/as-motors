@@ -1,0 +1,191 @@
+import React, { useContext } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { X, ChevronRight } from "lucide-react";
+import { AuthContext } from "../../services/authContext";
+
+const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
+  const { user, isAuthenticated, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path;
+
+  return (
+    <>
+      {/* Overlay */}
+      <div
+        className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
+          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={onClose}
+      />
+
+      {/* Sidebar */}
+      <div
+        className={`fixed top-0 left-0 h-full w-80 max-w-[85vw] z-50
+          transform transition-transform duration-300 ease-out
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+          ${
+            isHomePage
+              ? "bg-black/95 text-white border-r border-white/10"
+              : "bg-[var(--color-surface)] text-[var(--color-text)]"
+          }
+        `}
+      >
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className={`flex items-center justify-between p-6 border-b ${
+            isHomePage ? "border-white/10" : "border-[var(--color-border)]"
+          }`}>
+            <button
+              onClick={onClose}
+              className={`flex items-center gap-2 text-sm font-semibold transition-colors ${
+                isHomePage
+                  ? "text-white/70 hover:text-white"
+                  : "text-[var(--color-text-muted)] hover:text-[var(--color-brand)]"
+              }`}
+            >
+              <X className="w-5 h-5" />
+              CLOSE
+            </button>
+          </div>
+
+          {/* Links */}
+          <nav className="flex-1 overflow-y-auto py-8 px-6 space-y-2">
+            <Link
+              to="/"
+              onClick={onClose}
+              className={`block px-4 py-4 text-3xl font-bold transition-colors ${
+                isHomePage
+                  ? "text-white hover:text-orange-300"
+                  : "text-[var(--color-text)] hover:text-[var(--color-brand)]"
+              }`}
+            >
+              Accueil
+            </Link>
+
+            <Link
+              to="/vehicules"
+              onClick={onClose}
+              className={`block px-4 py-4 text-3xl font-bold transition-colors ${
+                isActive("/vehicules")
+                  ? isHomePage
+                    ? "text-orange-300"
+                    : "text-[var(--color-brand)]"
+                  : isHomePage
+                    ? "text-white hover:text-orange-300"
+                    : "text-[var(--color-text)] hover:text-[var(--color-brand)]"
+              }`}
+            >
+              Véhicules
+            </Link>
+
+            <Link
+              to="/contact"
+              onClick={onClose}
+              className={`block px-4 py-4 text-3xl font-bold transition-colors ${
+                isActive("/contact")
+                  ? isHomePage
+                    ? "text-orange-300"
+                    : "text-[var(--color-brand)]"
+                  : isHomePage
+                    ? "text-white hover:text-orange-300"
+                    : "text-[var(--color-text)] hover:text-[var(--color-brand)]"
+              }`}
+            >
+              Contact
+            </Link>
+
+            {isAuthenticated && (
+              <>
+                <div className={`h-px my-6 ${
+                  isHomePage ? "bg-white/20" : "bg-[var(--color-border)]"
+                }`} />
+                <Link
+                  to="/profile"
+                  onClick={onClose}
+                  className={`block px-4 py-4 text-3xl font-bold transition-colors ${
+                    isActive("/profile")
+                      ? isHomePage
+                        ? "text-orange-300"
+                        : "text-[var(--color-brand)]"
+                      : isHomePage
+                        ? "text-white hover:text-orange-300"
+                        : "text-[var(--color-text)] hover:text-[var(--color-brand)]"
+                  }`}
+                >
+                  Profil
+                </Link>
+                {user?.role === "admin" && (
+                  <Link
+                    to="/admin"
+                    onClick={onClose}
+                    className={`block px-4 py-4 text-3xl font-bold transition-colors ${
+                      isActive("/admin")
+                        ? isHomePage
+                          ? "text-orange-300"
+                          : "text-[var(--color-brand)]"
+                        : isHomePage
+                          ? "text-white hover:text-orange-300"
+                          : "text-[var(--color-text)] hover:text-[var(--color-brand)]"
+                    }`}
+                  >
+                    Admin
+                  </Link>
+                )}
+              </>
+            )}
+          </nav>
+
+          {/* Footer */}
+          <div className={`p-6 border-t space-y-3 ${
+            isHomePage ? "border-white/20" : "border-[var(--color-border)]"
+          }`}>
+            {isAuthenticated ? (
+              <button
+                onClick={() => {
+                  logout();
+                  navigate("/login");
+                  onClose();
+                }}
+                className={`w-full px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                  isHomePage
+                    ? "text-white hover:text-white bg-white/10 hover:bg-white/20border border-white/30"
+                    : "text-[var(--color-text-muted)] hover:text-[var(--color-brand)] bg-[var(--color-brand)]/5 hover:bg-[var(--color-brand)]/10"
+                }`}
+              >
+                Déconnexion
+              </button>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={onClose}
+                  className={`block w-full text-center px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                    isHomePage
+                      ? "text-white hover:text-gray-200 hover:bg-white/10 border border-white/30"
+                      : "text-[var(--color-text-muted)] hover:text-[var(--color-brand)] hover:bg-[var(--color-brand)]/5"
+                  }`}
+                >
+                  Connexion
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={onClose}
+                  className={`block w-full text-center px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                    isHomePage
+                      ? "text-white bg-black/40 hover:bg-black/60 border border-white/30"
+                      : "text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand)]/90"
+                  }`}
+                >
+                  S'inscrire
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default HomeNav;

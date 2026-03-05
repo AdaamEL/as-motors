@@ -28,13 +28,13 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)]">
+    <div className="min-h-screen bg-[var(--color-bg)] pt-28">
       {/* Header */}
-      <div className="pt-32 pb-16 sm:pt-36 sm:pb-20 px-4 bg-gray-50 dark:bg-navy-800/30 border-b border-gray-100 dark:border-gray-800">
+      <div className="pt-24 pb-16 sm:pt-28 sm:pb-20 px-4 bg-[var(--color-surface-alt)] border-b border-[var(--color-border)]">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="gold-accent mb-6" />
-          <h1 className="section-heading mb-4">Contactez-nous</h1>
-          <p className="section-subheading">
+          <div className="w-20 h-1 mx-auto mb-6" style={{ background: "linear-gradient(to right, var(--color-brand), var(--color-brand-light))" }} />
+          <h1 className="text-5xl sm:text-6xl font-bold text-[var(--color-text)] mb-4">Contactez-nous</h1>
+          <p className="text-xl text-[var(--color-text-muted)]">
             Une question, une demande spéciale ? Notre équipe vous répond rapidement.
           </p>
         </div>
@@ -50,26 +50,26 @@ const ContactPage = () => {
               { icon: Phone, title: "Téléphone", text: "+33 (0)7 83 36 67 60" },
               { icon: Mail, title: "Email", text: "contact@as-motors.fr" },
             ].map(({ icon: Icon, title, text }) => (
-              <div key={title} className="flex items-start gap-4 p-5 rounded-2xl bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 shadow-premium">
-                <div className="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand/20 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-5 h-5 text-brand dark:text-gold" />
+              <div key={title} className="flex items-start gap-4 p-5 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-sm hover:shadow-md transition-shadow">
+                <div className="w-10 h-10 rounded-xl bg-[var(--color-brand)]/10 flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-5 h-5 text-[var(--color-brand)]" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white">{title}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{text}</p>
+                  <p className="text-sm font-semibold text-[var(--color-text)]">{title}</p>
+                  <p className="text-sm text-[var(--color-text-muted)] mt-0.5">{text}</p>
                 </div>
               </div>
             ))}
 
-            <div className="p-5 rounded-2xl bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 shadow-premium">
-              <p className="text-xs font-semibold uppercase tracking-wider text-gray-900 dark:text-white mb-3">Réseaux</p>
+            <div className="p-5 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text)] mb-3">Réseaux</p>
               <div className="flex items-center gap-3">
                 <a
                   href="https://www.instagram.com/as_motors75/"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Instagram AS Motors"
-                  className="p-2 rounded-lg border border-gray-100 dark:border-gray-800 text-gray-500 dark:text-gray-400 hover:text-brand dark:hover:text-gold hover:border-brand/30 transition-colors"
+                  className="p-2 rounded-lg border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-brand)] hover:border-[var(--color-brand)] transition-colors"
                 >
                   <Instagram className="w-4 h-4" />
                 </a>
@@ -78,7 +78,7 @@ const ContactPage = () => {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Snapchat AS Motors"
-                  className="p-2 rounded-lg border border-gray-100 dark:border-gray-800 text-gray-500 dark:text-gray-400 hover:text-brand dark:hover:text-gold hover:border-brand/30 transition-colors"
+                  className="p-2 rounded-lg border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-brand)] hover:border-[var(--color-brand)] transition-colors"
                 >
                   <Ghost className="w-4 h-4" />
                 </a>
@@ -87,7 +87,7 @@ const ContactPage = () => {
                   target="_blank"
                   rel="noreferrer"
                   aria-label="WhatsApp AS Motors"
-                  className="p-2 rounded-lg border border-gray-100 dark:border-gray-800 text-gray-500 dark:text-gray-400 hover:text-brand dark:hover:text-gold hover:border-brand/30 transition-colors"
+                  className="p-2 rounded-lg border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-brand)] hover:border-[var(--color-brand)] transition-colors"
                 >
                   <MessageCircle className="w-4 h-4" />
                 </a>
@@ -98,55 +98,55 @@ const ContactPage = () => {
           {/* Form */}
           <form
             onSubmit={handleSubmit}
-            className="lg:col-span-3 p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 shadow-premium space-y-5"
+            className="lg:col-span-3 p-6 sm:p-8 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-sm space-y-5"
           >
             {success === true && (
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                <p className="text-sm text-emerald-700 dark:text-emerald-400">Message envoyé avec succès !</p>
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                <p className="text-sm text-emerald-700">Message envoyé avec succès !</p>
               </div>
             )}
             {success === false && (
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-                <p className="text-sm text-red-700 dark:text-red-400">Une erreur est survenue. Veuillez réessayer.</p>
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-100">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                <p className="text-sm text-red-700">Une erreur est survenue. Veuillez réessayer.</p>
               </div>
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Nom</label>
-                <input type="text" className="input-premium" value={nom} onChange={(e) => setNom(e.target.value)} required />
+                <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1.5">Nom</label>
+                <input type="text" className="w-full px-4 py-2.5 rounded-lg bg-[var(--color-surface-alt)] border border-[var(--color-border)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand)] focus:ring-1 focus:ring-[var(--color-brand)]/50" value={nom} onChange={(e) => setNom(e.target.value)} required />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Email</label>
-                <input type="email" className="input-premium" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1.5">Email</label>
+                <input type="email" className="w-full px-4 py-2.5 rounded-lg bg-[var(--color-surface-alt)] border border-[var(--color-border)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand)] focus:ring-1 focus:ring-[var(--color-brand)]/50" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Sujet</label>
-              <input type="text" className="input-premium" value={sujet} onChange={(e) => setSujet(e.target.value)} required />
+              <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1.5">Sujet</label>
+              <input type="text" className="w-full px-4 py-2.5 rounded-lg bg-[var(--color-surface-alt)] border border-[var(--color-border)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand)] focus:ring-1 focus:ring-[var(--color-brand)]/50" value={sujet} onChange={(e) => setSujet(e.target.value)} required />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Message</label>
+              <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1.5">Message</label>
               <textarea
-                className="input-premium !h-36 resize-none"
+                className="w-full h-36 px-4 py-2.5 rounded-lg bg-[var(--color-surface-alt)] border border-[var(--color-border)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand)] focus:ring-1 focus:ring-[var(--color-brand)]/50 resize-none"
                 value={contenu}
                 onChange={(e) => setContenu(e.target.value)}
                 required
               />
             </div>
-            <p className="text-xs text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-[var(--color-text-muted)]">
               En envoyant ce formulaire, vous acceptez notre
               {" "}
-              <Link to="/legal/privacy" className="text-brand dark:text-gold hover:underline">politique de confidentialité</Link>.
+              <Link to="/legal/privacy" className="text-[var(--color-brand)] hover:text-[var(--color-brand-light)] underline">politique de confidentialité</Link>.
             </p>
 
             <button
               type="submit"
               disabled={sending}
-              className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-60"
-              style={{ background: "linear-gradient(135deg, #6B1E1E, #8B2E2E)" }}
+              className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-white transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 disabled:opacity-60"
+              style={{ backgroundColor: "var(--color-brand)" }}
             >
               {sending ? (
                 <>
