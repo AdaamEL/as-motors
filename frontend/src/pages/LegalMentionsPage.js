@@ -20,16 +20,14 @@ const LegalMentionsPage = () => {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8">
         <Section title="Éditeur du site">
-          <p><strong>AS Motor's SAS</strong></p>
-          <p>Raison sociale : AS Motor's SAS</p>
+          <p><strong>AS MOTOR'S SAS</strong></p>
+          <p>Raison sociale : AS MOTOR'S SAS</p>
           <p>Forme juridique : SAS</p>
           <p>Capital social : 1 000 €</p>
-          <p>RCS / SIRET : Siren 988 597 118</p>
-          <p>TVA intracommunautaire : <em>[à compléter]</em></p>
           <p>Adresse : 15 rue du Louvre, 75001 Paris</p>
           <p>Email : contact@as-motors.fr</p>
           <p>Téléphone : +33 (0)7 83 36 67 60</p>
-          <p>Directeur de publication : EL OUNISSI Sofiane</p>
+          <p>Directeur de publication : EL OUNISSI Adam</p>
         </Section>
 
         <Section title="Hébergement">
