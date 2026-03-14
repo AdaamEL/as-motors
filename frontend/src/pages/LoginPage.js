@@ -37,35 +37,35 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8">
         {/* Header */}
         <div className="text-center">
-          <div className="gold-accent mx-auto mb-6" />
-          <h1 className="text-3xl font-bold font-display text-gray-900 dark:text-white">Connexion</h1>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Accédez à votre espace client</p>
+          <div className="w-20 h-1 mx-auto mb-6" style={{ background: "linear-gradient(to right, var(--color-brand), var(--color-brand-light))" }} />
+          <h1 className="text-3xl font-bold font-display text-[var(--color-text)]">Connexion</h1>
+          <p className="mt-2 text-sm text-[var(--color-text-muted)]">Accédez à votre espace client</p>
         </div>
 
         {/* Card */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 shadow-premium space-y-6">
+        <div className="p-6 sm:p-8 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-sm space-y-6">
           {error && (
-            <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
-              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-100">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+              <p className="text-sm text-red-700">{error}</p>
             </div>
           )}
 
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email" className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Adresse email</label>
-              <input id="email" name="email" type="email" autoComplete="email" required value={formData.email} onChange={handleChange} className="input-premium" />
+              <label htmlFor="email" className="block text-xs font-medium text-[var(--color-text-muted)] mb-1.5">Adresse email</label>
+              <input id="email" name="email" type="email" autoComplete="email" required value={formData.email} onChange={handleChange} className="w-full px-4 py-2.5 rounded-lg bg-[var(--color-surface-alt)] border border-[var(--color-border)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand)] focus:ring-1 focus:ring-[var(--color-brand)]/50" />
             </div>
             <div>
-              <label htmlFor="password" className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">Mot de passe</label>
-              <input id="password" name="password" type="password" autoComplete="current-password" required value={formData.password} onChange={handleChange} className="input-premium" />
+              <label htmlFor="password" className="block text-xs font-medium text-[var(--color-text-muted)] mb-1.5">Mot de passe</label>
+              <input id="password" name="password" type="password" autoComplete="current-password" required value={formData.password} onChange={handleChange} className="w-full px-4 py-2.5 rounded-lg bg-[var(--color-surface-alt)] border border-[var(--color-border)] text-[var(--color-text)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand)] focus:ring-1 focus:ring-[var(--color-brand)]/50" />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-60"
-              style={{ background: "linear-gradient(135deg, #6B1E1E, #8B2E2E)" }}
+              className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-white shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-60"
+              style={{ backgroundColor: "var(--color-brand)" }}
             >
               {loading ? (
                 <>
@@ -83,9 +83,9 @@ export default function LoginPage() {
 
           {/* Divider */}
           <div className="relative flex items-center">
-            <div className="flex-1 border-t border-gray-200 dark:border-gray-700" />
-            <span className="px-3 text-xs text-gray-400 dark:text-gray-500">ou</span>
-            <div className="flex-1 border-t border-gray-200 dark:border-gray-700" />
+            <div className="flex-1 border-t border-[var(--color-border)]" />
+            <span className="px-3 text-xs text-[var(--color-text-muted)]">ou</span>
+            <div className="flex-1 border-t border-[var(--color-border)]" />
           </div>
 
           {/* Google */}
@@ -94,9 +94,9 @@ export default function LoginPage() {
           </div>
 
           {/* Link */}
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-center text-sm text-[var(--color-text-muted)]">
             Pas encore de compte ?{" "}
-            <Link to="/register" className="font-semibold text-brand dark:text-gold hover:underline transition-colors">
+            <Link to="/register" className="font-semibold text-[var(--color-brand)] hover:text-[var(--color-brand-light)] underline transition-colors">
               S'inscrire
             </Link>
           </p>

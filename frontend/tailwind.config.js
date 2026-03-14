@@ -6,21 +6,21 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Playfair Display', 'serif'],
+        sans: ['Cormorant Garamond', 'Times New Roman', 'serif'],
+        display: ['Cormorant Garamond', 'Times New Roman', 'serif'],
       },
       colors: {
         'brand': {
-          DEFAULT: '#6B1E1E',
-          light: '#8B2E2E',
-          dark: '#4A1515',
-          50: '#FDF2F2',
-          100: '#FAE0E0',
-          200: '#F3B5B5',
-          500: '#6B1E1E',
-          900: '#2A0B0B',
+          DEFAULT: '#672D0F',
+          light: '#4F2009',
+          dark: '#3B1607',
+          50: '#F5EDE8',
+          100: '#E8D0C4',
+          200: '#D1A38A',
+          500: '#672D0F',
+          900: '#2A1106',
         },
-        'brand-primary': '#6B1E1E',
+        'brand-primary': '#672D0F',
         'gold': {
           DEFAULT: '#C9A961',
           light: '#D4BA7A',

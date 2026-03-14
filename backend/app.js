@@ -39,7 +39,9 @@ const corsOptions = {
     'http://localhost:3001',
     'http://127.0.0.1:3000',
     'http://127.0.0.1:3001',
-    'https://as-motors.netlify.app'
+    'https://as-motors.netlify.app',
+    'https://as-motors.com',
+    'https://www.as-motors.com'
   ],
   credentials: true,
   optionsSuccessStatus: 200
