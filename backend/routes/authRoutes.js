@@ -12,7 +12,7 @@ const registerValidation = [
   body('prenom').trim().isLength({ min: 1, max: 80 }).withMessage('Prénom requis'),
   body('email').isEmail().withMessage('Email invalide').normalizeEmail(),
   body('password')
-    .isLength({ min: 12 }).withMessage('12 caractères minimum')
+    .isLength({ min: 10 }).withMessage('10 caractères minimum')
     .matches(/[A-Z]/).withMessage('Une majuscule requise')
     .matches(/[a-z]/).withMessage('Une minuscule requise')
     .matches(/\d/).withMessage('Un chiffre requis')

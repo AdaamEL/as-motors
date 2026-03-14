@@ -26,7 +26,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           ${
             isHomePage
-              ? "bg-black/95 text-white border-r border-white/10"
+              ? "bg-[color:rgba(15,15,15,0.96)] text-[var(--color-surface)] border-r border-[color:rgba(214,214,212,0.2)]"
               : "bg-[var(--color-surface)] text-[var(--color-text)]"
           }
         `}
@@ -34,13 +34,13 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className={`flex items-center justify-between p-6 border-b ${
-            isHomePage ? "border-white/10" : "border-[var(--color-border)]"
+            isHomePage ? "border-[color:rgba(214,214,212,0.2)]" : "border-[var(--color-border)]"
           }`}>
             <button
               onClick={onClose}
               className={`flex items-center gap-2 text-sm font-semibold transition-colors ${
                 isHomePage
-                  ? "text-white/70 hover:text-white"
+                  ? "text-[color:rgba(214,214,212,0.76)] hover:text-[var(--color-surface)]"
                   : "text-[var(--color-text-muted)] hover:text-[var(--color-brand)]"
               }`}
             >
@@ -56,7 +56,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
               onClick={onClose}
               className={`block px-4 py-4 text-3xl font-bold transition-colors ${
                 isHomePage
-                  ? "text-white hover:text-orange-300"
+                  ? "text-[var(--color-surface)] hover:text-[var(--color-brand)]"
                   : "text-[var(--color-text)] hover:text-[var(--color-brand)]"
               }`}
             >
@@ -69,10 +69,10 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
               className={`block px-4 py-4 text-3xl font-bold transition-colors ${
                 isActive("/vehicules")
                   ? isHomePage
-                    ? "text-orange-300"
+                    ? "text-[var(--color-brand)]"
                     : "text-[var(--color-brand)]"
                   : isHomePage
-                    ? "text-white hover:text-orange-300"
+                    ? "text-[var(--color-surface)] hover:text-[var(--color-brand)]"
                     : "text-[var(--color-text)] hover:text-[var(--color-brand)]"
               }`}
             >
@@ -85,10 +85,10 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
               className={`block px-4 py-4 text-3xl font-bold transition-colors ${
                 isActive("/contact")
                   ? isHomePage
-                    ? "text-orange-300"
+                    ? "text-[var(--color-brand)]"
                     : "text-[var(--color-brand)]"
                   : isHomePage
-                    ? "text-white hover:text-orange-300"
+                    ? "text-[var(--color-surface)] hover:text-[var(--color-brand)]"
                     : "text-[var(--color-text)] hover:text-[var(--color-brand)]"
               }`}
             >
@@ -98,7 +98,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
             {isAuthenticated && (
               <>
                 <div className={`h-px my-6 ${
-                  isHomePage ? "bg-white/20" : "bg-[var(--color-border)]"
+                  isHomePage ? "bg-[color:rgba(214,214,212,0.2)]" : "bg-[var(--color-border)]"
                 }`} />
                 <Link
                   to="/profile"
@@ -106,10 +106,10 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
                   className={`block px-4 py-4 text-3xl font-bold transition-colors ${
                     isActive("/profile")
                       ? isHomePage
-                        ? "text-orange-300"
+                        ? "text-[var(--color-brand)]"
                         : "text-[var(--color-brand)]"
                       : isHomePage
-                        ? "text-white hover:text-orange-300"
+                        ? "text-[var(--color-surface)] hover:text-[var(--color-brand)]"
                         : "text-[var(--color-text)] hover:text-[var(--color-brand)]"
                   }`}
                 >
@@ -122,10 +122,10 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
                     className={`block px-4 py-4 text-3xl font-bold transition-colors ${
                       isActive("/admin")
                         ? isHomePage
-                          ? "text-orange-300"
+                          ? "text-[var(--color-brand)]"
                           : "text-[var(--color-brand)]"
                         : isHomePage
-                          ? "text-white hover:text-orange-300"
+                          ? "text-[var(--color-surface)] hover:text-[var(--color-brand)]"
                           : "text-[var(--color-text)] hover:text-[var(--color-brand)]"
                     }`}
                   >
@@ -138,7 +138,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
 
           {/* Footer */}
           <div className={`p-6 border-t space-y-3 ${
-            isHomePage ? "border-white/20" : "border-[var(--color-border)]"
+            isHomePage ? "border-[color:rgba(214,214,212,0.2)]" : "border-[var(--color-border)]"
           }`}>
             {isAuthenticated ? (
               <button
@@ -149,7 +149,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
                 }}
                 className={`w-full px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
                   isHomePage
-                    ? "text-white hover:text-white bg-white/10 hover:bg-white/20border border-white/30"
+                    ? "text-[var(--color-surface)] hover:text-white bg-[color:rgba(214,214,212,0.08)] hover:bg-[color:rgba(214,214,212,0.16)] border border-[color:rgba(214,214,212,0.35)]"
                     : "text-[var(--color-text-muted)] hover:text-[var(--color-brand)] bg-[var(--color-brand)]/5 hover:bg-[var(--color-brand)]/10"
                 }`}
               >
@@ -162,7 +162,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
                   onClick={onClose}
                   className={`block w-full text-center px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
                     isHomePage
-                      ? "text-white hover:text-gray-200 hover:bg-white/10 border border-white/30"
+                      ? "text-[var(--color-surface)] hover:text-white hover:bg-[color:rgba(214,214,212,0.08)] border border-[color:rgba(214,214,212,0.35)]"
                       : "text-[var(--color-text-muted)] hover:text-[var(--color-brand)] hover:bg-[var(--color-brand)]/5"
                   }`}
                 >
@@ -173,7 +173,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
                   onClick={onClose}
                   className={`block w-full text-center px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
                     isHomePage
-                      ? "text-white bg-black/40 hover:bg-black/60 border border-white/30"
+                      ? "text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-light)]"
                       : "text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand)]/90"
                   }`}
                 >

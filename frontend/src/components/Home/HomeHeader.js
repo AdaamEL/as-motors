@@ -18,16 +18,16 @@ const HomeHeader = ({ onMenuOpen, isHomePage = false }) => {
     <header className={`fixed top-0 left-0 right-0 z-40 px-6 py-4 flex items-center justify-between ${
       isHomePage 
         ? "" 
-        : "bg-[var(--color-bg)]"
+        : "bg-[var(--color-bg)] shadow-[0_2px_16px_rgba(15,15,15,0.06)]"
     }`}>
       {/* Hamburger left */}
       <button
         onClick={onMenuOpen}
-        className={`p-2 rounded-lg hover:bg-[var(--color-brand)]/10 transition-colors`}
+        className="p-2 rounded-lg hover:bg-black/10 transition-colors"
         aria-label="Menu"
       >
         <Menu className={`w-7 h-7 ${
-          isHomePage ? "text-white" : "text-[var(--color-text)]"
+          isHomePage ? "text-[var(--color-surface)]" : "text-[var(--color-text)]"
         }`} />
       </button>
 
@@ -37,14 +37,14 @@ const HomeHeader = ({ onMenuOpen, isHomePage = false }) => {
       </Link>
 
       {/* Auth buttons right */}
-      <div className="flex items-center gap-3">
+      <div className="hidden md:flex items-center gap-3">
         {isAuthenticated ? (
           <div className="flex items-center gap-3">
             <Link
               to="/profile"
               className={`px-5 py-2.5 text-base font-medium rounded-lg transition-colors ${
                 isHomePage
-                  ? "text-white hover:text-gray-200 hover:bg-white/10 border border-white/30"
+                  ? "text-[var(--color-surface)] hover:text-white hover:bg-black/20 border border-[color:rgba(214,214,212,0.55)]"
                   : "text-[var(--color-text-muted)] hover:text-[var(--color-brand)] hover:bg-[var(--color-brand)]/10"
               }`}
             >
@@ -54,7 +54,7 @@ const HomeHeader = ({ onMenuOpen, isHomePage = false }) => {
               onClick={handleLogout}
               className={`px-5 py-2.5 text-base font-medium rounded-lg transition-colors ${
                 isHomePage
-                  ? "text-white hover:text-gray-200 hover:bg-white/10 border border-white/30"
+                  ? "text-[var(--color-surface)] hover:text-white hover:bg-black/20 border border-[color:rgba(214,214,212,0.55)]"
                   : "text-[var(--color-text-muted)] hover:text-[var(--color-brand)] hover:bg-[var(--color-brand)]/10"
               }`}
             >
@@ -67,7 +67,7 @@ const HomeHeader = ({ onMenuOpen, isHomePage = false }) => {
               to="/login"
               className={`px-6 py-3 text-base font-medium rounded-lg transition-colors ${
                 isHomePage
-                  ? "text-white hover:text-gray-200 hover:bg-white/10 border border-white/30"
+                  ? "text-[var(--color-surface)] hover:text-white hover:bg-black/20 border border-[color:rgba(214,214,212,0.55)]"
                   : "text-[var(--color-text-muted)] hover:text-[var(--color-brand)] hover:bg-[var(--color-brand)]/10"
               }`}
             >
@@ -77,7 +77,7 @@ const HomeHeader = ({ onMenuOpen, isHomePage = false }) => {
               to="/register"
               className={`px-7 py-3 text-base font-semibold rounded-lg transition-colors ${
                 isHomePage
-                  ? "text-white bg-black/40 hover:bg-black/60 border border-white/30"
+                  ? "text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-light)]"
                   : "text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand)]/90"
               }`}
             >

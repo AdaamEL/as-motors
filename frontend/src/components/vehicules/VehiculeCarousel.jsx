@@ -9,6 +9,8 @@ const STATIC_VEHICULE_GALLERIES = {
     '/uploads/clio-alpine/clio-alpine-1.jpg',
     '/uploads/clio-alpine/clio-alpine-2.jpg',
     '/uploads/clio-alpine/clio-alpine-3.jpg',
+    '/uploads/clio-alpine/clio-alpine-4.jpg',
+    '/uploads/clio-alpine/clio-alpine-5.jpg',
   ],
   '2': [
     '/uploads/mercedes-a250e/mercedes-a250e-primary.jpg',

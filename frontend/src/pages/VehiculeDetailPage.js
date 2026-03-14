@@ -10,6 +10,14 @@ import api from '../services/api';
 import VehiculeCarousel from '../components/vehicules/VehiculeCarousel';
 import { Fuel, Settings, Users, Gauge, Calendar, ArrowLeft, AlertCircle, CheckCircle2, X } from 'lucide-react';
 
+const MODEL_BLURBS = {
+  "renault clio v alpine": "Sportivite accessible et caractere affirme. La Clio Alpine conjugue un chassis sport affine, un moteur essence vif et une finition exclusive pour une conduite engagee au quotidien.",
+  "renault clio alpine": "Sportivite accessible et caractere affirme. La Clio Alpine conjugue un chassis sport affine, un moteur essence vif et une finition exclusive pour une conduite engagee au quotidien.",
+  "mercedes a250e": "L'hybride rechargeable de la Classe A. La A250e allie la technologie EQ Power de Mercedes a un temperament sportif, pour une mobilite urbaine premium, econome et sans compromis.",
+  "mercedes classe a250e": "L'hybride rechargeable de la Classe A. La A250e allie la technologie EQ Power de Mercedes a un temperament sportif, pour une mobilite urbaine premium, econome et sans compromis.",
+  "mini cooper": "L'icone britannique dans toute son expression. Compacte, agile et irresistiblement stylee, la Mini Cooper incarne un plaisir de conduite unique, entre heritage et modernite audacieuse.",
+};
+
 /* ─── Devis Modal ─── */
 const DevisModal = ({ onClose }) => (
   <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -131,9 +139,9 @@ const VehiculeDetailPage = () => {
   if (!vehicule) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--color-bg)] pt-20">
-        <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
-        <p className="text-lg text-gray-500 dark:text-gray-400">Véhicule introuvable.</p>
-        <button onClick={() => navigate('/vehicules')} className="mt-4 text-brand dark:text-gold font-medium hover:underline">
+        <AlertCircle className="w-12 h-12 mb-4 text-[var(--color-text-muted)]" />
+        <p className="text-lg text-[var(--color-text-muted)]">Véhicule introuvable.</p>
+        <button onClick={() => navigate('/vehicules')} className="mt-4 font-medium hover:underline text-[var(--color-brand)]">
           ← Retour aux véhicules
         </button>
       </div>
@@ -147,12 +155,17 @@ const VehiculeDetailPage = () => {
     { icon: Gauge, label: "Puissance", value: `${vehicule.puissance || "N/A"} ch` },
   ];
 
+  const modelKey = `${vehicule.marque || ''} ${vehicule.modele || ''}`.toLowerCase().trim();
+  const vehicleIntro =
+    vehicule.description?.trim() ||
+    MODEL_BLURBS[modelKey] ||
+    "Un vehicule premium selectionne pour offrir style, confort et plaisir de conduite.";
+
   return (
     <div className="min-h-screen bg-[var(--color-bg)] pt-28">
       {showDevisModal && <DevisModal onClose={() => setShowDevisModal(false)} />}
 
-      {/* Back button bar */}
-      <div className="pt-24 pb-4 px-4 sm:px-6 max-w-7xl mx-auto">
+      <div className="pt-14 pb-5 px-4 sm:px-6 max-w-7xl mx-auto">
         <button
           onClick={() => navigate('/vehicules')}
           className="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
@@ -163,46 +176,66 @@ const VehiculeDetailPage = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+        <section className="mb-8 sm:mb-10 border border-[var(--color-border)] bg-[var(--color-bg)] rounded-3xl p-6 sm:p-8 lg:p-10">
+          <div className="max-w-4xl">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] uppercase tracking-[0.2em] font-semibold bg-[var(--color-brand)]/10 text-[var(--color-brand)]">
+              {vehicule.categorie || "Vehicule premium"}
+            </span>
+            <h1 className="mt-4 font-display text-2xl sm:text-3xl lg:text-3xl font-semibold text-[var(--color-text)] leading-[1.02]">
+              {vehicule.marque} {vehicule.modele}
+            </h1>
+            <p className="mt-4 text-base sm:text-lg text-[var(--color-text-muted)] max-w-3xl leading-snug">
+              {vehicleIntro}
+            </p>
 
-          {/* ═══ LEFT: Carousel (3/5 width on desktop) ═══ */}
-          <div className="lg:col-span-3">
-            <VehiculeCarousel vehiculeId={vehicule.id} />
-          </div>
-
-          {/* ═══ RIGHT: Info & Form (2/5 width on desktop) ═══ */}
-          <div className="lg:col-span-2 space-y-6">
-
-            {/* Title block */}
-            <div>
-              <span className="inline-block px-3 py-1 rounded-lg text-xs font-semibold bg-[var(--color-brand)]/10 text-[var(--color-brand)] mb-3">
-                {vehicule.categorie}
-              </span>
-              <h1 className="font-display text-3xl sm:text-4xl font-bold text-[var(--color-text)] leading-tight">
-                {vehicule.marque} {vehicule.modele}
-              </h1>
-            </div>
-
-            {/* Specs Grid */}
-            <div className="grid grid-cols-2 gap-3">
-              {specs.map(({ icon: Icon, label, value }) => (
-                <div key={label} className="flex items-center gap-3 p-3 rounded-xl bg-[var(--color-surface-alt)] border border-[var(--color-border)]">
-                  <div className="w-9 h-9 rounded-lg bg-[var(--color-surface)] flex items-center justify-center shadow-sm">
-                    <Icon className="w-4 h-4 text-[var(--color-brand)]" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-[var(--color-text-muted)]">{label}</p>
-                    <p className="text-sm font-semibold text-[var(--color-text)]">{value}</p>
-                  </div>
-                </div>
+            <div className="mt-6 flex flex-wrap gap-2.5">
+              {[vehicule.categorie || "Berline", vehicule.carburant || "Essence", vehicule.type_boite || "Automatique", `${vehicule.places || 5} places`].map((item) => (
+                <span key={item} className="inline-flex items-center px-3 py-1.5 rounded-full text-xs uppercase tracking-[0.14em] border border-[var(--color-border)] text-[var(--color-text-muted)]">
+                  {item}
+                </span>
               ))}
             </div>
+          </div>
+        </section>
 
-            {/* Pricing Table */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+
+          <div className="lg:col-span-7 space-y-7">
+            <div className="rounded-3xl border border-[var(--color-border)] p-4 sm:p-5">
+              <VehiculeCarousel vehiculeId={vehicule.id} />
+            </div>
+
+            <section className="rounded-3xl border border-[var(--color-border)] p-5 sm:p-6 bg-[var(--color-bg)]">
+              <h2 className="font-display text-2xl sm:text-3xl font-semibold text-[var(--color-text)]">Caracteristiques</h2>
+
+              <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {specs.map(({ icon: Icon, label, value }) => (
+                  <div key={label} className="flex items-center gap-3 p-3.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)]">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--color-brand)]/10 flex items-center justify-center">
+                      <Icon className="w-4 h-4 text-[var(--color-brand)]" />
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.15em] text-[var(--color-text-muted)]">{label}</p>
+                      <p className="text-sm font-semibold text-[var(--color-text)]">{value}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 border-t border-[var(--color-border)] pt-5">
+                <h3 className="text-sm uppercase tracking-[0.16em] font-semibold text-[var(--color-text)]">A retenir</h3>
+                <ul className="mt-3 space-y-1 text-sm leading-snug text-[var(--color-text-muted)]">
+                  <li>• Véhicule préparé et contrôlé avant chaque remise.</li>
+                  <li>• Devis personnalisé selon vos dates et votre besoin.</li>
+                  <li>• Accompagnement humain et reponse rapide.</li>
+                </ul>
+              </div>
+            </section>
+
             {pricing && (
-              <div className="rounded-2xl border border-[var(--color-border)] overflow-hidden">
-                <div className="px-5 py-4 bg-[var(--color-surface-alt)] border-b border-[var(--color-border)]">
-                  <h3 className="font-semibold text-[var(--color-text)] text-sm">Grille tarifaire indicative</h3>
+              <section className="rounded-3xl border border-[var(--color-border)] overflow-hidden">
+                <div className="px-5 py-4 border-b border-[var(--color-border)]">
+                  <h2 className="font-display text-2xl font-semibold text-[var(--color-text)]">Tarifs indicatifs</h2>
                 </div>
                 <div className="divide-y divide-[var(--color-border)]">
                   {[
@@ -211,24 +244,29 @@ const VehiculeDetailPage = () => {
                     { label: "72h week-end", price: pricing.prix72hWeekend },
                     { label: "Semaine", price: pricing.prixSemaine },
                   ].map(({ label, price }) => (
-                    <div key={label} className="flex items-center justify-between px-5 py-3">
-                      <span className="text-sm text-[var(--color-text-muted)]">{label}</span>
-                      <span className="text-sm font-bold text-[var(--color-text)]">{price}€</span>
+                    <div key={label} className="flex items-center justify-between px-5 py-3.5">
+                      <span className="text-sm uppercase tracking-[0.12em] text-[var(--color-text-muted)]">{label}</span>
+                      <span className="text-base font-semibold text-[var(--color-text)]">{price}€</span>
                     </div>
                   ))}
                 </div>
-                <div className="px-5 py-3 bg-[var(--color-surface-alt)]">
-                  <p className="text-xs text-[var(--color-text-muted)]">Tarifs indicatifs — devis personnalisé pour chaque demande.</p>
+                <div className="px-5 py-3 border-t border-[var(--color-border)]">
+                  <p className="text-xs text-[var(--color-text-muted)]">Tarifs indicatifs. Confirmation finale apres validation de la demande.</p>
                 </div>
-              </div>
+              </section>
             )}
+          </div>
 
-            {/* ── Reservation Form ── */}
-            <div className="rounded-2xl border border-[var(--color-border)] p-5 sm:p-6 bg-[var(--color-surface)]">
+          <aside className="lg:col-span-5">
+            <div className="rounded-3xl border border-[var(--color-border)] p-5 sm:p-6 bg-[var(--color-bg)] lg:sticky lg:top-28">
               <div className="flex items-center gap-2 mb-5">
                 <Calendar className="w-5 h-5 text-[var(--color-brand)]" />
-                <h3 className="font-semibold text-[var(--color-text)]">Réserver ce véhicule</h3>
+                <h2 className="font-display text-2xl font-semibold text-[var(--color-text)]">Demander un devis</h2>
               </div>
+
+              <p className="text-sm text-[var(--color-text-muted)] mb-5">
+                Selectionnez vos dates. Nous revenons rapidement avec un devis adapte.
+              </p>
 
               {error && (
                 <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200 mb-4">
@@ -279,19 +317,6 @@ const VehiculeDetailPage = () => {
                   </div>
                 </div>
 
-                {blockedRanges.length > 0 && (
-                  <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs">
-                    <p className="font-semibold text-amber-800 mb-1">Dates indisponibles :</p>
-                    <ul className="space-y-0.5 text-amber-700">
-                      {blockedRanges.map((r, idx) => (
-                        <li key={idx}>
-                          {new Date(r.date_debut).toLocaleDateString("fr-FR")} → {new Date(r.date_fin).toLocaleDateString("fr-FR")}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
                 {user ? (
                   <div>
                     <button
@@ -302,11 +327,11 @@ const VehiculeDetailPage = () => {
                       Demander un devis
                     </button>
                     <p className="text-xs text-[var(--color-text-muted)] text-center mt-3">
-                      Un devis personnalisé sera établi pour chaque demande.
+                      Sans engagement. Retour sous 24h ouvrées en general.
                     </p>
                   </div>
                 ) : (
-                  <div className="text-center p-5 rounded-xl bg-[var(--color-surface-alt)] border border-[var(--color-border)]">
+                  <div className="text-center p-5 rounded-xl border border-[var(--color-border)]">
                     <p className="text-sm text-[var(--color-text-muted)] mb-3">Connectez-vous pour réserver</p>
                     <button
                       type="button"
@@ -320,8 +345,7 @@ const VehiculeDetailPage = () => {
                 )}
               </form>
             </div>
-
-          </div>
+          </aside>
         </div>
       </div>
     </div>
