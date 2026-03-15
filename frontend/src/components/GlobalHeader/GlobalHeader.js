@@ -2,7 +2,8 @@ import React, { useContext, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { AuthContext } from "../../services/authContext";
-import logoClair from "../../styles/logo_clair.png";
+
+const logoSombre = "/logo_sombre_transparent.png";
 
 const GlobalHeader = () => {
   const { user, isAuthenticated, logout } = useContext(AuthContext);
@@ -24,7 +25,7 @@ const GlobalHeader = () => {
         <div className="flex justify-between items-center h-24">
           {/* Logo */}
           <Link to="/" className="flex-shrink-0">
-            <img src={logoClair} alt="AS Motors" className="h-16 transition-all" />
+            <img src={logoSombre} alt="AS Motors" className="h-12 sm:h-14 transition-all" />
           </Link>
 
           {/* Desktop Menu */}

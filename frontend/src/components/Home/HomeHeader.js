@@ -2,8 +2,9 @@ import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { AuthContext } from "../../services/authContext";
-import logoClair from "../../styles/logo_clair.png";
-import logoSombre from "../../styles/logo_sombre.png";
+
+const logoClair = "/logo_clair_transparent.png";
+const logoSombre = "/logo_sombre_transparent.png";
 
 const HomeHeader = ({ onMenuOpen, isHomePage = false }) => {
   const { user, isAuthenticated, logout } = useContext(AuthContext);
@@ -33,7 +34,7 @@ const HomeHeader = ({ onMenuOpen, isHomePage = false }) => {
 
       {/* Logo center - large */}
       <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 flex-shrink-0">
-        <img src={isHomePage ? logoSombre : logoClair} alt="AS Motors" className="h-28 transition-all" />
+        <img src={isHomePage ? logoClair : logoSombre} alt="AS Motors" className="h-20 sm:h-24 transition-all" />
       </Link>
 
       {/* Auth buttons right */}

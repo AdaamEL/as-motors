@@ -2,8 +2,9 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../services/authContext";
 import { Menu, X, ChevronRight } from "lucide-react";
-import logoClair from "../../styles/logo_clair.png";
-import logoSombre from "../../styles/logo_sombre.png";
+
+const logoClair = "/logo_clair_transparent.png";
+const logoSombre = "/logo_sombre_transparent.png";
 
 const navLinks = [
   { to: "/", label: "Accueil" },
@@ -48,8 +49,7 @@ const Navbar = () => {
           <div className="flex justify-between items-center h-24">
             {/* Logo */}
             <Link to="/" className="flex-shrink-0 relative z-10">
-              <img src={logoClair} alt="AS Motors" className="h-16 sm:h-[4.25rem] block dark:hidden transition-all" />
-              <img src={logoSombre} alt="AS Motors" className="h-16 sm:h-[4.25rem] hidden dark:block transition-all" />
+              <img src={logoSombre} alt="AS Motors" className="h-12 sm:h-14 transition-all" />
             </Link>
 
             {/* Desktop Nav */}
