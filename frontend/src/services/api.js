@@ -1,10 +1,7 @@
 import axios from 'axios';
 
-const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-const isMainDomain = hostname === 'as-motors.com' || hostname === 'www.as-motors.com';
-
-export const API_ROOT = process.env.REACT_APP_API_ROOT || (isMainDomain ? '' : 'https://as-motors.onrender.com');
-export const API_URL = process.env.REACT_APP_API_URL || (API_ROOT ? `${API_ROOT}/api` : '/api');
+export const API_ROOT = 'https://as-motors.onrender.com';
+export const API_URL = `${API_ROOT}/api`;
 
 const api = axios.create({
     baseURL: API_URL,
