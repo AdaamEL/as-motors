@@ -1,8 +1,9 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { API_URL } from "./api";
 
-const API = process.env.REACT_APP_API_URL || "https://as-motors.onrender.com/api";
+const API = API_URL;
 
 export const AuthContext = createContext({
   user: null,
