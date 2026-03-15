@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../services/authContext";
-import GoogleSignInButton from "../components/Auth/GoogleSignInButton";
 import { LogIn, AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
@@ -80,18 +79,6 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-
-          {/* Divider */}
-          <div className="relative flex items-center">
-            <div className="flex-1 border-t border-[var(--color-border)]" />
-            <span className="px-3 text-xs text-[var(--color-text-muted)]">ou</span>
-            <div className="flex-1 border-t border-[var(--color-border)]" />
-          </div>
-
-          {/* Google */}
-          <div className="flex justify-center">
-            <GoogleSignInButton onCredential={(cred) => console.log("Google credential:", cred)} />
-          </div>
 
           {/* Link */}
           <p className="text-center text-sm text-[var(--color-text-muted)]">

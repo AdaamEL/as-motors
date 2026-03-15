@@ -2,10 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const CONFIGURED_API = process.env.REACT_APP_API_URL || "https://as-motors.onrender.com/api";
-const API = CONFIGURED_API.includes("api.as-motors.com")
-  ? "https://as-motors.onrender.com/api"
-  : CONFIGURED_API;
+const API = process.env.REACT_APP_API_URL || "https://as-motors.onrender.com/api";
 
 export const AuthContext = createContext({
   user: null,
@@ -13,7 +10,6 @@ export const AuthContext = createContext({
   login: async () => {},
   logout: () => {},
   register: async () => {},
-  loginWithGoogle: async () => {},
 });
 
 export function AuthProvider({ children }) {
@@ -82,16 +78,6 @@ export function AuthProvider({ children }) {
       consent: !!consent,
     });
     // pas de login auto → écran “inscription OK”, puis redirection login
-  };
-
-  const loginWithGoogle = async (credential) => {
-    const res = await axios.post(`${API}/auth/google`, { credential });
-    const { token, user } = res.data;
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-    setIsAuthenticated(true);
-    setUser(user);
-    return user;
   };
 
   return (
