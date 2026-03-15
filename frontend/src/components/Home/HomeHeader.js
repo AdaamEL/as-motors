@@ -17,8 +17,8 @@ const HomeHeader = ({ onMenuOpen, isHomePage = false }) => {
 
   return (
     <header
-      style={{ top: "var(--safe-area-top)" }}
-      className={`fixed left-0 right-0 z-40 px-6 py-4 flex items-center justify-between ${
+      style={{ paddingTop: "calc(var(--safe-area-top) + 0.65rem)" }}
+      className={`fixed top-0 left-0 right-0 z-40 px-6 pb-3 sm:py-4 flex items-center justify-between ${
       isHomePage 
         ? "" 
         : "bg-[var(--color-bg)] shadow-[0_2px_16px_rgba(15,15,15,0.06)]"

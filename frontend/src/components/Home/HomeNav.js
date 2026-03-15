@@ -22,10 +22,9 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
       {/* Sidebar */}
       <div
         style={{
-          top: "var(--safe-area-top)",
-          height: "calc(100dvh - var(--safe-area-top))"
+          paddingTop: "var(--safe-area-top)"
         }}
-        className={`fixed left-0 w-64 max-w-[74vw] sm:w-72 sm:max-w-[80vw] z-50
+        className={`fixed top-0 left-0 h-[100dvh] w-64 max-w-[74vw] sm:w-72 sm:max-w-[80vw] z-50
           transform transition-transform duration-300 ease-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           ${
