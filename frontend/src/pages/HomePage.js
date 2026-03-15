@@ -34,7 +34,7 @@ const HomePage = () => {
   const activeSlide = slides[currentImageIndex] || slides[0];
 
   const handleMobileScroll = (event) => {
-    const viewportHeight = window.innerHeight || 1;
+    const viewportHeight = window.visualViewport?.height || window.innerHeight || 1;
     const nextIndex = Math.round(event.currentTarget.scrollTop / viewportHeight);
     if (nextIndex !== currentImageIndex && nextIndex >= 0 && nextIndex < totalSlides) {
       setCurrentImageIndex(nextIndex);
@@ -42,7 +42,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div className="relative w-full h-[100svh] overflow-hidden">
       {/* Hero Background */}
       <HomeHero
         currentImageIndex={currentImageIndex}
@@ -58,16 +58,16 @@ const HomePage = () => {
         aria-hidden="true"
       >
         {slides.map((slide) => (
-          <section key={slide.index} className="h-screen w-full home-mobile-snap-section" />
+          <section key={slide.index} className="h-[100svh] w-full home-mobile-snap-section" />
         ))}
       </div>
 
       {/* Mobile overlay: cinematic title + index */}
       <div className="md:hidden fixed inset-0 z-20 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/65" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/18 via-transparent to-black/45" />
         <Link
           to={activeSlide.to}
-          className="absolute left-6 bottom-10 text-white pointer-events-auto"
+          className="absolute left-6 bottom-[calc(env(safe-area-inset-bottom)+1.65rem)] text-white pointer-events-auto"
           aria-label={`Ouvrir ${activeSlide.label}`}
         >
           <h2 className="font-display text-4xl sm:text-5xl font-semibold tracking-tight leading-[0.95]">{activeSlide.label}</h2>

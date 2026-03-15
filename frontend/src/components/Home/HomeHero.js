@@ -10,11 +10,16 @@ const HomeHero = ({
   const [isPortrait, setIsPortrait] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [useDesktopFallback, setUseDesktopFallback] = useState(false);
+  const [mobileBasePath, setMobileBasePath] = useState(null);
+  const [mobileNextPath, setMobileNextPath] = useState(null);
+  const [mobileNextVisible, setMobileNextVisible] = useState(false);
   const blurTimerRef = useRef(null);
 
   const activeImages = isMobile && !useDesktopFallback ? mobileImages : desktopImages;
   const activeImageName = activeImages[currentImageIndex] || activeImages[0];
   const imagePath = activeImageName ? `/uploads/home_page/${activeImageName}.JPG` : "/uploads/automobile.png";
+
+  const isMobileSimpleMode = disableEffectsOnMobile && isMobile;
 
   // Handle image index change before paint to avoid sharp flash
   useLayoutEffect(() => {
@@ -39,6 +44,20 @@ const HomeHero = ({
       window.removeEventListener("resize", updateIsMobile);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isMobileSimpleMode) return;
+
+    if (!mobileBasePath) {
+      setMobileBasePath(imagePath);
+      return;
+    }
+
+    if (imagePath === mobileBasePath || imagePath === mobileNextPath) return;
+
+    setMobileNextVisible(false);
+    setMobileNextPath(imagePath);
+  }, [imagePath, isMobileSimpleMode, mobileBasePath, mobileNextPath]);
 
   useEffect(() => {
     return () => {
@@ -66,8 +85,61 @@ const HomeHero = ({
     }, 550);
   };
 
+  const handleImageError = (event) => {
+    if (isMobile && !useDesktopFallback) {
+      setUseDesktopFallback(true);
+      return;
+    }
+
+    event.currentTarget.onerror = null;
+    event.currentTarget.src = "/uploads/automobile.png";
+  };
+
+  const handleMobileNextLoad = (event) => {
+    const { naturalWidth, naturalHeight } = event.currentTarget;
+    setIsPortrait(naturalHeight > naturalWidth);
+
+    requestAnimationFrame(() => {
+      setMobileNextVisible(true);
+    });
+  };
+
+  const handleMobileTransitionEnd = () => {
+    if (!mobileNextPath || !mobileNextVisible) return;
+
+    setMobileBasePath(mobileNextPath);
+    setMobileNextPath(null);
+    setMobileNextVisible(false);
+  };
+
   return (
     <div className="fixed inset-0 overflow-hidden bg-black">
+      {isMobileSimpleMode && (
+        <>
+          <img
+            src={mobileBasePath || imagePath}
+            alt={`Background ${currentImageIndex + 1}`}
+            className="absolute inset-0 w-full h-full object-cover"
+            onError={handleImageError}
+          />
+
+          {mobileNextPath && (
+            <img
+              src={mobileNextPath}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out"
+              style={{ opacity: mobileNextVisible ? 1 : 0 }}
+              onLoad={handleMobileNextLoad}
+              onTransitionEnd={handleMobileTransitionEnd}
+              onError={handleImageError}
+            />
+          )}
+        </>
+      )}
+
+      {!isMobileSimpleMode && (
+        <>
       {isPortrait && !(disableEffectsOnMobile && isMobile) && (
         <img
           src={imagePath}
@@ -95,16 +167,10 @@ const HomeHero = ({
             : "filter 1900ms ease-out, opacity 1900ms ease-out, transform 1900ms ease-out",
         }}
         onLoad={handleImageLoad}
-        onError={(event) => {
-          if (isMobile && !useDesktopFallback) {
-            setUseDesktopFallback(true);
-            return;
-          }
-
-          event.currentTarget.onerror = null;
-          event.currentTarget.src = "/uploads/automobile.png";
-        }}
+        onError={handleImageError}
       />
+        </>
+      )}
     </div>
   );
 };
