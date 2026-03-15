@@ -24,15 +24,15 @@ const VehiculesPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen vehicle-grid-page pt-28">
-      <section className="vehicle-grid-shell pt-14 sm:pt-16 pb-8 sm:pb-10">
+    <div className="min-h-screen vehicle-grid-page pt-24 sm:pt-28">
+      <section className="vehicle-grid-shell pt-10 sm:pt-16 pb-6 sm:pb-10">
         <p className="vehicle-grid-kicker text-center">Catalogue</p>
         <h1 className="vehicle-grid-heading">Nos véhicules</h1>
       </section>
 
-      <section className="vehicle-grid-shell pb-14 sm:pb-20">
+      <section className="vehicle-grid-shell pb-10 sm:pb-20">
         {!loading && !error && vehicules.length > 0 && (
-          <p className="vehicle-grid-kicker mb-8">
+          <p className="vehicle-grid-kicker mb-6 sm:mb-8">
             {vehicules.length} véhicule{vehicules.length > 1 ? "s" : ""} disponible{vehicules.length > 1 ? "s" : ""}
           </p>
         )}

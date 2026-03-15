@@ -21,7 +21,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-80 max-w-[85vw] z-50
+        className={`fixed top-0 left-0 h-full w-64 max-w-[74vw] sm:w-72 sm:max-w-[80vw] z-50
           transform transition-transform duration-300 ease-out
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           ${
@@ -33,28 +33,28 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className={`flex items-center justify-between p-6 border-b ${
+          <div className={`flex items-center justify-between px-4 py-4 sm:px-5 sm:py-5 border-b ${
             isHomePage ? "border-[color:rgba(214,214,212,0.2)]" : "border-[var(--color-border)]"
           }`}>
             <button
               onClick={onClose}
-              className={`flex items-center gap-2 text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-2 text-xs sm:text-sm font-semibold transition-colors ${
                 isHomePage
                   ? "text-[color:rgba(214,214,212,0.76)] hover:text-[var(--color-surface)]"
                   : "text-[var(--color-text-muted)] hover:text-[var(--color-brand)]"
               }`}
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
               CLOSE
             </button>
           </div>
 
           {/* Links */}
-          <nav className="flex-1 overflow-y-auto py-8 px-6 space-y-2">
+          <nav className="flex-1 overflow-y-auto py-5 px-4 sm:py-6 sm:px-5 space-y-1.5 sm:space-y-2">
             <Link
               to="/"
               onClick={onClose}
-              className={`block px-4 py-4 text-3xl font-bold transition-colors ${
+              className={`block px-3 py-3 text-2xl sm:text-3xl font-bold transition-colors ${
                 isHomePage
                   ? "text-[var(--color-surface)] hover:text-[var(--color-brand)]"
                   : "text-[var(--color-text)] hover:text-[var(--color-brand)]"
@@ -66,7 +66,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
             <Link
               to="/vehicules"
               onClick={onClose}
-              className={`block px-4 py-4 text-3xl font-bold transition-colors ${
+              className={`block px-3 py-3 text-2xl sm:text-3xl font-bold transition-colors ${
                 isActive("/vehicules")
                   ? isHomePage
                     ? "text-[var(--color-brand)]"
@@ -82,7 +82,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
             <Link
               to="/contact"
               onClick={onClose}
-              className={`block px-4 py-4 text-3xl font-bold transition-colors ${
+              className={`block px-3 py-3 text-2xl sm:text-3xl font-bold transition-colors ${
                 isActive("/contact")
                   ? isHomePage
                     ? "text-[var(--color-brand)]"
@@ -97,13 +97,13 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
 
             {isAuthenticated && (
               <>
-                <div className={`h-px my-6 ${
+                <div className={`h-px my-4 sm:my-6 ${
                   isHomePage ? "bg-[color:rgba(214,214,212,0.2)]" : "bg-[var(--color-border)]"
                 }`} />
                 <Link
                   to="/profile"
                   onClick={onClose}
-                  className={`block px-4 py-4 text-3xl font-bold transition-colors ${
+                  className={`block px-3 py-3 text-2xl sm:text-3xl font-bold transition-colors ${
                     isActive("/profile")
                       ? isHomePage
                         ? "text-[var(--color-brand)]"
@@ -119,7 +119,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
                   <Link
                     to="/admin"
                     onClick={onClose}
-                    className={`block px-4 py-4 text-3xl font-bold transition-colors ${
+                    className={`block px-3 py-3 text-2xl sm:text-3xl font-bold transition-colors ${
                       isActive("/admin")
                         ? isHomePage
                           ? "text-[var(--color-brand)]"
@@ -137,7 +137,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
           </nav>
 
           {/* Footer */}
-          <div className={`p-6 border-t space-y-3 ${
+          <div className={`px-4 py-4 sm:px-5 sm:py-5 border-t space-y-2.5 sm:space-y-3 ${
             isHomePage ? "border-[color:rgba(214,214,212,0.2)]" : "border-[var(--color-border)]"
           }`}>
             {isAuthenticated ? (
@@ -147,7 +147,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
                   navigate("/login");
                   onClose();
                 }}
-                className={`w-full px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                className={`w-full px-3 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors ${
                   isHomePage
                     ? "text-[var(--color-surface)] hover:text-white bg-[color:rgba(214,214,212,0.08)] hover:bg-[color:rgba(214,214,212,0.16)] border border-[color:rgba(214,214,212,0.35)]"
                     : "text-[var(--color-text-muted)] hover:text-[var(--color-brand)] bg-[var(--color-brand)]/5 hover:bg-[var(--color-brand)]/10"
@@ -160,7 +160,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
                 <Link
                   to="/login"
                   onClick={onClose}
-                  className={`block w-full text-center px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                  className={`block w-full text-center px-3 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors ${
                     isHomePage
                       ? "text-[var(--color-surface)] hover:text-white hover:bg-[color:rgba(214,214,212,0.08)] border border-[color:rgba(214,214,212,0.35)]"
                       : "text-[var(--color-text-muted)] hover:text-[var(--color-brand)] hover:bg-[var(--color-brand)]/5"
@@ -171,7 +171,7 @@ const HomeNav = ({ isOpen, onClose, isHomePage = false }) => {
                 <Link
                   to="/register"
                   onClick={onClose}
-                  className={`block w-full text-center px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                  className={`block w-full text-center px-3 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors ${
                     isHomePage
                       ? "text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-light)]"
                       : "text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand)]/90"
