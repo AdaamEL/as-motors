@@ -21,19 +21,26 @@ exports.sendMessage = async (req, res) => {
     // Enregistrement dans la BDD
     await contactModel.sendMessage({ nom, email, sujet, contenu });
 
-    // Envoi d'un e-mail
-    await transporter.sendMail({
-      from: `"${nom}" <${email}>`,
-      to: process.env.EMAIL_TO,
-      subject: sujet,
-      text: contenu,
-      html: `<h3>Message de ${nom}</h3><p>${contenu}</p>`
-    });
+    // L'envoi email ne doit pas bloquer le formulaire si SMTP est indisponible.
+    try {
+      await transporter.sendMail({
+        from: `"${nom}" <${email}>`,
+        to: process.env.EMAIL_TO,
+        subject: sujet,
+        text: contenu,
+        html: `<h3>Message de ${nom}</h3><p>${contenu}</p>`
+      });
 
-    res.status(200).json({ message: "Message enregistré et e-mail envoyé avec succès." });
+      return res.status(200).json({ message: "Message enregistré et e-mail envoyé avec succès." });
+    } catch (mailErr) {
+      console.error("Erreur envoi email contact:", mailErr);
+      return res.status(200).json({
+        message: "Message enregistré. L'e-mail de notification n'a pas pu être envoyé."
+      });
+    }
   } catch (err) {
-    console.error("Erreur lors de l'envoi de l'e-mail :", err);
-    res.status(500).json({ message: "Erreur lors de l'envoi de l'e-mail." });
+    console.error("Erreur lors de l'enregistrement du message:", err);
+    res.status(500).json({ message: "Erreur lors de l'enregistrement du message." });
   }
 };
 

@@ -46,6 +46,9 @@
 /* --- Base Styles --- */
 html {
   font-size: 93.75%;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -54,6 +57,16 @@ body {
   font-family: 'Cormorant Garamond', 'Times New Roman', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
+  overscroll-behavior-x: none;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
   overflow-x: hidden;
 }
 
