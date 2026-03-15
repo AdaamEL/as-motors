@@ -113,13 +113,13 @@ const HomeHero = ({
   };
 
   return (
-    <div className="fixed left-0 top-0 w-full h-[100svh] h-[100dvh] overflow-hidden bg-black">
+    <div className="fixed left-0 top-0 w-full max-w-full h-[100dvh] overflow-hidden bg-black">
       {isMobileSimpleMode && (
         <>
           <img
             src={mobileBasePath || imagePath}
             alt={`Background ${currentImageIndex + 1}`}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-contain"
             onError={handleImageError}
           />
 
@@ -128,7 +128,7 @@ const HomeHero = ({
               src={mobileNextPath}
               alt=""
               aria-hidden="true"
-              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out"
+              className="absolute inset-0 w-full h-full object-contain transition-opacity duration-500 ease-out"
               style={{ opacity: mobileNextVisible ? 1 : 0 }}
               onLoad={handleMobileNextLoad}
               onTransitionEnd={handleMobileTransitionEnd}

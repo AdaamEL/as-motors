@@ -5,15 +5,15 @@ import { MapPin, Phone, Mail, Clock, Instagram, MessageCircle, Ghost, Music2 } f
 const Footer = () => {
   return (
     <footer className="mt-auto w-full bg-[var(--color-bg)] border-t border-[var(--color-border)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 sm:gap-6 lg:gap-8">
 
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <h3 className="font-display text-xl font-bold text-[var(--color-text)] mb-3">
+            <h3 className="font-display text-lg sm:text-xl font-bold text-[var(--color-text)] mb-2 sm:mb-3">
               AS <span className="text-[var(--color-brand)]">MOTOR'S</span>
             </h3>
-            <p className="text-sm text-[var(--color-text-muted)] leading-relaxed max-w-xs">
+            <p className="text-xs sm:text-sm text-[var(--color-text-muted)] leading-relaxed max-w-xs">
               Location premium de citadines haut de gamme. 
               L'élégance urbaine à portée de main.
             </p>
@@ -21,17 +21,17 @@ const Footer = () => {
 
           {/* Navigation */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text)] mb-4">
+            <h4 className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[var(--color-text)] mb-3 sm:mb-4">
               Navigation
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2 sm:space-y-3">
               {[
                 { to: "/", label: "Accueil" },
                 { to: "/vehicules", label: "Véhicules" },
                 { to: "/contact", label: "Contact" },
               ].map(({ to, label }) => (
                 <li key={to}>
-                  <Link to={to} className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand)] transition-colors">
+                  <Link to={to} className="text-xs sm:text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand)] transition-colors">
                     {label}
                   </Link>
                 </li>
@@ -41,10 +41,10 @@ const Footer = () => {
 
           {/* Légal */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text)] mb-4">
+            <h4 className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[var(--color-text)] mb-3 sm:mb-4">
               Légal
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2 sm:space-y-3">
               {[
                 { to: "/legal/mentions", label: "Mentions légales" },
                 { to: "/legal/privacy", label: "Confidentialité" },
@@ -52,7 +52,7 @@ const Footer = () => {
                 { to: "/legal/terms", label: "CGU" },
               ].map(({ to, label }) => (
                 <li key={to}>
-                  <Link to={to} className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand)] transition-colors">
+                  <Link to={to} className="text-xs sm:text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand)] transition-colors">
                     {label}
                   </Link>
                 </li>
@@ -62,62 +62,62 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text)] mb-4">
+            <h4 className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[var(--color-text)] mb-3 sm:mb-4">
               Contact
             </h4>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-2.5 text-sm text-[var(--color-text-muted)]">
-                <MapPin className="w-4 h-4 text-[var(--color-brand)] flex-shrink-0 mt-0.5" />
+            <ul className="space-y-2 sm:space-y-3">
+              <li className="flex items-start gap-2 text-xs sm:text-sm text-[var(--color-text-muted)]">
+                <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-brand)] flex-shrink-0 mt-0.5" />
                 <span>Paris, France</span>
               </li>
-              <li className="flex items-start gap-2.5 text-sm text-[var(--color-text-muted)]">
-                <Phone className="w-4 h-4 text-[var(--color-brand)] flex-shrink-0 mt-0.5" />
+              <li className="flex items-start gap-2 text-xs sm:text-sm text-[var(--color-text-muted)]">
+                <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-brand)] flex-shrink-0 mt-0.5" />
                 <span>+33 (0)7 83 36 67 60</span>
               </li>
-              <li className="flex items-start gap-2.5 text-sm text-[var(--color-text-muted)]">
-                <Mail className="w-4 h-4 text-[var(--color-brand)] flex-shrink-0 mt-0.5" />
+              <li className="flex items-start gap-2 text-xs sm:text-sm text-[var(--color-text-muted)]">
+                <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-brand)] flex-shrink-0 mt-0.5" />
                 <span>contact@as-motors.fr</span>
               </li>
             </ul>
 
-            <div className="mt-5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text)] mb-3">Réseaux</p>
-              <div className="flex items-center gap-3">
+            <div className="mt-4 sm:mt-5">
+              <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[var(--color-text)] mb-2 sm:mb-3">Réseaux</p>
+              <div className="flex items-center gap-2 sm:gap-3">
                 <a
                   href="https://www.instagram.com/as_motors75/"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Instagram AS Motors"
-                  className="p-2.5 rounded-xl text-[var(--color-text)] bg-[var(--color-bg)] border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-all duration-300 hover:-translate-y-0.5"
+                  className="p-2 sm:p-2.5 rounded-xl text-[var(--color-text)] bg-[var(--color-bg)] border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-all duration-300 hover:-translate-y-0.5"
                 >
-                  <Instagram className="w-4 h-4" />
+                  <Instagram className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </a>
                 <a
                   href="https://www.snapchat.com/add/as_motors75"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Snapchat AS Motors"
-                  className="p-2.5 rounded-xl text-[var(--color-text)] bg-[var(--color-bg)] border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-all duration-300 hover:-translate-y-0.5"
+                  className="p-2 sm:p-2.5 rounded-xl text-[var(--color-text)] bg-[var(--color-bg)] border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-all duration-300 hover:-translate-y-0.5"
                 >
-                  <Ghost className="w-4 h-4" />
+                  <Ghost className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </a>
                 <a
                   href="https://wa.me/33783366760"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="WhatsApp AS Motors"
-                  className="p-2.5 rounded-xl text-[var(--color-text)] bg-[var(--color-bg)] border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-all duration-300 hover:-translate-y-0.5"
+                  className="p-2 sm:p-2.5 rounded-xl text-[var(--color-text)] bg-[var(--color-bg)] border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-all duration-300 hover:-translate-y-0.5"
                 >
-                  <MessageCircle className="w-4 h-4" />
+                  <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </a>
                 <a
                   href="https://www.tiktok.com/@as.motors75"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="TikTok AS Motors"
-                  className="p-2.5 rounded-xl text-[var(--color-text)] bg-[var(--color-bg)] border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-all duration-300 hover:-translate-y-0.5"
+                  className="p-2 sm:p-2.5 rounded-xl text-[var(--color-text)] bg-[var(--color-bg)] border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-all duration-300 hover:-translate-y-0.5"
                 >
-                  <Music2 className="w-4 h-4" />
+                  <Music2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </a>
               </div>
             </div>
@@ -125,12 +125,12 @@ const Footer = () => {
 
           {/* Horaires */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text)] mb-4">
+            <h4 className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-[var(--color-text)] mb-3 sm:mb-4">
               Horaires
             </h4>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-2.5 text-sm text-[var(--color-text-muted)]">
-                <Clock className="w-4 h-4 text-[var(--color-brand)] flex-shrink-0 mt-0.5" />
+            <ul className="space-y-2 sm:space-y-3">
+              <li className="flex items-start gap-2 text-xs sm:text-sm text-[var(--color-text-muted)]">
+                <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--color-brand)] flex-shrink-0 mt-0.5" />
                 <div>
                   <p>Lun - Ven : 9h - 19h</p>
                   <p>Sam : 10h - 17h</p>
@@ -141,11 +141,11 @@ const Footer = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-8 pt-5 border-t border-[var(--color-border)] flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="mt-6 sm:mt-8 pt-4 sm:pt-5 border-t border-[var(--color-border)] flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
           <p className="text-xs text-[var(--color-text-muted)]/80">
             © {new Date().getFullYear()} AS Motors. Tous droits réservés.
           </p>
-          <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--color-text-muted)]/80">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[11px] sm:text-xs text-[var(--color-text-muted)]/80">
             <span>Conçu avec soin à Paris</span>
             <span className="opacity-40">•</span>
             <Link to="/legal/privacy" className="hover:text-[var(--color-brand)] transition-colors">Confidentialité</Link>

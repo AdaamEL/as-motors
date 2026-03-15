@@ -8,42 +8,44 @@
 
 /* --- CSS Custom Properties --- */
 :root {
-  --color-brand: #672D0F;
-  --color-brand-light: #4F2009;
-  --color-gold: #672D0F;
-  --color-gold-light: #4F2009;
-  --color-bg: #D6D6D4;
-  --color-surface: #D6D6D4;
-  --color-surface-alt: #D6D6D4;
+  --color-brand: #5C240C;
+  --color-brand-light: #461A08;
+  --color-gold: #5C240C;
+  --color-gold-light: #461A08;
+  --color-bg: #EEE9DF;
+  --color-surface: #EEE9DF;
+  --color-surface-alt: #EEE9DF;
   --color-text: #0F0F0F;
   --color-text-muted: #363634;
   --color-border: rgba(15, 15, 15, 0.18);
   --color-border-subtle: rgba(15, 15, 15, 0.1);
-  --nav-bg: rgba(214, 214, 212, 0.95);
+  --nav-bg: rgba(238, 233, 223, 0.95);
   --nav-border: rgba(15, 15, 15, 0.16);
-  --color-editorial-bg: #D6D6D4;
+  --color-editorial-bg: #EEE9DF;
   --color-editorial-ink: #0F0F0F;
-  --color-editorial-accent: #672D0F;
-  --color-editorial-card: #D6D6D4;
+  --color-editorial-accent: #5C240C;
+  --color-editorial-card: #EEE9DF;
 }
 
 .dark {
-  --color-brand: #672D0F;
-  --color-brand-light: #4F2009;
-  --color-bg: #D6D6D4;
-  --color-surface: #D6D6D4;
-  --color-surface-alt: #D6D6D4;
+  --color-brand: #5C240C;
+  --color-brand-light: #461A08;
+  --color-bg: #EEE9DF;
+  --color-surface: #EEE9DF;
+  --color-surface-alt: #EEE9DF;
   --color-text: #0F0F0F;
   --color-text-muted: #363634;
   --color-border: rgba(15, 15, 15, 0.18);
   --color-border-subtle: rgba(15, 15, 15, 0.1);
-  --nav-bg: rgba(214, 214, 212, 0.95);
+  --nav-bg: rgba(238, 233, 223, 0.95);
   --nav-border: rgba(15, 15, 15, 0.16);
 }
 
 /* --- Base Styles --- */
 html {
   font-size: 93.75%;
+  width: 100%;
+  overflow-x: clip;
 }
 
 body {
@@ -53,6 +55,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  width: 100%;
+}
+
+#root {
+  overflow-x: clip;
 }
 
 /* Scrollbar premium */

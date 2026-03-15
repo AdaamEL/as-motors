@@ -34,7 +34,7 @@ const HomeHeader = ({ onMenuOpen, isHomePage = false }) => {
 
       {/* Logo center - large */}
       <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 flex-shrink-0">
-        <img src={isHomePage ? logoClair : logoSombre} alt="AS Motors" className="h-20 sm:h-24 transition-all" />
+        <img src={isHomePage ? logoClair : logoSombre} alt="AS Motors" className="h-16 sm:h-24 max-w-[64vw] sm:max-w-none object-contain transition-all" />
       </Link>
 
       {/* Auth buttons right */}
