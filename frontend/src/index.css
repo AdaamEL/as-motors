@@ -8,6 +8,8 @@
 
 /* --- CSS Custom Properties --- */
 :root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --color-brand: #672D0F;
   --color-brand-light: #4F2009;
   --color-gold: #672D0F;
