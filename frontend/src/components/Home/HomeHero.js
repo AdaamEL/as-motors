@@ -113,7 +113,7 @@ const HomeHero = ({
   };
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-black">
+    <div className="fixed left-0 top-0 w-full h-[100svh] h-[100dvh] overflow-hidden bg-black">
       {isMobileSimpleMode && (
         <>
           <img

@@ -2,7 +2,10 @@ import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const API = process.env.REACT_APP_API_URL || "https://as-motors.onrender.com/api";
+const CONFIGURED_API = process.env.REACT_APP_API_URL || "https://as-motors.onrender.com/api";
+const API = CONFIGURED_API.includes("api.as-motors.com")
+  ? "https://as-motors.onrender.com/api"
+  : CONFIGURED_API;
 
 export const AuthContext = createContext({
   user: null,

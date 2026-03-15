@@ -42,7 +42,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="relative w-full h-[100svh] overflow-hidden">
+    <div className="relative w-full h-[100svh] h-[100dvh] overflow-hidden">
       {/* Hero Background */}
       <HomeHero
         currentImageIndex={currentImageIndex}
@@ -53,17 +53,17 @@ const HomePage = () => {
 
       {/* Mobile vertical snap track */}
       <div
-        className="md:hidden absolute inset-0 z-10 overflow-y-auto no-scrollbar home-mobile-snap"
+        className="md:hidden absolute left-0 top-0 w-full h-[100svh] h-[100dvh] z-10 overflow-y-auto no-scrollbar home-mobile-snap"
         onScroll={handleMobileScroll}
         aria-hidden="true"
       >
         {slides.map((slide) => (
-          <section key={slide.index} className="h-[100svh] w-full home-mobile-snap-section" />
+          <section key={slide.index} className="h-[100svh] h-[100dvh] w-full home-mobile-snap-section" />
         ))}
       </div>
 
       {/* Mobile overlay: cinematic title + index */}
-      <div className="md:hidden fixed inset-0 z-20 pointer-events-none">
+      <div className="md:hidden fixed left-0 top-0 w-full h-[100svh] h-[100dvh] z-20 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-black/18 via-transparent to-black/45" />
         <Link
           to={activeSlide.to}
