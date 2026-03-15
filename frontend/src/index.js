@@ -13,8 +13,10 @@ root.render(
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js').catch((err) => {
-      console.error('Service worker registration failed:', err);
-    });
+    navigator.serviceWorker.getRegistrations()
+      .then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
+      .catch((err) => {
+        console.error('Service worker cleanup failed:', err);
+      });
   });
 }
