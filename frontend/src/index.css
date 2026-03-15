@@ -226,6 +226,10 @@ body {
       @apply gap-y-10;
     }
 
+    .vehicle-grid-media {
+      aspect-ratio: 4/4.4;
+    }
+
     .vehicle-grid-content {
       @apply pt-4;
     }
