@@ -26,7 +26,7 @@ const AppContent = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-bg)] text-[var(--color-text)]">
+    <div className="min-h-screen w-full overflow-x-hidden flex flex-col bg-[var(--color-bg)] text-[var(--color-text)]">
       {!isHomePage && <HomeHeader onMenuOpen={() => setMenuOpen(true)} />}
       {!isHomePage && <HomeNav isOpen={menuOpen} onClose={() => setMenuOpen(false)} />}
 
