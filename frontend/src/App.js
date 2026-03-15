@@ -30,7 +30,7 @@ const AppContent = () => {
       {!isHomePage && <HomeHeader onMenuOpen={() => setMenuOpen(true)} />}
       {!isHomePage && <HomeNav isOpen={menuOpen} onClose={() => setMenuOpen(false)} />}
 
-      <main className="flex-grow">
+      <main className={`flex-grow ${!isHomePage ? "pt-3 sm:pt-0" : ""}`}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/vehicules" element={<VehiculesPage />} />

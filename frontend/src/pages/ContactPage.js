@@ -26,6 +26,7 @@ const ContactPage = () => {
   const [sujet, setSujet] = useState("");
   const [contenu, setContenu] = useState("");
   const [success, setSuccess] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
   const [sending, setSending] = useState(false);
 
   const autoSubjects = useMemo(() => Object.values(DEMANDE_SUBJECTS), []);
@@ -52,14 +53,16 @@ const ContactPage = () => {
   }, [isAuthenticated, user]);
 
   const isFormComplete =
-    nom.trim().length > 0 &&
+    nom.trim().length >= 2 &&
     email.trim().length > 0 &&
-    sujet.trim().length > 0 &&
-    contenu.trim().length > 0;
+    sujet.trim().length >= 2 &&
+    sujet.trim().length <= 120 &&
+    contenu.trim().length >= 10;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSending(true);
+    setErrorMessage("");
 
     try {
       await sendMessage({ nom, email, sujet, contenu });
@@ -72,6 +75,13 @@ const ContactPage = () => {
       setContenu("");
     } catch (error) {
       console.error("Erreur lors de l'envoi du message :", error);
+      const backendErrors = error?.response?.data?.errors;
+      const backendMessage =
+        Array.isArray(backendErrors) && backendErrors.length > 0
+          ? backendErrors[0]?.msg
+          : error?.response?.data?.message;
+
+      setErrorMessage(backendMessage || "Une erreur est survenue. Veuillez reessayer.");
       setSuccess(false);
     } finally {
       setSending(false);
@@ -207,7 +217,7 @@ const ContactPage = () => {
             {success === false && (
               <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-200">
                 <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-                <p className="text-sm text-red-700">Une erreur est survenue. Veuillez reessayer.</p>
+                <p className="text-sm text-red-700">{errorMessage || "Une erreur est survenue. Veuillez reessayer."}</p>
               </div>
             )}
 
@@ -241,12 +251,14 @@ const ContactPage = () => {
             </div>
             <div>
               <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--color-text-muted)" }}>Sujet</label>
-              <input type="text" className="input-premium" value={sujet} onChange={(e) => setSujet(e.target.value)} required />
+              <input type="text" minLength={2} maxLength={120} className="input-premium" value={sujet} onChange={(e) => setSujet(e.target.value)} required />
             </div>
             <div>
               <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--color-text-muted)" }}>Message</label>
               <textarea
                 className="input-premium !h-36 resize-none"
+                minLength={10}
+                maxLength={800}
                 value={contenu}
                 onChange={(e) => setContenu(e.target.value.slice(0, 800))}
                 required
