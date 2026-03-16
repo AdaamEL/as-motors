@@ -11,13 +11,12 @@ const HomePage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const desktopHeroImages = useMemo(
-    () => ["Home_1", "Home_2", "Home_3"],
+    () => ["desktop-1.jpg", "desktop-2.jpg", "desktop-3.jpg"],
     []
   );
 
-  // Vous pouvez remplacer ces noms par des images mobiles dediees (ex: Home_1_mobile).
   const mobileHeroImages = useMemo(
-    () => ["Home_1", "Home_2", "Home_3"],
+    () => ["mobile-1.jpg", "mobile-2.jpg", "mobile-3.jpg"],
     []
   );
 

@@ -3,8 +3,8 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 const HomeHero = ({
   currentImageIndex = 0,
   disableEffectsOnMobile = false,
-  desktopImages = ["Home_1", "Home_2", "Home_3", "Home_4", "Home_5"],
-  mobileImages = ["Home_1", "Home_2", "Home_3", "Home_4", "Home_5"],
+  desktopImages = ["desktop-1.jpg", "desktop-2.jpg", "desktop-3.jpg"],
+  mobileImages = ["mobile-1.jpg", "mobile-2.jpg", "mobile-3.jpg"],
 }) => {
   const [showBlur, setShowBlur] = useState(true);
   const [isPortrait, setIsPortrait] = useState(false);
@@ -17,7 +17,10 @@ const HomeHero = ({
 
   const activeImages = isMobile && !useDesktopFallback ? mobileImages : desktopImages;
   const activeImageName = activeImages[currentImageIndex] || activeImages[0];
-  const imagePath = activeImageName ? `/uploads/home_page/${activeImageName}.JPG` : "/uploads/automobile.png";
+  const activeDirectory = isMobile && !useDesktopFallback ? "mobile" : "desktop";
+  const imagePath = activeImageName
+    ? `/uploads/home_page/${activeDirectory}/${activeImageName}`
+    : "/uploads/automobile.png";
 
   const isMobileSimpleMode = disableEffectsOnMobile && isMobile;
 
