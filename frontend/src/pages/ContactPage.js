@@ -120,7 +120,7 @@ const ContactPage = () => {
               <div className="mt-4 space-y-4">
             {[
               { icon: MapPin, title: "Adresse", text: "Paris, France" },
-              { icon: Phone, title: "Téléphone", text: "+33 (0)7 83 36 67 60" },
+              { icon: Phone, title: "Téléphone", text: "+33 (0)6 29 55 56 19" },
               { icon: Mail, title: "Email", text: "contact@as-motors.fr" },
             ].map(({ icon: Icon, title, text }) => (
               <div key={title} className="flex items-start gap-3 p-4 rounded-2xl border" style={{ borderColor: "var(--color-border)" }}>
