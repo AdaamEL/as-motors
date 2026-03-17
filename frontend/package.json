@@ -29,6 +29,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "images:rw2": "./scripts/convert-rw2.sh",
+    "images:rw2:force": "./scripts/convert-rw2.sh --force",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
