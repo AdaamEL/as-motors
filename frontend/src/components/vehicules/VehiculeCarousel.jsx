@@ -17,6 +17,12 @@ const STATIC_VEHICULE_GALLERIES = {
     '/uploads/mercedes-a250e/mercedes-a250e-1.jpg',
     '/uploads/mercedes-a250e/mercedes-a250e-2.jpg',
     '/uploads/mercedes-a250e/mercedes-a250e-3.jpg',
+    '/uploads/mercedes-a250e/mercedes-a250e-4.jpg',
+    '/uploads/mercedes-a250e/mercedes-a250e-5.jpg',
+    '/uploads/mercedes-a250e/mercedes-a250e-6.jpg',
+    '/uploads/mercedes-a250e/mercedes-a250e-7.jpg',
+    '/uploads/mercedes-a250e/mercedes-a250e-8.jpg',
+    '/uploads/mercedes-a250e/mercedes-a250e-9.jpg'
   ],
   default: ['/uploads/default.jpg'],
 };
