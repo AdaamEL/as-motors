@@ -204,7 +204,7 @@ body {
 
   .vehicle-grid-media {
     @apply relative w-full overflow-hidden;
-    aspect-ratio: 3/4;
+    aspect-ratio: 7/9;
     background: var(--color-bg);
   }
 

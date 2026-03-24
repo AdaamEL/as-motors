@@ -266,8 +266,8 @@ const VehiculeDetailPage = () => {
             )}
           </div>
 
-          <aside className="lg:col-span-5 lg:self-start">
-            <div className="rounded-3xl border border-[var(--color-border)] p-5 sm:p-6 bg-[var(--color-bg)] lg:sticky lg:top-32">
+          <aside className="lg:col-span-5 lg:self-start lg:sticky lg:top-32 h-fit">
+            <div className="rounded-3xl border border-[var(--color-border)] p-5 sm:p-6 bg-[var(--color-bg)]">
               <div className="flex items-center gap-2 mb-5">
                 <Calendar className="w-5 h-5 text-[var(--color-brand)]" />
                 <h2 className="font-display text-2xl font-semibold text-[var(--color-text)]">Demander un devis</h2>
