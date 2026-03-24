@@ -204,18 +204,12 @@ body {
 
   .vehicle-grid-media {
     @apply relative w-full overflow-hidden;
-    aspect-ratio: 4/3;
+    aspect-ratio: 4/5;
     background: var(--color-bg);
   }
 
   .vehicle-grid-media img {
     @apply w-full h-full object-cover transition-opacity duration-500;
-  }
-
-  @media (min-width: 1024px) {
-    .vehicle-grid-media {
-      aspect-ratio: 16/10;
-    }
   }
 
   .vehicle-grid-content {

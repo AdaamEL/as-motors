@@ -10,18 +10,7 @@ const escapeHtml = (value = "") => String(value)
 
 const toParagraphs = (value = "") => escapeHtml(value).replace(/\n/g, "<br />");
 
-const normalizeEnv = (value = "") => {
-  const trimmed = String(value).trim();
-  return trimmed.replace(/^['\"](.*)['\"]$/, "$1").trim();
-};
-
-const sanitizeSmtpUser = (value = "") => normalizeEnv(value).replace(/\s+/g, "");
-const sanitizeSmtpPass = (value = "") => normalizeEnv(value).replace(/\s+/g, "").replace(/[\u200B-\u200D\uFEFF]/g, "");
-
-const smtpUser = sanitizeSmtpUser(process.env.EMAIL_USER);
-const smtpPass = sanitizeSmtpPass(process.env.EMAIL_PASS);
-
-const emailUser = smtpUser.toLowerCase();
+const emailUser = String(process.env.EMAIL_USER || "").trim().toLowerCase();
 const isGmail = emailUser.endsWith("@gmail.com");
 
 const smtpHost = process.env.SMTP_HOST || (isGmail ? 'smtp.gmail.com' : 'smtp.office365.com');
@@ -33,20 +22,10 @@ const transporter = nodemailer.createTransport({
   port: smtpPort,
   secure: smtpSecure,
   auth: {
-    user: smtpUser,
-    pass: smtpPass,
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
   tls: { ciphers: 'SSLv3' }
-});
-
-console.log("SMTP contact config:", {
-  host: smtpHost,
-  port: smtpPort,
-  secure: smtpSecure,
-  user: smtpUser,
-  passLength: smtpPass.length,
-  hasUser: Boolean(smtpUser),
-  hasPass: Boolean(smtpPass),
 });
 
 exports.sendMessage = async (req, res) => {

@@ -4,38 +4,17 @@ const reservationModel = require('../models/reservationModel');
 const userModel = require('../models/userModel');
 const vehiculeModel = require('../models/vehiculeModel');
 
-const normalizeEnv = (value = "") => {
-    const trimmed = String(value).trim();
-    return trimmed.replace(/^['\"](.*)['\"]$/, "$1").trim();
-};
-
-const sanitizeSmtpUser = (value = "") => normalizeEnv(value).replace(/\s+/g, "");
-const sanitizeSmtpPass = (value = "") => normalizeEnv(value).replace(/\s+/g, "").replace(/[\u200B-\u200D\uFEFF]/g, "");
-
-const smtpUser = sanitizeSmtpUser(process.env.EMAIL_USER);
-const smtpPass = sanitizeSmtpPass(process.env.EMAIL_PASS);
-
 const transporter = nodemailer.createTransport({
     host: 'smtp.office365.com',
     port: 587,
     secure: false,
     auth: {
-        user: smtpUser,
-        pass: smtpPass,
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
     },
     tls: {
         ciphers: 'SSLv3',
     }
-});
-
-console.log("SMTP reservation config:", {
-    host: 'smtp.office365.com',
-    port: 587,
-    secure: false,
-    user: smtpUser,
-    passLength: smtpPass.length,
-    hasUser: Boolean(smtpUser),
-    hasPass: Boolean(smtpPass),
 });
 
 // --- CONFIGURATION DES PRIX PAR VÉHICULE (En dur) ---
