@@ -9,8 +9,11 @@ const normalizeEnv = (value = "") => {
     return trimmed.replace(/^['\"](.*)['\"]$/, "$1").trim();
 };
 
-const smtpUser = normalizeEnv(process.env.EMAIL_USER);
-const smtpPass = normalizeEnv(process.env.EMAIL_PASS);
+const sanitizeSmtpUser = (value = "") => normalizeEnv(value).replace(/\s+/g, "");
+const sanitizeSmtpPass = (value = "") => normalizeEnv(value).replace(/\s+/g, "").replace(/[\u200B-\u200D\uFEFF]/g, "");
+
+const smtpUser = sanitizeSmtpUser(process.env.EMAIL_USER);
+const smtpPass = sanitizeSmtpPass(process.env.EMAIL_PASS);
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.office365.com',
@@ -23,6 +26,16 @@ const transporter = nodemailer.createTransport({
     tls: {
         ciphers: 'SSLv3',
     }
+});
+
+console.log("SMTP reservation config:", {
+    host: 'smtp.office365.com',
+    port: 587,
+    secure: false,
+    user: smtpUser,
+    passLength: smtpPass.length,
+    hasUser: Boolean(smtpUser),
+    hasPass: Boolean(smtpPass),
 });
 
 // --- CONFIGURATION DES PRIX PAR VÉHICULE (En dur) ---
