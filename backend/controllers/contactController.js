@@ -10,7 +10,15 @@ const escapeHtml = (value = "") => String(value)
 
 const toParagraphs = (value = "") => escapeHtml(value).replace(/\n/g, "<br />");
 
-const emailUser = String(process.env.EMAIL_USER || "").trim().toLowerCase();
+const normalizeEnv = (value = "") => {
+  const trimmed = String(value).trim();
+  return trimmed.replace(/^['\"](.*)['\"]$/, "$1").trim();
+};
+
+const smtpUser = normalizeEnv(process.env.EMAIL_USER);
+const smtpPass = normalizeEnv(process.env.EMAIL_PASS);
+
+const emailUser = smtpUser.toLowerCase();
 const isGmail = emailUser.endsWith("@gmail.com");
 
 const smtpHost = process.env.SMTP_HOST || (isGmail ? 'smtp.gmail.com' : 'smtp.office365.com');
@@ -22,8 +30,8 @@ const transporter = nodemailer.createTransport({
   port: smtpPort,
   secure: smtpSecure,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: smtpUser,
+    pass: smtpPass,
   },
   tls: { ciphers: 'SSLv3' }
 });

@@ -4,13 +4,21 @@ const reservationModel = require('../models/reservationModel');
 const userModel = require('../models/userModel');
 const vehiculeModel = require('../models/vehiculeModel');
 
+const normalizeEnv = (value = "") => {
+    const trimmed = String(value).trim();
+    return trimmed.replace(/^['\"](.*)['\"]$/, "$1").trim();
+};
+
+const smtpUser = normalizeEnv(process.env.EMAIL_USER);
+const smtpPass = normalizeEnv(process.env.EMAIL_PASS);
+
 const transporter = nodemailer.createTransport({
     host: 'smtp.office365.com',
     port: 587,
     secure: false,
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: smtpUser,
+        pass: smtpPass,
     },
     tls: {
         ciphers: 'SSLv3',

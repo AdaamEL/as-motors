@@ -9,6 +9,11 @@ dotenv.config();
 
 const app = express();
 
+// Render is behind a reverse proxy; trust first hop for correct client IP handling.
+if (process.env.RENDER || process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Rate limiting (global + endpoints sensibles)
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
