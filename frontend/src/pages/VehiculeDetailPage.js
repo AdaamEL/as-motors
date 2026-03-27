@@ -13,9 +13,11 @@ import { Fuel, Settings, Users, Gauge, Calendar, ArrowLeft, AlertCircle, CheckCi
 const MODEL_BLURBS = {
   "renault clio v alpine": "Sportivite accessible et caractere affirme. La Clio Alpine conjugue un chassis sport affine, un moteur essence vif et une finition exclusive pour une conduite engagee au quotidien.",
   "renault clio alpine": "Sportivite accessible et caractere affirme. La Clio Alpine conjugue un chassis sport affine, un moteur essence vif et une finition exclusive pour une conduite engagee au quotidien.",
-  "mercedes a250e": "L'hybride rechargeable de la Classe A. La A250e allie la technologie EQ Power de Mercedes a un temperament sportif, pour une mobilite urbaine premium, econome et sans compromis.",
-  "mercedes classe a250e": "L'hybride rechargeable de la Classe A. La A250e allie la technologie EQ Power de Mercedes a un temperament sportif, pour une mobilite urbaine premium, econome et sans compromis.",
-  "mini cooper": "L'icone britannique dans toute son expression. Compacte, agile et irresistiblement stylee, la Mini Cooper incarne un plaisir de conduite unique, entre heritage et modernite audacieuse.",
+  "mercedes a250e": "Mercedes Classe A 250e (221 ch) avec Pack AMG, toit ouvrant, siege electrique, Apple CarPlay, aide au stationnement, eclairage LED, modes Eco/Confort/Sport, chargeur smartphone sans fil et camera 360.",
+  "mercedes classe a250e": "Mercedes Classe A 250e (221 ch) avec Pack AMG, toit ouvrant, siege electrique, Apple CarPlay, aide au stationnement, eclairage LED, modes Eco/Confort/Sport, chargeur smartphone sans fil et camera 360.",
+  "mini cooper": "Cooper Camden 136 ch avec Apple CarPlay, aides a la conduite, toit ouvrant panoramique, couleur exclusive, eclairage LED d'interieur et systeme audio Harman Kardon.",
+  "bmw 120i": "BMW 120i noire: 3 cylindres 1.5L turbo (170 ch, 280 Nm), boite auto DCT7 traction, 0 a 100 km/h en ~7,8 s, vitesse max ~226 km/h, conso ~5,3 L/100 km, 4,36 m, 1 450 kg, coffre 300L. Options: Pack exterieur M, jantes 18\", Apple CarPlay, toit ouvrant panoramique, sieges chauffants, full LED/LED advanced, Harman Kardon, camera de recul et radar.",
+  "bmw serie 1 120i": "BMW 120i noire: 3 cylindres 1.5L turbo (170 ch, 280 Nm), boite auto DCT7 traction, 0 a 100 km/h en ~7,8 s, vitesse max ~226 km/h, conso ~5,3 L/100 km, 4,36 m, 1 450 kg, coffre 300L. Options: Pack exterieur M, jantes 18\", Apple CarPlay, toit ouvrant panoramique, sieges chauffants, full LED/LED advanced, Harman Kardon, camera de recul et radar.",
 };
 
 /* ─── Devis Modal ─── */
