@@ -4,14 +4,6 @@ import { ChevronLeft, ChevronRight, Expand } from 'lucide-react';
 
 // --- MAPPING STATIQUE DES GALERIES ---
 const STATIC_VEHICULE_GALLERIES = {
-  '1': [
-    '/uploads/clio-alpine/clio-alpine-primary.jpg',
-    '/uploads/clio-alpine/clio-alpine-1.jpg',
-    '/uploads/clio-alpine/clio-alpine-2.jpg',
-    '/uploads/clio-alpine/clio-alpine-3.jpg',
-    '/uploads/clio-alpine/clio-alpine-4.jpg',
-    '/uploads/clio-alpine/clio-alpine-5.jpg',
-  ],
   '2': [
     '/uploads/mercedes-a250e/mercedes-a250e-primary.jpg',
     '/uploads/mercedes-a250e/mercedes-a250e-1.jpg',
@@ -23,6 +15,25 @@ const STATIC_VEHICULE_GALLERIES = {
     '/uploads/mercedes-a250e/mercedes-a250e-7.jpg',
     '/uploads/mercedes-a250e/mercedes-a250e-8.jpg',
     '/uploads/mercedes-a250e/mercedes-a250e-9.jpg'
+  ],
+  '3': [
+    '/uploads/mini-cooper/mini-cooper-primary.JPG',
+    '/uploads/mini-cooper/mini-cooper-1.JPG',
+    '/uploads/mini-cooper/mini-cooper-2.JPG',
+    '/uploads/mini-cooper/mini-cooper-3.JPG',
+    '/uploads/mini-cooper/mini-cooper-4.JPG',
+    '/uploads/mini-cooper/mini-cooper-5.JPG',
+    '/uploads/mini-cooper/mini-cooper-6.JPG',
+    '/uploads/mini-cooper/mini-cooper-7.JPG',
+  ],
+  '6': [
+    '/uploads/bmw-serie-1/bmw-serie-1-primary.JPG',
+    '/uploads/bmw-serie-1/bmw-serie-1-1.JPG',
+    '/uploads/bmw-serie-1/bmw-serie-1-2.JPG',
+    '/uploads/bmw-serie-1/bmw-serie-1-3.JPG',
+    '/uploads/bmw-serie-1/bmw-serie-1-4.JPG',
+    '/uploads/bmw-serie-1/bmw-serie-1-5.JPG',
+    '/uploads/bmw-serie-1/bmw-serie-1-6.JPG',
   ],
   default: ['/uploads/default.jpg'],
 };
