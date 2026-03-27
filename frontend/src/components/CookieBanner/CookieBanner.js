@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { recordConsentDecision } from "../../services/analytics";
 
 const COOKIE_KEY = "cookieConsent";
 
@@ -29,6 +30,8 @@ const CookieBanner = ({ discrete = false }) => {
       date: new Date().toISOString(),
     };
     localStorage.setItem(COOKIE_KEY, JSON.stringify(payload));
+    recordConsentDecision(value, nextPrefs);
+    window.dispatchEvent(new CustomEvent("cookie-consent-updated", { detail: payload }));
     setPrefs(nextPrefs);
     setVisible(false);
     setShowSettings(false);

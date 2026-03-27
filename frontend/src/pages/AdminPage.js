@@ -4,14 +4,42 @@ import { AuthContext } from "../services/authContext";
 import api, { API_ROOT } from "../services/api";
 import {
   CalendarCheck, MessageSquare, Users, Loader2, Trash2, CheckCircle2,
-  XCircle, FileText, Upload, Eye, Shield, UserCircle
+  XCircle, Upload, Eye, Shield, UserCircle, BarChart3, RefreshCw
 } from "lucide-react";
+import { getLocalTrackingDashboard } from "../services/analytics";
 
 const tabs = [
   { id: "reservations", label: "Réservations", icon: CalendarCheck },
   { id: "messages", label: "Messages", icon: MessageSquare },
   { id: "users", label: "Utilisateurs", icon: Users },
+  { id: "tracking", label: "Tracking", icon: BarChart3 },
 ];
+
+const Sparkline = ({ data = [] }) => {
+  const width = 100;
+  const height = 36;
+  const max = Math.max(1, ...data.map((point) => point.count || 0));
+  const points = data
+    .map((point, index) => {
+      const x = data.length > 1 ? (index / (data.length - 1)) * width : width / 2;
+      const y = height - ((point.count || 0) / max) * (height - 4) - 2;
+      return `${x},${Number.isFinite(y) ? y : height - 2}`;
+    })
+    .join(" ");
+
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-10" aria-hidden="true">
+      <polyline
+        fill="none"
+        stroke="var(--color-brand)"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        points={points}
+      />
+    </svg>
+  );
+};
 
 export default function AdminPage() {
   const { user } = useContext(AuthContext);
@@ -26,6 +54,10 @@ export default function AdminPage() {
   const [uploadingId, setUploadingId] = useState(null);
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState("");
+  const [tracking, setTracking] = useState(() => getLocalTrackingDashboard(14));
+  const [trackingLoading, setTrackingLoading] = useState(false);
+  const [trackingSource, setTrackingSource] = useState("local");
+  const [trackingNotice, setTrackingNotice] = useState("");
 
   // Protection
   useEffect(() => {
@@ -65,6 +97,29 @@ export default function AdminPage() {
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const refreshTracking = async () => {
+      setTrackingLoading(true);
+      try {
+        const res = await api.get("/analytics/overview?days=14");
+        setTracking(res.data);
+        setTrackingSource("ga4");
+        setTrackingNotice("");
+      } catch (err) {
+        setTracking(getLocalTrackingDashboard(14));
+        setTrackingSource("local");
+        setTrackingNotice("GA4 indisponible ou non configure. Affichage des donnees locales consenties.");
+      } finally {
+        setTrackingLoading(false);
+      }
+    };
+
+    refreshTracking();
+    window.addEventListener("cookie-consent-updated", refreshTracking);
+
+    return () => window.removeEventListener("cookie-consent-updated", refreshTracking);
   }, []);
 
   const handleDelete = async (endpoint, id) => {
@@ -148,6 +203,14 @@ export default function AdminPage() {
     <td className={`px-5 py-4 ${className}`}>{children}</td>
   );
 
+  const getTabCount = (id) => {
+    if (id === "reservations") return data.reservations.length;
+    if (id === "messages") return data.messages.length;
+    if (id === "users") return data.users.length;
+    if (id === "tracking") return tracking.totalPageViews;
+    return 0;
+  };
+
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
       {/* Header */}
@@ -181,7 +244,7 @@ export default function AdminPage() {
                   ? "bg-brand-50 dark:bg-brand/20 text-brand dark:text-gold"
                   : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
               }`}>
-                {id === "reservations" ? data.reservations.length : id === "messages" ? data.messages.length : data.users.length}
+                {getTabCount(id)}
               </span>
             </button>
           ))}
@@ -366,6 +429,106 @@ export default function AdminPage() {
                   )}
                 </tbody>
               </TableWrapper>
+            )}
+
+            {tab === "tracking" && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Vue tracking</h2>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Source: {trackingSource === "ga4" ? "GA4 global" : "Local navigateur"} ({tracking.windowDays} derniers jours).
+                    </p>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      setTrackingLoading(true);
+                      try {
+                        const res = await api.get("/analytics/overview?days=14");
+                        setTracking(res.data);
+                        setTrackingSource("ga4");
+                        setTrackingNotice("");
+                      } catch {
+                        setTracking(getLocalTrackingDashboard(14));
+                        setTrackingSource("local");
+                        setTrackingNotice("GA4 indisponible ou non configure. Affichage des donnees locales consenties.");
+                      } finally {
+                        setTrackingLoading(false);
+                      }
+                    }}
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${trackingLoading ? "animate-spin" : ""}`} />
+                    Actualiser
+                  </button>
+                </div>
+
+                {trackingNotice && (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-300">
+                    {trackingNotice}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
+                    <p className="text-xs uppercase tracking-wider text-gray-400">Pages vues</p>
+                    <p className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{tracking.totalPageViews}</p>
+                  </div>
+                  <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
+                    <p className="text-xs uppercase tracking-wider text-gray-400">Utilisateurs actifs</p>
+                    <p className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{tracking.activeUsers ?? 0}</p>
+                  </div>
+                  <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
+                    <p className="text-xs uppercase tracking-wider text-gray-400">Pages uniques</p>
+                    <p className="mt-1 text-2xl font-semibold text-emerald-600 dark:text-emerald-400">{tracking.uniquePages}</p>
+                  </div>
+                  <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
+                    <p className="text-xs uppercase tracking-wider text-gray-400">Mise a jour</p>
+                    <p className="mt-1 text-sm font-semibold text-amber-600 dark:text-amber-400">
+                      {tracking.lastUpdate
+                        ? new Date(tracking.lastUpdate).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
+                        : "-"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">Evolution quotidienne</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{tracking.windowDays} derniers jours</p>
+                    <Sparkline data={tracking.dailyViews} />
+                    <div className="mt-2 flex justify-between text-[10px] text-gray-400">
+                      <span>{tracking.dailyViews[0]?.label || "-"}</span>
+                      <span>{tracking.dailyViews[tracking.dailyViews.length - 1]?.label || "-"}</span>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">Top pages</p>
+                    <div className="mt-3 space-y-2.5">
+                      {tracking.topPages.length === 0 ? (
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Aucune donnee disponible pour le moment.</p>
+                      ) : (
+                        tracking.topPages.map((item) => {
+                          const max = Math.max(1, ...tracking.topPages.map((entry) => entry.count));
+                          const width = `${Math.max(6, (item.count / max) * 100)}%`;
+                          return (
+                            <div key={item.path}>
+                              <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300 mb-1">
+                                <span className="truncate pr-2">{item.path}</span>
+                                <span className="font-semibold">{item.count}</span>
+                              </div>
+                              <div className="h-1.5 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                                <div className="h-full rounded-full" style={{ width, backgroundColor: "var(--color-brand)" }} />
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
           </>
         )}

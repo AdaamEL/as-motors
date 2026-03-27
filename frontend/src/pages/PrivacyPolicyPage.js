@@ -36,6 +36,7 @@ const PrivacyPolicyPage = () => {
             <li>Relation client et support</li>
             <li>Envoi d’informations liées à la réservation</li>
             <li>Sécurité et prévention de la fraude</li>
+            <li>Mesure d'audience du site après consentement</li>
           </ul>
         </Section>
 
@@ -43,7 +44,7 @@ const PrivacyPolicyPage = () => {
           <ul className="list-disc pl-5 space-y-1.5">
             <li>Exécution du contrat (réservation)</li>
             <li>Intérêt légitime (sécurité et prévention de fraude)</li>
-            <li>Consentement (communication marketing si applicable)</li>
+            <li>Consentement (analytics et communication marketing si applicable)</li>
           </ul>
         </Section>
 
@@ -63,8 +64,16 @@ const PrivacyPolicyPage = () => {
           <p>Hébergeur, services d’e-mail et outils techniques nécessaires au fonctionnement. Aucune revente de données.</p>
         </Section>
 
+        <Section title="Minimisation et proportionnalite">
+          <p>Nous collectons uniquement les donnees strictement necessaires au service, avec des acces limites selon les besoins metier.</p>
+        </Section>
+
         <Section title="Vos droits">
-          <p>Accès, rectification, suppression, limitation, opposition, portabilité. Contact : <strong>contact@as-motors.fr</strong></p>
+          <p>Accès, rectification, suppression, limitation, opposition, portabilité, retrait du consentement. Contact : <strong>contact@as-motors.fr</strong></p>
+        </Section>
+
+        <Section title="Exercice de vos droits">
+          <p>Pour toute demande RGPD, precisez votre identite, l'objet de la demande et toute information utile. Une reponse est apportee dans les delais legaux applicables.</p>
         </Section>
 
         <Section title="Réclamation">

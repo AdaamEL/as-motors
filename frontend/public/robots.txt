@@ -1,3 +1,9 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin
+Disallow: /profile
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://as-motors.fr/sitemap.xml

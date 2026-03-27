@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
@@ -19,14 +19,36 @@ import HomeNav from "./components/Home/HomeNav";
 import Footer from "./components/Footer/Footer";
 import CookieBanner from "./components/CookieBanner/CookieBanner";
 import AuthProvider from "./services/authContext";
+import SeoManager from "./components/SEO/SeoManager";
+import { initAnalyticsIfAllowed, trackPageView } from "./services/analytics";
 
 const AppContent = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
   const [menuOpen, setMenuOpen] = useState(false);
 
+  useEffect(() => {
+    initAnalyticsIfAllowed();
+  }, []);
+
+  useEffect(() => {
+    initAnalyticsIfAllowed();
+    trackPageView(`${location.pathname}${location.search}`);
+  }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    const onConsentUpdated = () => {
+      initAnalyticsIfAllowed();
+      trackPageView(`${window.location.pathname}${window.location.search}`);
+    };
+
+    window.addEventListener("cookie-consent-updated", onConsentUpdated);
+    return () => window.removeEventListener("cookie-consent-updated", onConsentUpdated);
+  }, []);
+
   return (
     <div className="min-h-screen w-full overflow-x-hidden flex flex-col bg-[var(--color-bg)] text-[var(--color-text)]">
+      <SeoManager />
       {!isHomePage && <HomeHeader onMenuOpen={() => setMenuOpen(true)} />}
       {!isHomePage && <HomeNav isOpen={menuOpen} onClose={() => setMenuOpen(false)} />}
 

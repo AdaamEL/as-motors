@@ -63,11 +63,13 @@ const vehiculeRoutes = require('./routes/vehiculeRoutes');
 const authRoutes = require('./routes/authRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
 
 app.use('/api/vehicules', vehiculeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/reservations', reservationRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 const PORT = 5000;
 app.listen(PORT, () => {
