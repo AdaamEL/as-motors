@@ -74,6 +74,41 @@ const getAuthToken = async (credentials) => {
 const parseMetric = (row, index = 0) => Number(row?.metricValues?.[index]?.value || 0);
 const parseDimension = (row, index = 0) => row?.dimensionValues?.[index]?.value || "";
 
+const getRealtimeData = async (token, propertyId) => {
+  const realtimeEndpoint = `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runRealtimeReport`;
+
+  try {
+    const [realtimeTotals, realtimeTopPages] = await Promise.all([
+      postJson(realtimeEndpoint, token, {
+        metrics: [{ name: "activeUsers" }],
+      }),
+      postJson(realtimeEndpoint, token, {
+        dimensions: [{ name: "pagePath" }],
+        metrics: [{ name: "activeUsers" }],
+        orderBys: [{ metric: { metricName: "activeUsers" }, desc: true }],
+        limit: 8,
+      }),
+    ]);
+
+    const realtimeActiveUsers = parseMetric(realtimeTotals?.rows?.[0], 0);
+    const realtimeTopPagesData = (realtimeTopPages?.rows || []).map((row) => ({
+      path: parseDimension(row, 0) || "/",
+      count: parseMetric(row, 0),
+    }));
+
+    return {
+      realtimeActiveUsers,
+      realtimeTopPages: realtimeTopPagesData,
+    };
+  } catch (error) {
+    // Realtime API can be empty or temporarily unavailable; keep aggregated report working.
+    return {
+      realtimeActiveUsers: 0,
+      realtimeTopPages: [],
+    };
+  }
+};
+
 const getTrackingOverview = async (req, res) => {
   try {
     const credentials = getGaCredentials();
@@ -90,7 +125,7 @@ const getTrackingOverview = async (req, res) => {
 
     const token = await getAuthToken(credentials);
 
-    const [totals, daily, topPages] = await Promise.all([
+    const [totals, daily, topPages, realtime] = await Promise.all([
       postJson(endpoint, token, {
         dateRanges: [dateRange],
         metrics: [{ name: "screenPageViews" }, { name: "activeUsers" }],
@@ -108,6 +143,7 @@ const getTrackingOverview = async (req, res) => {
         orderBys: [{ metric: { metricName: "screenPageViews" }, desc: true }],
         limit: 8,
       }),
+      getRealtimeData(token, credentials.propertyId),
     ]);
 
     const totalPageViews = parseMetric(totals?.rows?.[0], 0);
@@ -138,10 +174,12 @@ const getTrackingOverview = async (req, res) => {
       windowDays: days,
       totalPageViews,
       activeUsers,
+      realtimeActiveUsers: realtime.realtimeActiveUsers,
       uniquePages: topPagesData.length,
       consentAccepted: null,
       consentRefused: null,
       topPages: topPagesData,
+      realtimeTopPages: realtime.realtimeTopPages,
       dailyViews,
       lastUpdate: new Date().toISOString(),
     });

@@ -59,6 +59,22 @@ export default function AdminPage() {
   const [trackingSource, setTrackingSource] = useState("local");
   const [trackingNotice, setTrackingNotice] = useState("");
 
+  const refreshTracking = async () => {
+    setTrackingLoading(true);
+    try {
+      const res = await api.get("/analytics/overview?days=14");
+      setTracking(res.data);
+      setTrackingSource("ga4");
+      setTrackingNotice("");
+    } catch (err) {
+      setTracking(getLocalTrackingDashboard(14));
+      setTrackingSource("local");
+      setTrackingNotice("GA4 indisponible ou non configure. Affichage des donnees locales consenties.");
+    } finally {
+      setTrackingLoading(false);
+    }
+  };
+
   // Protection
   useEffect(() => {
     if (!user || user.role !== "admin") {
@@ -100,27 +116,21 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    const refreshTracking = async () => {
-      setTrackingLoading(true);
-      try {
-        const res = await api.get("/analytics/overview?days=14");
-        setTracking(res.data);
-        setTrackingSource("ga4");
-        setTrackingNotice("");
-      } catch (err) {
-        setTracking(getLocalTrackingDashboard(14));
-        setTrackingSource("local");
-        setTrackingNotice("GA4 indisponible ou non configure. Affichage des donnees locales consenties.");
-      } finally {
-        setTrackingLoading(false);
-      }
-    };
-
     refreshTracking();
     window.addEventListener("cookie-consent-updated", refreshTracking);
 
     return () => window.removeEventListener("cookie-consent-updated", refreshTracking);
   }, []);
+
+  useEffect(() => {
+    if (tab !== "tracking") return undefined;
+
+    const intervalId = window.setInterval(() => {
+      refreshTracking();
+    }, 15000);
+
+    return () => window.clearInterval(intervalId);
+  }, [tab]);
 
   const handleDelete = async (endpoint, id) => {
     if (!window.confirm("Confirmer la suppression ?")) return;
@@ -189,12 +199,12 @@ export default function AdminPage() {
   /* ── Shared table wrapper ── */
   const TableWrapper = ({ children }) => (
     <div className="overflow-x-auto rounded-2xl bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 shadow-premium">
-      <table className="w-full text-sm">{children}</table>
+      <table className="w-full text-base">{children}</table>
     </div>
   );
 
   const Th = ({ children }) => (
-    <th className="text-left px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+    <th className="text-left px-5 py-3.5 text-sm font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
       {children}
     </th>
   );
@@ -218,7 +228,7 @@ export default function AdminPage() {
         <div className="max-w-6xl mx-auto">
           <div className="gold-accent mb-6" />
           <h1 className="section-heading mb-2">Administration</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-base text-gray-500 dark:text-gray-400">
             Gérez les réservations, messages et utilisateurs
           </p>
         </div>
@@ -231,7 +241,7 @@ export default function AdminPage() {
             <button
               key={id}
               onClick={() => setTab(id)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-base font-medium transition-all ${
                 tab === id
                   ? "bg-white dark:bg-[#111827] text-gray-900 dark:text-white shadow-sm"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
@@ -239,7 +249,7 @@ export default function AdminPage() {
             >
               <Icon className="w-4 h-4" />
               {label}
-              <span className={`ml-1 text-xs px-1.5 py-0.5 rounded-md ${
+              <span className={`ml-1 text-sm px-1.5 py-0.5 rounded-md ${
                 tab === id
                   ? "bg-brand-50 dark:bg-brand/20 text-brand dark:text-gold"
                   : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
@@ -288,12 +298,12 @@ export default function AdminPage() {
                       data.reservations.map((r) => (
                         <tr key={r.id} className="hover:bg-gray-50/50 dark:hover:bg-white/[0.02] transition-colors">
                           <Td>
-                            <div className="font-medium text-gray-900 dark:text-white text-sm">{r.user_nom} {r.user_prenom}</div>
-                            <div className="text-xs text-gray-400 dark:text-gray-500">{r.email}</div>
+                            <div className="font-medium text-gray-900 dark:text-white text-base">{r.user_nom} {r.user_prenom}</div>
+                            <div className="text-sm text-gray-400 dark:text-gray-500">{r.email}</div>
                           </Td>
                           <Td className="font-medium text-gray-900 dark:text-white">{r.vehicule_marque}</Td>
                           <Td>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
                               {new Date(r.date_debut).toLocaleDateString("fr-FR", { day: "2-digit", month: "short" })}
                               {" → "}
                               {new Date(r.date_fin).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" })}
@@ -301,7 +311,7 @@ export default function AdminPage() {
                           </Td>
                           <Td className="font-semibold text-gray-900 dark:text-white">{r.montant_total}€</Td>
                           <Td>
-                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-semibold border ${
                               r.statut === "confirmée"
                                 ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20"
                                 : r.statut === "annulée"
@@ -436,27 +446,13 @@ export default function AdminPage() {
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Vue tracking</h2>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       Source: {trackingSource === "ga4" ? "GA4 global" : "Local navigateur"} ({tracking.windowDays} derniers jours).
                     </p>
                   </div>
                   <button
-                    onClick={async () => {
-                      setTrackingLoading(true);
-                      try {
-                        const res = await api.get("/analytics/overview?days=14");
-                        setTracking(res.data);
-                        setTrackingSource("ga4");
-                        setTrackingNotice("");
-                      } catch {
-                        setTracking(getLocalTrackingDashboard(14));
-                        setTrackingSource("local");
-                        setTrackingNotice("GA4 indisponible ou non configure. Affichage des donnees locales consenties.");
-                      } finally {
-                        setTrackingLoading(false);
-                      }
-                    }}
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                    onClick={refreshTracking}
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${trackingLoading ? "animate-spin" : ""}`} />
                     Actualiser
@@ -464,26 +460,26 @@ export default function AdminPage() {
                 </div>
 
                 {trackingNotice && (
-                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-300">
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-300">
                     {trackingNotice}
                   </div>
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
-                    <p className="text-xs uppercase tracking-wider text-gray-400">Pages vues</p>
+                    <p className="text-sm uppercase tracking-wider text-gray-400">Pages vues</p>
                     <p className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{tracking.totalPageViews}</p>
                   </div>
                   <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
-                    <p className="text-xs uppercase tracking-wider text-gray-400">Utilisateurs actifs</p>
+                    <p className="text-sm uppercase tracking-wider text-gray-400">Utilisateurs actifs</p>
                     <p className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{tracking.activeUsers ?? 0}</p>
                   </div>
                   <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
-                    <p className="text-xs uppercase tracking-wider text-gray-400">Pages uniques</p>
-                    <p className="mt-1 text-2xl font-semibold text-emerald-600 dark:text-emerald-400">{tracking.uniquePages}</p>
+                    <p className="text-sm uppercase tracking-wider text-gray-400">Visiteurs en direct</p>
+                    <p className="mt-1 text-2xl font-semibold text-emerald-600 dark:text-emerald-400">{tracking.realtimeActiveUsers ?? 0}</p>
                   </div>
                   <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
-                    <p className="text-xs uppercase tracking-wider text-gray-400">Mise a jour</p>
+                    <p className="text-sm uppercase tracking-wider text-gray-400">Mise a jour</p>
                     <p className="mt-1 text-sm font-semibold text-amber-600 dark:text-amber-400">
                       {tracking.lastUpdate
                         ? new Date(tracking.lastUpdate).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
@@ -495,7 +491,7 @@ export default function AdminPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">Evolution quotidienne</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{tracking.windowDays} derniers jours</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{tracking.windowDays} derniers jours</p>
                     <Sparkline data={tracking.dailyViews} />
                     <div className="mt-2 flex justify-between text-[10px] text-gray-400">
                       <span>{tracking.dailyViews[0]?.label || "-"}</span>
@@ -505,16 +501,20 @@ export default function AdminPage() {
 
                   <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">Top pages</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {tracking.realtimeTopPages?.length ? "Temps reel (utilisateurs actifs)" : "Periode selectionnee (pages vues)"}
+                    </p>
                     <div className="mt-3 space-y-2.5">
-                      {tracking.topPages.length === 0 ? (
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Aucune donnee disponible pour le moment.</p>
+                      {(tracking.realtimeTopPages?.length ? tracking.realtimeTopPages : tracking.topPages).length === 0 ? (
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Aucune donnee disponible pour le moment.</p>
                       ) : (
-                        tracking.topPages.map((item) => {
-                          const max = Math.max(1, ...tracking.topPages.map((entry) => entry.count));
+                        (tracking.realtimeTopPages?.length ? tracking.realtimeTopPages : tracking.topPages).map((item) => {
+                          const baseList = tracking.realtimeTopPages?.length ? tracking.realtimeTopPages : tracking.topPages;
+                          const max = Math.max(1, ...baseList.map((entry) => entry.count));
                           const width = `${Math.max(6, (item.count / max) * 100)}%`;
                           return (
                             <div key={item.path}>
-                              <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300 mb-1">
+                              <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300 mb-1">
                                 <span className="truncate pr-2">{item.path}</span>
                                 <span className="font-semibold">{item.count}</span>
                               </div>

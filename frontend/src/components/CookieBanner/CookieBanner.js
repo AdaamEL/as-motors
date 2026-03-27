@@ -42,12 +42,12 @@ const CookieBanner = ({ discrete = false }) => {
   if (discrete) {
     return (
       <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 z-40 sm:max-w-md">
-        <div className="p-4 sm:p-5 rounded-2xl bg-[var(--color-surface)]/95 backdrop-blur-md border border-[var(--color-border)] shadow-[0_12px_28px_rgba(0,0,0,0.14)]">
+        <div className="p-4 sm:p-5 rounded-2xl bg-black/75 backdrop-blur-md border border-white/20 shadow-[0_12px_28px_rgba(0,0,0,0.35)]">
           <div className="flex items-start gap-3">
             <div className="flex-1 min-w-0">
-              <p className="text-sm leading-relaxed text-[var(--color-text)]">
+              <p className="text-base leading-relaxed text-white">
                 Nous utilisons des cookies essentiels.{" "}
-                <Link to="/legal/cookies" className="font-medium text-[var(--color-brand)] hover:text-[var(--color-brand)]/80 underline underline-offset-2">
+                <Link to="/legal/cookies" className="font-semibold text-white underline underline-offset-2 hover:text-white/80">
                   En savoir plus
                 </Link>
               </p>
@@ -55,14 +55,13 @@ const CookieBanner = ({ discrete = false }) => {
             <div className="flex gap-2 ml-2 flex-shrink-0 pt-0.5">
               <button
                 onClick={() => saveConsent("all", { essential: true, analytics: true })}
-                className="px-4 py-2 rounded-lg text-sm font-semibold text-white hover:text-white/85 transition-colors"
-                style={{ backgroundColor: "var(--color-brand)" }}
+                className="px-4 py-2 rounded-lg text-sm font-semibold bg-white text-black hover:bg-white/90 transition-colors"
               >
                 OK
               </button>
               <button
                 onClick={() => saveConsent("essential", { essential: true, analytics: false })}
-                className="px-4 py-2 rounded-lg text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-semibold text-white/85 hover:text-white transition-colors border border-white/20"
               >
                 Refuser
               </button>
