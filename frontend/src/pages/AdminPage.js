@@ -471,8 +471,8 @@ export default function AdminPage() {
                     <p className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{tracking.totalPageViews}</p>
                   </div>
                   <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
-                    <p className="text-sm uppercase tracking-wider text-gray-400">Utilisateurs actifs</p>
-                    <p className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{tracking.activeUsers ?? 0}</p>
+                    <p className="text-sm uppercase tracking-wider text-gray-400">Utilisateurs differents</p>
+                    <p className="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{tracking.totalUsers ?? tracking.activeUsers ?? 0}</p>
                   </div>
                   <div className="rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111827] p-4">
                     <p className="text-sm uppercase tracking-wider text-gray-400">Visiteurs en direct</p>

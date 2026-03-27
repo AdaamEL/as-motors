@@ -128,7 +128,7 @@ const getTrackingOverview = async (req, res) => {
     const [totals, daily, topPages, realtime] = await Promise.all([
       postJson(endpoint, token, {
         dateRanges: [dateRange],
-        metrics: [{ name: "screenPageViews" }, { name: "activeUsers" }],
+        metrics: [{ name: "screenPageViews" }, { name: "totalUsers" }, { name: "activeUsers" }],
       }),
       postJson(endpoint, token, {
         dateRanges: [dateRange],
@@ -147,7 +147,8 @@ const getTrackingOverview = async (req, res) => {
     ]);
 
     const totalPageViews = parseMetric(totals?.rows?.[0], 0);
-    const activeUsers = parseMetric(totals?.rows?.[0], 1);
+    const totalUsers = parseMetric(totals?.rows?.[0], 1);
+    const activeUsers = parseMetric(totals?.rows?.[0], 2);
 
     const dailyViews = (daily?.rows || []).map((row) => {
       const rawDate = parseDimension(row, 0);
@@ -173,6 +174,7 @@ const getTrackingOverview = async (req, res) => {
       provider: "ga4",
       windowDays: days,
       totalPageViews,
+      totalUsers,
       activeUsers,
       realtimeActiveUsers: realtime.realtimeActiveUsers,
       uniquePages: topPagesData.length,
