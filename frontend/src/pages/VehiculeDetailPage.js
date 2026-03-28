@@ -20,6 +20,54 @@ const MODEL_BLURBS = {
   "bmw serie 1 120i": "BMW 120i noire: 3 cylindres 1.5L turbo (170 ch, 280 Nm), boite auto DCT7 traction, 0 a 100 km/h en ~7,8 s, vitesse max ~226 km/h, conso ~5,3 L/100 km, 4,36 m, 1 450 kg, coffre 300L. Options: Pack exterieur M, jantes 18\", Apple CarPlay, toit ouvrant panoramique, sieges chauffants, full LED/LED advanced, Harman Kardon, camera de recul et radar.",
 };
 
+const formatVehicleDescription = (text) => {
+  const fallback = {
+    introParagraphs: [text],
+    features: [],
+  };
+
+  if (!text || typeof text !== "string") return fallback;
+
+  const cleaned = text.replace(/\s+/g, " ").trim();
+  if (!cleaned) return fallback;
+
+  if (/options?\s*:/i.test(cleaned)) {
+    const [introRaw, optionsRaw = ""] = cleaned.split(/options?\s*:/i);
+    const introParagraphs = introRaw
+      .split(/(?<=\.)\s+/)
+      .map((part) => part.trim())
+      .filter(Boolean);
+
+    const features = optionsRaw
+      .split(/,|\s+-\s+/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    return {
+      introParagraphs: introParagraphs.length ? introParagraphs : [introRaw.trim()],
+      features,
+    };
+  }
+
+  const dashedSegments = cleaned.split(/\s+-\s+/).map((item) => item.trim()).filter(Boolean);
+  if (dashedSegments.length >= 3) {
+    return {
+      introParagraphs: [dashedSegments[0]],
+      features: dashedSegments.slice(1),
+    };
+  }
+
+  const introParagraphs = cleaned
+    .split(/(?<=\.)\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  return {
+    introParagraphs: introParagraphs.length ? introParagraphs : [cleaned],
+    features: [],
+  };
+};
+
 /* ─── Devis Modal ─── */
 const DevisModal = ({ onClose }) => (
   <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -171,6 +219,7 @@ const VehiculeDetailPage = () => {
     vehicule.description?.trim() ||
     MODEL_BLURBS[modelKey] ||
     "Un vehicule premium selectionne pour offrir style, confort et plaisir de conduite.";
+  const formattedDescription = formatVehicleDescription(vehicleIntro);
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)] pt-28">
@@ -195,9 +244,27 @@ const VehiculeDetailPage = () => {
             <h1 className="mt-4 font-display text-2xl sm:text-3xl lg:text-3xl font-semibold text-[var(--color-text)] leading-[1.02]">
               {vehicule.marque} {vehicule.modele}
             </h1>
-            <p className="mt-4 text-base sm:text-lg text-[var(--color-text-muted)] max-w-3xl leading-snug">
-              {vehicleIntro}
-            </p>
+            <div className="mt-4 max-w-3xl space-y-3">
+              {formattedDescription.introParagraphs.map((paragraph, index) => (
+                <p key={`${index}-${paragraph.slice(0, 16)}`} className="text-base sm:text-lg text-[var(--color-text-muted)] leading-relaxed">
+                  {paragraph}
+                </p>
+              ))}
+
+              {formattedDescription.features.length > 0 && (
+                <div className="pt-1">
+                  <p className="text-xs uppercase tracking-[0.16em] font-semibold text-[var(--color-text)] mb-2">Equipements</p>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-sm text-[var(--color-text-muted)] leading-snug">
+                    {formattedDescription.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-2">
+                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--color-brand)] flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
 
             <div className="mt-6 flex flex-wrap gap-2.5">
               {[vehicule.categorie || "Berline", vehicule.carburant || "Essence", vehicule.type_boite || "Automatique", `${vehicule.places || 5} places`].map((item) => (

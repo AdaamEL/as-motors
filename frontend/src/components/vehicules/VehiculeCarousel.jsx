@@ -33,7 +33,6 @@ const STATIC_VEHICULE_GALLERIES = {
     '/uploads/bmw-serie-1/bmw-serie-1-3.JPG',
     '/uploads/bmw-serie-1/bmw-serie-1-4.JPG',
     '/uploads/bmw-serie-1/bmw-serie-1-5.JPG',
-    '/uploads/bmw-serie-1/bmw-serie-1-6.JPG',
   ],
   default: ['/uploads/default.jpg'],
 };
@@ -115,6 +114,7 @@ const VehiculeCarousel = ({ vehiculeId }) => {
   };
 
   const mainImage = galleryImages[currentIndex];
+  const isPrimaryImage = /-primary\./i.test(mainImage || '');
 
   return (
     <>
@@ -138,7 +138,7 @@ const VehiculeCarousel = ({ vehiculeId }) => {
               animate="center"
               exit="exit"
               transition={{ type: 'tween', duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="absolute inset-0 w-full h-full object-cover"
+              className={`absolute inset-0 w-full h-full ${isPrimaryImage ? 'object-contain bg-black/20 p-2 sm:p-3' : 'object-cover'}`}
               onError={(e) => { e.target.src = "/uploads/automobile.png"; }}
             />
           </AnimatePresence>
