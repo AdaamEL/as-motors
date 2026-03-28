@@ -7,7 +7,6 @@ const STATIC_VEHICULE_GALLERIES = {
   '2': [
     '/uploads/mercedes-a250e/mercedes-a250e-primary.jpg',
     '/uploads/mercedes-a250e/mercedes-a250e-1.jpg',
-    '/uploads/mercedes-a250e/mercedes-a250e-2.jpg',
     '/uploads/mercedes-a250e/mercedes-a250e-3.jpg',
     '/uploads/mercedes-a250e/mercedes-a250e-4.jpg',
     '/uploads/mercedes-a250e/mercedes-a250e-5.jpg',
@@ -121,7 +120,7 @@ const VehiculeCarousel = ({ vehiculeId }) => {
       <div className="space-y-4">
         {/* Main Image */}
         <div
-          className="relative aspect-[4/3] sm:aspect-[16/10] rounded-2xl overflow-hidden bg-gray-100 dark:bg-navy-800 shadow-premium-lg cursor-pointer group"
+          className="relative aspect-[4/3] sm:aspect-[16/10] rounded-2xl overflow-hidden bg-transparent shadow-premium-lg cursor-pointer group"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -138,7 +137,7 @@ const VehiculeCarousel = ({ vehiculeId }) => {
               animate="center"
               exit="exit"
               transition={{ type: 'tween', duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className={`absolute inset-0 w-full h-full ${isPrimaryImage ? 'object-contain bg-black/20 p-2 sm:p-3' : 'object-cover'}`}
+              className={`absolute inset-0 w-full h-full ${isPrimaryImage ? 'object-contain p-1 sm:p-2' : 'object-cover'}`}
               onError={(e) => { e.target.src = "/uploads/automobile.png"; }}
             />
           </AnimatePresence>
