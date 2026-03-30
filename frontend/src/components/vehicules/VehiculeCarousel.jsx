@@ -113,7 +113,6 @@ const VehiculeCarousel = ({ vehiculeId }) => {
   };
 
   const mainImage = galleryImages[currentIndex];
-  const isPrimaryImage = /-primary\./i.test(mainImage || '');
 
   return (
     <>
@@ -137,7 +136,7 @@ const VehiculeCarousel = ({ vehiculeId }) => {
               animate="center"
               exit="exit"
               transition={{ type: 'tween', duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className={`absolute inset-0 w-full h-full ${isPrimaryImage ? 'object-contain p-1 sm:p-2' : 'object-cover'}`}
+              className="absolute inset-0 w-full h-full object-cover"
               onError={(e) => { e.target.src = "/uploads/automobile.png"; }}
             />
           </AnimatePresence>
