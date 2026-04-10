@@ -145,13 +145,7 @@ const Footer = () => {
           <p className="text-xs text-[var(--color-text-muted)]/80">
             © {new Date().getFullYear()} AS Motors. Tous droits réservés.
           </p>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[11px] sm:text-xs text-[var(--color-text-muted)]/80">
-            <span>Conçu avec soin à Paris</span>
-            <span className="opacity-40">•</span>
-            <Link to="/legal/privacy" className="hover:text-[var(--color-brand)] transition-colors">Confidentialité</Link>
-            <span className="opacity-40">•</span>
-            <Link to="/legal/terms" className="hover:text-[var(--color-brand)] transition-colors">CGU</Link>
-          </div>
+         
         </div>
       </div>
     </footer>
