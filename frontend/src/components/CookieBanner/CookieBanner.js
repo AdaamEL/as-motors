@@ -41,7 +41,7 @@ const CookieBanner = ({ discrete = false }) => {
 
   if (discrete) {
     return (
-      <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 z-40 sm:max-w-md">
+      <div data-nosnippet className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 z-40 sm:max-w-md">
         <div className="p-4 sm:p-5 rounded-2xl bg-black/75 backdrop-blur-md border border-white/20 shadow-[0_12px_28px_rgba(0,0,0,0.35)]">
           <div className="flex items-start gap-3">
             <div className="flex-1 min-w-0">
@@ -74,7 +74,7 @@ const CookieBanner = ({ discrete = false }) => {
 
   // Regular version for other pages
   return (
-    <div className="fixed inset-x-0 bottom-4 z-50 px-4">
+    <div data-nosnippet className="fixed inset-x-0 bottom-4 z-50 px-4">
       <div className="max-w-3xl mx-auto p-5 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-md">
         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
           <div className="flex-1">

@@ -42,6 +42,14 @@ const HomePage = () => {
 
   return (
     <div className="relative w-full max-w-full h-[100dvh] overflow-x-hidden overflow-y-hidden">
+      <section className="sr-only">
+        <h1>AS Motor's : Location de voitures de luxe a Paris</h1>
+        <p>
+          AS Motor's propose la location de vehicules premium a Paris, avec devis rapide,
+          accompagnement personnalise et flotte haut de gamme.
+        </p>
+      </section>
+
       {/* Hero Background */}
       <HomeHero
         currentImageIndex={currentImageIndex}

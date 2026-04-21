@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-const SITE_NAME = "AS Motors";
-const SITE_URL = (process.env.REACT_APP_SITE_URL || "https://as-motors.fr").replace(/\/$/, "");
+const SITE_NAME = "AS Motor's";
+const SITE_URL = (process.env.REACT_APP_SITE_URL || "https://as-motors.com").replace(/\/$/, "");
 
 const ROUTE_META = {
   "/": {
-    title: "AS Motors | Location premium de vehicules",
+    title: "AS Motor's | Location de voitures de luxe a Paris",
     description:
-      "Location premium de vehicules a Paris. Choisissez votre modele et demandez un devis en quelques clics.",
+      "Decouvrez notre flotte de voitures de luxe a Paris. Reservation rapide et accompagnement premium.",
     robots: "index,follow",
   },
   "/vehicules": {
@@ -110,9 +110,9 @@ const resolveRouteMeta = (pathname) => {
 
   return (
     ROUTE_META[pathname] || {
-      title: "AS Motors | Location premium de vehicules",
+      title: "AS Motor's | Location de voitures de luxe a Paris",
       description:
-        "Location premium de vehicules a Paris. Choisissez votre modele et demandez un devis en quelques clics.",
+        "Decouvrez notre flotte de voitures de luxe a Paris. Reservation rapide et accompagnement premium.",
       robots: "index,follow",
     }
   );
